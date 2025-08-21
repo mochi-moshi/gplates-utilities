@@ -27,6 +27,7 @@ class Session:
 
         self._rotationModel_path: str = ""
         self._rotationModel: pygplates.RotationModel = None
+        self._rotationFeatureCollection: pygplates.FeatureCollection = None
 
         self._project_file: str = ""
         self._project_path: str = ""
@@ -49,6 +50,15 @@ class Session:
     def load_rotation_model(self, path):
         self._rotationModel_path = path
         self._rotationModel = pygplates.RotationModel(path)
+        self._rotationFeatureCollection = pygplates.FeatureCollection(path)
+    
+    def soft_reload_rotation_model(self):
+        if self._rotationModel_path == "":
+            #QMessageBox.warning(None, "Error", "Cannot reload uninitialized feature model.")
+            return
+        
+        self._rotationModel = pygplates.RotationModel(self._rotationFeatureCollection)
+        
     
     def reload_rotation_model(self):
         if self._rotationModel_path == "":
@@ -56,6 +66,7 @@ class Session:
             return
         
         self._rotationModel = pygplates.RotationModel(self._rotationModel_path)
+        self._rotationFeatureCollection = pygplates.FeatureCollection(self._rotationModel_path)
 
     
     def get_feature_collection_model(self):

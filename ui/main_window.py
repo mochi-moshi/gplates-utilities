@@ -7,6 +7,7 @@ from core.session import Session
 from ui.feature_collection_loader import FeatureCollectionLoader
 from ui.feature_splitting_window import FeatureSplittingWindow
 from ui.line_splitting_window import LineSplitterWindow
+from ui.rotation_helper_window import RotationHelperWindow
 from util.project_storage import load_project, save_project
 
 
@@ -50,6 +51,7 @@ class MainWindow(QMainWindow):
         # Icons
         feature_split_icon = QIcon("./media/icons/plate_split_256.png")
         line_split_icon = QIcon("./media/icons/line_split_256.png")
+        rotation_helper_icon = QIcon("./media/icons/line_split_256.png")
 
         # Toolbars
         views_toolbar = self.addToolBar("Views")
@@ -58,10 +60,13 @@ class MainWindow(QMainWindow):
         split_plates_action.triggered.connect(self.show_feature_split_view)
         cheese_action = views_toolbar.addAction(line_split_icon, "Split Lines")
         cheese_action.triggered.connect(self.show_line_split_view)
+        rotation_action = views_toolbar.addAction(rotation_helper_icon, "Rotation Helper")
+        rotation_action.triggered.connect(self.show_rotation_helper_view)
         
         action_group = QActionGroup(self)
         action_group.addAction(split_plates_action)
         action_group.addAction(cheese_action)
+        action_group.addAction(rotation_action)
         action_group.setExclusive(True)
 
         # Set initial "view"
@@ -122,3 +127,9 @@ class MainWindow(QMainWindow):
         # TODO: clear any still opened windows
         self.resize(400, 400)
         self.setCentralWidget(LineSplitterWindow(self.session))
+        
+    @Slot()
+    def show_rotation_helper_view(self):
+        # TODO: clear any still opened windows
+        self.resize(950, 400)
+        self.setCentralWidget(RotationHelperWindow(self.session))
