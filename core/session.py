@@ -1,10 +1,9 @@
 import os
-from os.path import dirname
 from typing import Sequence
 
 from PySide6.QtCore import QStringListModel, Qt
 from PySide6.QtGui import QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QMessageBox, QWidget
+from PySide6.QtWidgets import QWidget
 import pygplates
 
 

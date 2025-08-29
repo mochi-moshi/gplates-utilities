@@ -9,11 +9,17 @@ def split_plate_features(plates: Feature, splitting_feature: Feature, rotation_m
     splitter_snapshot = ReconstructSnapshot(FeatureCollection(splitting_feature), rotation_model, split_time)
     snapshot_features = snapshot.get_reconstructed_geometries()
     splitter_feature = splitter_snapshot.get_reconstructed_geometries()[0]
+    splitter_geometry = splitter_feature.get_reconstructed_geometry()
 
     new_collection = FeatureCollection()
-
     for feature in snapshot_features:
-        plates = split_plate_by_line(feature.get_reconstructed_geometry(), splitter_feature.get_reconstructed_geometry())
+
+        if isinstance(splitter_geometry, PolylineOnSphere):
+          plates = split_plate_by_line(feature.get_reconstructed_geometry(), splitter_geometry)
+        elif isinstance(splitter_geometry, PolygonOnSphere):
+          plates = split_plate_by_polygon(feature.get_reconstructed_geometry(), splitter_geometry)
+        else:
+          raise ValueError(f'Cannot split plate by geometry: {splitter_geometry}')
 
         if len(plates) == 0:
             # Ignore making features if we have no plates
@@ -138,3 +144,16 @@ def split_plate_by_line(plate: PolygonOnSphere, line: PolylineOnSphere)-> list[P
         output_plates.append(PolygonOnSphere(plate))
 
     return output_plates
+
+def split_plate_by_polygon(plate: PolygonOnSphere, splitter: PolygonOnSphere) -> list[PolygonOnSphere]:
+    insideA, outsideA, insideB, outsideB = [], [], [], []
+    splitter.partition(plate, insideA, outsideA)
+    plate.partition(splitter, insideB, outsideB)
+
+    outside_splitter = [PolygonOnSphere(g[:]) for g in PolylineOnSphere.join(outsideA + insideB)]
+    inside_splitter = [PolygonOnSphere(g[:]) for g in PolylineOnSphere.join(insideA + insideB)]
+
+    # return no new plates if there is no intersection
+    if len(inside_splitter) == 0:
+      return []
+    return outside_splitter + inside_splitter

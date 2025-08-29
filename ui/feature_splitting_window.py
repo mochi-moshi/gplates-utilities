@@ -1,11 +1,11 @@
 from os import path
 from PySide6.QtCore import Slot
 from PySide6.QtGui import QDoubleValidator, QRegularExpressionValidator
-from PySide6.QtWidgets import QAbstractItemView, QComboBox, QFileDialog, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QTreeView, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QAbstractItemView, QCheckBox, QComboBox, QFileDialog, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QTreeView, QVBoxLayout, QWidget
 
 from core.plate_splitter import split_plate_features
 from core.session import Session
-from models.line_filter_model import LineFilterModel
+from models.splitter_filter_model import SplitterFilterModel
 from models.polygon_filter_model import PolygonFilterModel
 from ui.decorators.time_decorator_delegate import TimeDecoratorDelegate
 
@@ -17,9 +17,10 @@ class FeatureSplittingWindow(QWidget):
 
         self.session = session
         self._save_location: str = ""
+        self._lines_only: bool = False
 
-        self.splitter_model = LineFilterModel()
-        self.splitter_model.setFeatureTypeFilter(["ContinentalRift", "SubductionZone"])
+        self.splitter_model = SplitterFilterModel()
+        self.splitter_model.setFeatureTypeFilter([])
         self.splitter_model.setSourceModel(session.get_feature_model())
 
         self.feature_model = PolygonFilterModel()
@@ -42,6 +43,10 @@ class FeatureSplittingWindow(QWidget):
         self.splitter_selection.setModel(self.splitter_model)
         self.splitter_selection.setModelColumn(1)
         self.splitter_selection.setPlaceholderText("Select splitter feature ...")
+        
+        line_splitters_only_label = QLabel("Lines Only")
+        self.line_splitters_only = QCheckBox()
+        self.line_splitters_only.checkStateChanged.connect(self.update_line_splitters_only)
 
         self.new_feature_view = QTreeView()
         self.new_feature_view.setModel(self.feature_model)
@@ -61,6 +66,7 @@ class FeatureSplittingWindow(QWidget):
                 background-color: rgb(34, 177, 76);
             }
             """)    # Sets
+        self.new_feature_view.clicked.connect(self.on_item_changed)
 
         set_save_location_button = QPushButton("Set Save Location")
         set_save_location_button.clicked.connect(self.set_save_location)
@@ -75,10 +81,15 @@ class FeatureSplittingWindow(QWidget):
         plate_filter_layout = QHBoxLayout()
         plate_filter_layout.addWidget(plate_id_label, 0)
         plate_filter_layout.addWidget(self.plate_filter, 1)
+        
+        line_splitters_only_layout = QHBoxLayout()
+        line_splitters_only_layout.addWidget(line_splitters_only_label, 1)
+        line_splitters_only_layout.addWidget(self.line_splitters_only, 0)
 
         side_layout = QVBoxLayout()
         side_layout.addLayout(split_time_layout)
         side_layout.addLayout(plate_filter_layout)
+        side_layout.addLayout(line_splitters_only_layout)
         side_layout.addWidget(self.splitter_selection)
         side_layout.addWidget(QWidget(), 1)
         side_layout.addWidget(set_save_location_button, 0)
@@ -89,6 +100,10 @@ class FeatureSplittingWindow(QWidget):
         main_layout.addLayout(side_layout, 0)
 
         self.setLayout(main_layout)
+
+    @Slot()
+    def on_item_changed(self):
+      self.splitter_model.setFeatureIdFilter([i.data() for i in self.new_feature_view.selectedIndexes() if i.column() == 6])
     
     @Slot()
     def set_save_location(self):
@@ -106,6 +121,11 @@ class FeatureSplittingWindow(QWidget):
         if filter_text == "":
             self.feature_model.setPlateIdFilter([])
         self.feature_model.setPlateIdFilter([id for id in filter_text.split(",") if len(id) > 0])
+
+    @Slot()
+    def update_line_splitters_only(self):
+      self._lines_only = self.line_splitters_only.isChecked()
+      self.splitter_model.setFeatureTypeFilter(["ContinentalRift", "SubductionZone"] if self._lines_only else [])
 
     @Slot()
     def on_split(self):
