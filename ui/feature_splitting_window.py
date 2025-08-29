@@ -9,6 +9,8 @@ from models.line_filter_model import LineFilterModel
 from models.polygon_filter_model import PolygonFilterModel
 from ui.decorators.time_decorator_delegate import TimeDecoratorDelegate
 
+from pygplates import FeatureCollection
+
 class FeatureSplittingWindow(QWidget):
     def __init__(self, session: Session):
         super().__init__()
@@ -38,14 +40,15 @@ class FeatureSplittingWindow(QWidget):
         
         self.splitter_selection = QComboBox()
         self.splitter_selection.setModel(self.splitter_model)
-        self.splitter_selection.setModelColumn(0)
+        self.splitter_selection.setModelColumn(1)
         self.splitter_selection.setPlaceholderText("Select splitter feature ...")
 
         self.new_feature_view = QTreeView()
         self.new_feature_view.setModel(self.feature_model)
-        self.new_feature_view.setColumnHidden(2, True)
-        self.new_feature_view.setItemDelegateForColumn(4, TimeDecoratorDelegate(self.new_feature_view))
+        self.new_feature_view.setColumnHidden(1, True)
+        self.new_feature_view.setColumnHidden(3, True)
         self.new_feature_view.setItemDelegateForColumn(5, TimeDecoratorDelegate(self.new_feature_view))
+        self.new_feature_view.setItemDelegateForColumn(6, TimeDecoratorDelegate(self.new_feature_view))
         self.new_feature_view.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.new_feature_view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.new_feature_view.setStyleSheet(
@@ -110,7 +113,7 @@ class FeatureSplittingWindow(QWidget):
             QMessageBox.critical(self, "Error", "No rift selected!")
             return
         
-        splitter_idx = self.splitter_model.index(self.splitter_selection.currentIndex(), 6)
+        splitter_idx = self.splitter_model.index(self.splitter_selection.currentIndex(), 7)
         all_features = [f for lfc in self.session.loaded_feature_collections for f in lfc.feature_collection]
         selected_splitter = next(filter(lambda f: f.get_feature_id().get_string() == self.splitter_model.itemData(splitter_idx)[0], all_features))
         
@@ -125,8 +128,8 @@ class FeatureSplittingWindow(QWidget):
             return
         
         
-        selected_feature_ids = [i.data() for i in self.new_feature_view.selectedIndexes() if i.column() == 6]
-        selected_feature_collections = [i.data() for i in self.new_feature_view.selectedIndexes() if i.column() == 7]
+        selected_feature_ids = [i.data() for i in self.new_feature_view.selectedIndexes() if i.column() == 7]
+        selected_feature_collections = [i.data() for i in self.new_feature_view.selectedIndexes() if i.column() == 8]
         
         selected_features = []
 
@@ -148,5 +151,11 @@ class FeatureSplittingWindow(QWidget):
             return
 
         fc = split_plate_features(selected_features, selected_splitter, self.session._rotationModel, split_time)
+
+        if path.exists(self._save_location):
+          fc2 = FeatureCollection(self._save_location)
+          for f in fc:
+            fc2.add(f)
+          fc = fc2
         fc.write(self._save_location)
         QMessageBox.information(self, "Success", "Successfully saved split features: " + path.realpath(self._save_location))

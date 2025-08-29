@@ -8,6 +8,7 @@ from ui.feature_collection_loader import FeatureCollectionLoader
 from ui.feature_splitting_window import FeatureSplittingWindow
 from ui.line_splitting_window import LineSplitterWindow
 from ui.rotation_helper_window import RotationHelperWindow
+from ui.subduction_rift_helper_window import SubductionRiftHelperWindow
 from util.project_storage import load_project, save_project
 
 
@@ -52,6 +53,7 @@ class MainWindow(QMainWindow):
         feature_split_icon = QIcon("./media/icons/plate_split_256.png")
         line_split_icon = QIcon("./media/icons/line_split_256.png")
         rotation_helper_icon = QIcon("./media/icons/line_split_256.png")
+        subduction_rift_helper_icon = QIcon("./media/icons/line_split_256.png")
 
         # Toolbars
         views_toolbar = self.addToolBar("Views")
@@ -62,11 +64,14 @@ class MainWindow(QMainWindow):
         cheese_action.triggered.connect(self.show_line_split_view)
         rotation_action = views_toolbar.addAction(rotation_helper_icon, "Rotation Helper")
         rotation_action.triggered.connect(self.show_rotation_helper_view)
+        sub_rift_action = views_toolbar.addAction(subduction_rift_helper_icon, "Subduction/Rift Helper")
+        sub_rift_action.triggered.connect(self.show_subduction_rift_helper_view)
         
         action_group = QActionGroup(self)
         action_group.addAction(split_plates_action)
         action_group.addAction(cheese_action)
         action_group.addAction(rotation_action)
+        action_group.addAction(sub_rift_action)
         action_group.setExclusive(True)
 
         # Set initial "view"
@@ -133,3 +138,9 @@ class MainWindow(QMainWindow):
         # TODO: clear any still opened windows
         self.resize(950, 400)
         self.setCentralWidget(RotationHelperWindow(self.session))
+        
+    @Slot()
+    def show_subduction_rift_helper_view(self):
+        # TODO: clear any still opened windows
+        self.resize(950, 400)
+        self.setCentralWidget(SubductionRiftHelperWindow(self.session))

@@ -23,7 +23,7 @@ class Session:
         self._feature_collection_names = QStringListModel()
         self._feature_model = QStandardItemModel()
         self._feature_model.setColumnCount(7)
-        self._feature_model.setHorizontalHeaderLabels(["Feature Name", "Feature Type", "Geometry Type", "Plate ID", "Start Time", "End Time", "Feature ID", "Feature Collection"])
+        self._feature_model.setHorizontalHeaderLabels(["Feature Name", "Feature Name (ID)", "Feature Type", "Geometry Type", "Plate ID", "Start Time", "End Time", "Feature ID", "Feature Collection"])
 
         self._rotationModel_path: str = ""
         self._rotationModel: pygplates.RotationModel = None
@@ -88,6 +88,7 @@ class Session:
                 feature_item: Sequence[QStandardItem] = []
 
                 feature_item.append(QStandardItem(feature.get_name()))                          # Feature Name
+                feature_item.append(QStandardItem(f'{feature.get_name()} ({feature.get_feature_id().get_string()})'))      
                 feature_item.append(QStandardItem(feature.get_feature_type().get_name()))       # Feature Type
                 feature_item.append(QStandardItem(type(feature.get_geometry()).__name__))       # Geometry Type
                 feature_item.append(QStandardItem(str(feature.get_reconstruction_plate_id())))  # Plate ID
@@ -130,6 +131,7 @@ class Session:
                 feature_item: Sequence[QStandardItem] = []
 
                 feature_item.append(QStandardItem(feature.get_name()))                          # Feature Name
+                feature_item.append(QStandardItem(f'{feature.get_name()} ({feature.get_feature_id().get_string()})'))    
                 feature_item.append(QStandardItem(feature.get_feature_type().get_name()))       # Feature Type
                 feature_item.append(QStandardItem(type(feature.get_geometry()).__name__))       # Geometry Type
                 feature_item.append(QStandardItem(str(feature.get_reconstruction_plate_id())))  # Plate ID

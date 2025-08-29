@@ -8,6 +8,8 @@ from core.session import Session
 from models.line_filter_model import LineFilterModel
 from ui.feature_collection_loader import FeatureCollectionLoader
 
+from pygplates import  FeatureCollection
+
 class LineSplitterWindow(QWidget):
     def __init__(self, session: Session):
         super().__init__()
@@ -35,12 +37,12 @@ class LineSplitterWindow(QWidget):
 
         self.lineA_selection = QComboBox()
         self.lineA_selection.setModel(self.line_model)
-        self.lineA_selection.setModelColumn(0)
+        self.lineA_selection.setModelColumn(1)
         self.lineA_selection.setPlaceholderText("Select first line feature ...")
 
         self.lineB_selection = QComboBox()
         self.lineB_selection.setModel(self.line_model)
-        self.lineB_selection.setModelColumn(0)
+        self.lineB_selection.setModelColumn(1)
         self.lineB_selection.setPlaceholderText("Select second line feature ...")
         
         set_save_location_button = QPushButton("Set Save Location")
@@ -95,8 +97,8 @@ class LineSplitterWindow(QWidget):
             return
         
         all_features = [f for lfc in self.session.loaded_feature_collections for f in lfc.feature_collection]
-        line_a_idx = self.line_model.index(self.lineA_selection.currentIndex(), 6)
-        line_b_idx = self.line_model.index(self.lineB_selection.currentIndex(), 6)
+        line_a_idx = self.line_model.index(self.lineA_selection.currentIndex(), 7)
+        line_b_idx = self.line_model.index(self.lineB_selection.currentIndex(), 7)
         line_a = next(filter(lambda f: f.get_feature_id().get_string() == self.line_model.itemData(line_a_idx)[0], all_features))
         line_b = next(filter(lambda f: f.get_feature_id().get_string() == self.line_model.itemData(line_b_idx)[0], all_features))
 
@@ -119,5 +121,11 @@ class LineSplitterWindow(QWidget):
             return
 
         fc = split_line_features(line_a, line_b, self.session._rotationModel, split_date)
+        
+        if path.exists(self._save_location):
+          fc2 = FeatureCollection(self._save_location)
+          for f in fc:
+            fc2.add(f)
+          fc = fc2
         fc.write(self._save_location)
         QMessageBox.information(self, "Success", "Successfully saved split lines: " + path.realpath(self._save_location))
