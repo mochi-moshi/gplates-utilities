@@ -1,0 +1,106 @@
+"""
+Time Range Widget
+
+A widget for entering and validating geological time ranges with validation feedback.
+"""
+
+from PySide6.QtCore import Signal, QTimer
+from PySide6.QtGui import QDoubleValidator
+from PySide6.QtWidgets import QWidget, QFormLayout, QLineEdit, QLabel
+
+
+class TimeRangeWidget(QWidget):
+    """Widget for entering geological time ranges with validation."""
+    
+    timeChanged = Signal(float, float)  # start_time, end_time
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._updating = False
+        self.setup_ui()
+        
+    def setup_ui(self):
+        """Setup the UI components."""
+        layout = QFormLayout(self)
+        
+        # Time inputs with validators
+        self.start_time = QLineEdit()
+        self.start_time.setValidator(QDoubleValidator())
+        self.start_time.setPlaceholderText("e.g., 100.0")
+        
+        self.end_time = QLineEdit()
+        self.end_time.setValidator(QDoubleValidator())
+        self.end_time.setPlaceholderText("e.g., 50.0")
+        
+        # Connect signals with delay to avoid rapid updates
+        self.validation_timer = QTimer()
+        self.validation_timer.setSingleShot(True)
+        self.validation_timer.timeout.connect(self.validate_times)
+        
+        self.start_time.textChanged.connect(lambda: self.validation_timer.start(500))
+        self.end_time.textChanged.connect(lambda: self.validation_timer.start(500))
+        
+        layout.addRow("Start Time (Ma):", self.start_time)
+        layout.addRow("End Time (Ma):", self.end_time)
+        
+        self.status_label = QLabel()
+        self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+        layout.addRow(self.status_label)
+        
+    def validate_times(self):
+        """Validate time range and emit signal if valid."""
+        if self._updating:
+            return False
+            
+        if self._validate_times():
+            self._updating = True
+            try:
+                start = float(self.start_time.text())
+                end = float(self.end_time.text())
+                self.timeChanged.emit(start, end)
+                return True
+            finally:
+                self._updating = False
+        return False
+      
+    def _validate_times(self):
+        """Validate time range"""
+        try:
+            start = float(self.start_time.text()) if self.start_time.text() else None
+            end = float(self.end_time.text()) if self.end_time.text() else None
+            
+            if start is not None and end is not None:
+                if start <= end:
+                    self.status_label.setText("⚠️ Start time should be greater than end time")
+                    self.status_label.setStyleSheet("color: orange; font-size: 11px;")
+                    return False
+                else:
+                    duration = start - end
+                    self.status_label.setText(f"✓ Duration: {duration:.1f} million years")
+                    self.status_label.setStyleSheet("color: green; font-size: 11px;")
+                    return True
+            else:
+                self.status_label.setText("Enter both start and end times")
+                self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+                
+        except ValueError:
+            self.status_label.setText("⚠️ Please enter valid numbers")
+            self.status_label.setStyleSheet("color: red; font-size: 11px;")
+        
+        return False
+    
+    def get_times(self) -> tuple[float, float]:
+        """Get validated time range."""
+        if self._validate_times():
+            return float(self.start_time.text()), float(self.end_time.text())
+        raise ValueError("Invalid time range")
+    
+    def set_times(self, start_time: float, end_time: float):
+        """Set time range values."""
+        self._updating = True
+        try:
+            self.start_time.setText(str(start_time))
+            self.end_time.setText(str(end_time))
+            self._validate_times()
+        finally:
+            self._updating = False

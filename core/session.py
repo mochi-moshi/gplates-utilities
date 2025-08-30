@@ -5,7 +5,7 @@ from PySide6.QtCore import QStringListModel, Qt
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QWidget
 import pygplates
-
+from dataclasses import dataclass
 
 class LoadedFeatureCollection():
     def __init__(self, path, feature_collection) -> None:
@@ -13,7 +13,41 @@ class LoadedFeatureCollection():
         self.feature_collection = feature_collection
         self.shortname = os.path.basename(path)
 
+@dataclass
+class FeatureData:
+  feature_name: str
+  feature_name_and_id: str
+  feature_type: str
+  geometry_type: str
+  plate_id: str
+  start_time: float
+  end_time: float
+  feature_id: str
+  feature_collection: str
 
+class FeatureDataColumn:
+  feature_name = 0
+  feature_name_and_id = 1
+  feature_type = 2
+  geometry_type = 3
+  plate_id = 4
+  start_time = 5
+  end_time = 6
+  feature_id = 7
+  feature_collection = 8
+
+def extractFeatureDataFromRow(model: QStandardItemModel, row_num: int):
+  return FeatureData(
+    model.item(row_num, 0).text(),
+    model.item(row_num, 1).text(),
+    model.item(row_num, 2).text(),
+    model.item(row_num, 3).text(),
+    model.item(row_num, 4).text(),
+    float(model.item(row_num, 5).text()),
+    float(model.item(row_num, 6).text()),
+    model.item(row_num, 7).text(),
+    model.item(row_num, 8).text()
+  )
 class Session:
     def __init__(self) -> None:
         self.loaded_feature_collections: list[LoadedFeatureCollection] = []

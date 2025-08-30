@@ -1,4 +1,5 @@
 from PySide6.QtCore import QSortFilterProxyModel
+from core.session import extractFeatureDataFromRow
 
 
 class PolygonFilterModel(QSortFilterProxyModel):
@@ -8,15 +9,10 @@ class PolygonFilterModel(QSortFilterProxyModel):
         self._accepted_ids: list[str] = []
     
     def filterAcceptsRow(self, row_num: int, _) -> bool:
-        # Get the underlying model
-        model: QStandardItemModel = self.sourceModel()  # type: ignore | We know what data we are dealing with
-        
-        geo_type = model.item(row_num, 3).text()
-        plateId = model.item(row_num, 4).text()
-        start_time = float(model.item(row_num, 5).text())
-        end_time = float(model.item(row_num, 6).text())
+        model = self.sourceModel()
+        data = extractFeatureDataFromRow(model, row_num)
 
-        return geo_type == "PolygonOnSphere" and (len(self._accepted_ids) == 0 or plateId in self._accepted_ids) and (start_time >= self._time_filter >= end_time)
+        return data.geometry_type == "PolygonOnSphere" and (len(self._accepted_ids) == 0 or data.plate_id in self._accepted_ids) and (data.start_time >= self._time_filter >= data.end_time)
     
     def setTimeFilter(self, time: float):
         self.beginFilterChange()

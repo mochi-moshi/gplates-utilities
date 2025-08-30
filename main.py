@@ -1,18 +1,63 @@
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication
-
-import sys
-
-from core.session import Session
-from ui.main_window import MainWindow
 
 if __name__ == "__main__":
+    import sys
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtGui import QIcon
+    from core.session import Session
+    from ui.improved_geological_operations_window import ImprovedGeologicalOperationsWindow
+    
+    
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("./media/logo.png"))
+    app.setApplicationName("Geological Operations Suite")
 
+    # session = Session()
+
+    # main_window = MainWindow(session)
+    # main_window.show()
+
+    # sys.exit(app.exec())
+    
+    # Set application style
+    app.setStyleSheet("""
+        QTabWidget::pane {
+            border: 1px solid #C0C0C0;
+            background-color: white;
+        }
+        
+        QTabBar::tab {
+            background-color: #f0f0f0;
+            padding: 8px 16px;
+            margin-right: 2px;
+            border: 1px solid #C0C0C0;
+            border-bottom-color: #C0C0C0;
+        }
+        
+        QTabBar::tab:selected {
+            background-color: white;
+            border-bottom-color: white;
+        }
+        
+        QTabBar::tab:hover:!selected {
+            background-color: #e6f3ff;
+        }
+        
+        QGroupBox {
+            font-weight: bold;
+            border: 2px solid #C0C0C0;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 10px 0 10px;
+        }
+    """)
+    
     session = Session()
-
-    main_window = MainWindow(session)
-    main_window.show()
-
+    
+    window = ImprovedGeologicalOperationsWindow(session)
+    window.show()
+    
     sys.exit(app.exec())
