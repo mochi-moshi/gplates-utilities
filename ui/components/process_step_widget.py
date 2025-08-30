@@ -49,6 +49,8 @@ class ProcessStepWidget(QFrame):
         content_layout.addWidget(self.title_label)
         content_layout.addWidget(self.description_label)
         
+        layout.setAlignment(Qt.AlignCenter)
+        
         layout.addWidget(self.step_label)
         layout.addLayout(content_layout, 1)
         
