@@ -7,6 +7,7 @@ functionality into a unified, guided workflow with clear visual feedback.
 
 from os import path
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
     QComboBox, QFileDialog, QHBoxLayout, QLabel, 
     QLineEdit, QMessageBox, QPushButton, QVBoxLayout, QWidget,
@@ -42,12 +43,10 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             ProcessStepWidget(1, "Select Splitting Feature", 
                             "Choose the geological feature that will split the plates"),
             ProcessStepWidget(2, "Set Split Time", 
-                            "Define when plate splitting occurs"),
+                            "Define when plate splitting occur (uses start time)"),
             ProcessStepWidget(3, "Select Plates to Split", 
                             "Choose which plates will be affected by splitting"),
-            ProcessStepWidget(4, "Configure Split Parameters", 
-                            "Set splitting options and new plate properties"),
-            ProcessStepWidget(5, "Process & Save", 
+            ProcessStepWidget(4, "Process & Save", 
                             "Execute splitting and save results")
         ]
         
@@ -69,13 +68,16 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         
         splitter_layout.addWidget(self.splitter_selection)
         
-        # Step 2: Time range
+        # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
-        self.time_widget = TimeRangeWidget()
-        self.time_widget.timeChanged.connect(self.on_time_changed)
+        time_layout = QFormLayout(self.time_group)
         
-        time_layout = QVBoxLayout(self.time_group)
-        time_layout.addWidget(self.time_widget)
+        self.split_time = QLineEdit()
+        self.split_time.setValidator(QDoubleValidator())
+        self.split_time.setPlaceholderText("e.g., 10.0")
+        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        
+        time_layout.addRow("Split Time (Ma):", self.split_time)
         
         # Step 3: Feature selection
         self.feature_group = QGroupBox("Plate Selection")
@@ -84,16 +86,6 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         
         feature_layout = QVBoxLayout(self.feature_group)
         feature_layout.addWidget(self.feature_selector)
-        
-        # Step 4: Split parameters
-        self.params_group = QGroupBox("Splitting Parameters")
-        params_layout = QVBoxLayout(self.params_group)
-        
-        # Plate ID widget with validation
-        self.plate_id_widget = PlateIdWidget(self.session, "New Plate ID", enable_uniqueness_validation=True)
-        self.plate_id_widget.plateIdChanged.connect(lambda plate_id: self.update_step_status(3, True))
-        
-        params_layout.addWidget(self.plate_id_widget)
         
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
@@ -128,18 +120,11 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         layout.addWidget(self.splitter_group)
         layout.addWidget(self.time_group)
         layout.addWidget(self.feature_group)
-        layout.addWidget(self.params_group)
         layout.addWidget(self.output_group)
         
         # Set first step as active
         self.steps[0].set_active(True)
     
-    def on_time_changed(self, start_time: float, end_time: float):
-        """Handle time range changes."""
-        self.feature_selector.set_time_filter(start_time, end_time)
-        self.update_step_status(1, True)
-        self.validate_and_enable_process()
-        
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
         if count > 0:
@@ -149,7 +134,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
     def validate_and_enable_process(self):
         """Validate inputs and enable process button if ready."""
         has_splitter = self.splitter_selection.currentIndex() >= 0
-        has_time = self.time_widget._validate_times()
+        has_time = bool(self.split_time.text())
         has_features = len(self.feature_selector.get_selected_features()) > 0
         has_output, _ = self.output_widget.is_valid()
         
@@ -180,13 +165,6 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             start_time, end_time = self.time_widget.get_times()
             selected_features = self.feature_selector.get_selected_features()
             
-            # Get validated plate ID
-            try:
-                new_plate_id = self.plate_id_widget.get_plate_id()
-            except ValueError as e:
-                QMessageBox.warning(self, "Invalid Plate ID", str(e))
-                return
-            
             if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
@@ -214,7 +192,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             else:
                 result_fc.write(output_path)
             
-            self.update_step_status(4, True)
+            self.update_step_status(3, True)
             QMessageBox.information(self, "Success", 
                                   f"Plate splitting complete!\nResults saved to: {path.basename(output_path)}\n"
                                   f"Features processed: {len(selected_features)}\n"
@@ -275,13 +253,16 @@ class LineSplittingTabWidget(ProcessTabWidget):
         
         line2_layout.addWidget(self.line2_selection)
         
-        # Step 3: Time (split time)
+        # Step 3: Split time
         self.time_group = QGroupBox("Split Time")
-        self.time_widget = TimeRangeWidget()
-        self.time_widget.timeChanged.connect(self.on_time_changed)
+        time_layout = QFormLayout(self.time_group)
         
-        time_layout = QVBoxLayout(self.time_group)
-        time_layout.addWidget(self.time_widget)
+        self.split_time = QLineEdit()
+        self.split_time.setValidator(QDoubleValidator())
+        self.split_time.setPlaceholderText("e.g., 10.0")
+        self.split_time.textChanged.connect(lambda: self.update_step_status(2, bool(self.split_time.text())))
+        
+        time_layout.addRow("Split Time (Ma):", self.split_time)
         
         # Step 4: Output controls
         self.output_group = QGroupBox("Output")
@@ -320,6 +301,15 @@ class LineSplittingTabWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+    
+    def validate_and_enable_process(self):
+        """Validate inputs and enable process button if ready."""
+        has_line1 = self.line1_selection.currentIndex() >= 0
+        has_line2 = self.line2_selection.currentIndex() >= 0
+        has_time = bool(self.split_time.text())
+        has_output, _ = self.output_widget.is_valid()
+        
+        self.process_button.setEnabled(has_line1 and has_line2 and has_time and has_output)
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
@@ -378,8 +368,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
                 return
             
             # Get parameters
-            start_time, end_time = self.time_widget.get_times()
-            split_time = start_time  # Use start time as split time
+            split_time = float(self.split_time.text())
                 
             if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
@@ -426,9 +415,9 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Workflow steps
         self.steps = [
             ProcessStepWidget(1, "Select Polygon Features", 
-                            "Choose polygon features for geometric operations"),
-            ProcessStepWidget(2, "Set Time Range", 
-                            "Define the time period for operations"),
+                            "Choose polygon features for geometric operation"),
+            ProcessStepWidget(2, "Set Split Time", 
+                            "Define the split time for operation (uses start time)"),
             ProcessStepWidget(3, "Choose Operation Type", 
                             "Select intersection, union, or difference operation"),
             ProcessStepWidget(4, "Configure Parameters", 
@@ -452,13 +441,16 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         
         polygon_layout.addWidget(self.polygon_selector)
         
-        # Step 2: Time range
-        self.time_group = QGroupBox("Time Range")
-        self.time_widget = TimeRangeWidget()
-        self.time_widget.timeChanged.connect(self.on_time_changed)
+        # Step 2: Split time
+        self.time_group = QGroupBox("Split Time")
+        time_layout = QFormLayout(self.time_group)
         
-        time_layout = QVBoxLayout(self.time_group)
-        time_layout.addWidget(self.time_widget)
+        self.split_time = QLineEdit()
+        self.split_time.setValidator(QDoubleValidator())
+        self.split_time.setPlaceholderText("e.g., 10.0")
+        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        
+        time_layout.addRow("Split Time (Ma):", self.split_time)
         
         # Step 3: Operation selection
         self.operation_group = QGroupBox("Operation Type")
@@ -590,12 +582,6 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         
         self.validate_and_enable_process()
     
-    def on_time_changed(self, start_time: float, end_time: float):
-        """Handle time range changes."""
-        self.polygon_selector.set_time_filter(start_time, end_time)
-        self.update_step_status(1, True)
-        self.validate_and_enable_process()
-        
     def on_polygons_selected(self, count: int):
         """Handle polygon selection changes."""
         if count >= 2:  # Need at least 2 polygons for operations
@@ -605,7 +591,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
     def validate_and_enable_process(self):
         """Validate inputs and enable process button if ready."""
         has_polygons = len(self.polygon_selector.get_selected_features()) >= 2
-        has_time = self.time_widget._validate_times()
+        has_time = bool(self.split_time.text())
         has_operation = self.selected_operation is not None
         has_output, _ = self.output_widget.is_valid()
         
@@ -622,7 +608,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
                 return
             
             # Get parameters
-            start_time, end_time = self.time_widget.get_times()
+            split_time = float(self.split_time.text())
             selected_features = self.polygon_selector.get_selected_features()
             
             # Get validated plate ID (only if not duplicating per plate)
@@ -656,7 +642,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
             result_fc = operation_func(
                 selected_features,
                 self.session._rotationModel,
-                start_time,
+                split_time,
                 reconstruction_plate_id=new_plate_id
             )
             

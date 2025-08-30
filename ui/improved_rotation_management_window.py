@@ -7,6 +7,7 @@ including initialization, plate creation, and rotation management with guided wo
 
 from os import path
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
     QFileDialog, QHBoxLayout, QLabel, 
     QLineEdit, QMessageBox, QPushButton, QVBoxLayout, QWidget,
@@ -18,6 +19,7 @@ from core.session import Session, FeatureDataColumn
 from core.rotations import create_initial_rotations, create_new_rotation_plate, replace_final_rotation
 from models.polygon_filter_model import PolygonFilterModel
 from ui.components.process_step_widget import ProcessStepWidget
+from ui.widgets.time_range_widget import TimeRangeWidget
 from ui.widgets.feature_selector_widget import FeatureSelectorWidget
 from ui.widgets.output_widget import OutputWidget
 from ui.base.process_tab_widget import ProcessTabWidget
@@ -54,23 +56,15 @@ class RotationInitializationWidget(ProcessTabWidget):
         
         # Step 2: Time parameters
         self.time_group = QGroupBox("Time Parameters")
-        time_layout = QFormLayout(self.time_group)
+        self.time_widget = TimeRangeWidget()
+        self.time_widget.timeChanged.connect(self.on_time_changed)
         
-        self.split_time = QLineEdit()
-        self.split_time.setPlaceholderText("e.g., 10.0")
-        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
-        
-        self.anchored_plate_id = QSpinBox()
-        self.anchored_plate_id.setRange(0, 9999)
-        self.anchored_plate_id.setValue(0)
-        self.anchored_plate_id.setToolTip("Plate ID that remains fixed (usually 0 for global reference frame)")
-        
-        time_layout.addRow("Split Time (Ma):", self.split_time)
-        time_layout.addRow("Anchored Plate ID:", self.anchored_plate_id)
+        time_layout = QVBoxLayout(self.time_group)
+        time_layout.addWidget(self.time_widget)
         
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
-        self.output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)")
+        self.output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)
@@ -104,6 +98,12 @@ class RotationInitializationWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+
+    
+    def on_time_changed(self, start_time: float, end_time: float):
+        """Handle time range changes."""
+        self.update_step_status(1, True)
+        self.validate_and_enable_process()
     
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
@@ -114,21 +114,16 @@ class RotationInitializationWidget(ProcessTabWidget):
     def validate_and_enable_process(self):
         """Validate inputs and enable process button if ready."""
         has_features = len(self.feature_selector.get_selected_features()) > 0
-        has_time = bool(self.split_time.text())
         has_output, _ = self.output_widget.is_valid()
         
-        if has_time:
-            self.update_step_status(2, True)
-        
-        self.process_button.setEnabled(has_features and has_time and has_output)
+        self.process_button.setEnabled(has_features and self.time_widget._validate_times() and has_output)
     
     def initialize_rotations(self):
         """Initialize rotation model."""
         try:
             # Get parameters
             selected_features = self.feature_selector.get_selected_features()
-            split_time = float(self.split_time.text())
-            anchored_plate_id = self.anchored_plate_id.value()
+            start_time, end_time = self.time_widget.get_times()
             
             if not selected_features:
                 # Use all features if none selected
@@ -139,7 +134,7 @@ class RotationInitializationWidget(ProcessTabWidget):
                 return
             
             # Create rotation model
-            result_fc = create_initial_rotations(selected_features, split_time, anchored_plate_id)
+            result_fc = create_initial_rotations(selected_features, start_time, end_time)
             
             if len(result_fc) == 0:
                 QMessageBox.warning(self, "No Results", "No rotation features created")
@@ -147,14 +142,20 @@ class RotationInitializationWidget(ProcessTabWidget):
             
             # Save results
             output_path = self.output_widget.get_output_path()
-            result_fc.write(output_path)
+
+            if self.output_widget.should_append():
+              output_fc = FeatureCollection(output_path)
+              output_fc.add(output_fc)
+              output_fc.write(output_path)
+            else:
+              result_fc.write(output_path)
             
             # Load rotation model if none exists
             if not self.session._rotationModel:
                 self.session.load_rotation_model(output_path)
-                status_msg = f"Rotation model created and loaded: {path.basename(output_path)}"
+                status_msg = f"Rotation model {'appended' if self.output_widget.should_append() else 'created'} and loaded: {path.basename(output_path)}"
             else:
-                status_msg = f"Rotation model created: {path.basename(output_path)}"
+                status_msg = f"Rotation model {'appended' if self.output_widget.should_append() else 'created'}: {path.basename(output_path)}"
             
             self.update_step_status(2, True)
             QMessageBox.information(self, "Success", 
@@ -199,11 +200,12 @@ class PlateCreationWidget(ProcessTabWidget):
         params_layout = QFormLayout(self.params_group)
         
         self.new_plate_id = QSpinBox()
-        self.new_plate_id.setRange(1, 9999)
+        self.new_plate_id.setRange(0, 9999)
         self.new_plate_id.setValue(1000)
         self.new_plate_id.valueChanged.connect(self.validate_plate_id)
         
         self.split_time = QLineEdit()
+        self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
         self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
         
@@ -216,12 +218,12 @@ class PlateCreationWidget(ProcessTabWidget):
         
         # Feature output
         feature_output_layout = QFormLayout()
-        self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)")
+        self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)", enable_topology_generation=False)
         feature_output_layout.addRow("Feature Output:", self.feature_output_widget)
         
         # Rotation output
         rotation_output_layout = QFormLayout()  
-        self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)")
+        self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
         rotation_output_layout.addRow("Rotation Output:", self.rotation_output_widget)
         
         output_layout.addLayout(feature_output_layout)

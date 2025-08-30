@@ -6,8 +6,9 @@ workflows with guided steps and clear visual feedback.
 """
 
 from os import path
+from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
-    QComboBox, QLabel, 
+    QComboBox, QLabel, QLineEdit, QFormLayout,
     QMessageBox, QPushButton, QVBoxLayout, QWidget,
     QTabWidget, QGroupBox
 )
@@ -214,7 +215,7 @@ class RiftingTabWidget(ProcessTabWidget):
             ProcessStepWidget(1, "Select Rift", 
                             "Choose the continental rift feature"),
             ProcessStepWidget(2, "Set Split Time", 
-                            "Define when rifting occurs (uses start time)"),
+                            "Define when rifting occurs"),
             ProcessStepWidget(3, "Select Features to Rift", 
                             "Choose features that will be split by rifting"),
             ProcessStepWidget(4, "Configure Rifting", 
@@ -242,13 +243,16 @@ class RiftingTabWidget(ProcessTabWidget):
         
         rift_layout.addWidget(self.rift_selection)
         
-        # Step 2: Time range (split time)
+        # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
-        self.time_widget = TimeRangeWidget()
-        self.time_widget.timeChanged.connect(self.on_time_changed)
+        time_layout = QFormLayout(self.time_group)
         
-        time_layout = QVBoxLayout(self.time_group)
-        time_layout.addWidget(self.time_widget)
+        self.split_time = QLineEdit()
+        self.split_time.setValidator(QDoubleValidator())
+        self.split_time.setPlaceholderText("e.g., 10.0")
+        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        
+        time_layout.addRow("Split Time (Ma):", self.split_time)
         
         # Step 3: Feature selection
         self.feature_group = QGroupBox("Feature Selection")
@@ -307,12 +311,6 @@ class RiftingTabWidget(ProcessTabWidget):
         # Set first step as active
         self.steps[0].set_active(True)
     
-    def on_time_changed(self, start_time: float, end_time: float):
-        """Handle time range changes."""
-        self.feature_selector.set_time_filter(start_time, end_time)
-        self.update_step_status(1, True)
-        self.validate_and_enable_process()
-        
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
         if count > 0:
@@ -322,7 +320,7 @@ class RiftingTabWidget(ProcessTabWidget):
     def validate_and_enable_process(self):
         """Validate inputs and enable process button if ready."""
         has_rift = self.rift_selection.currentIndex() >= 0
-        has_time = self.time_widget._validate_times()
+        has_time = bool(self.split_time.text())
         has_features = len(self.feature_selector.get_selected_features()) > 0
         has_output, _ = self.output_widget.is_valid()
         
@@ -350,7 +348,7 @@ class RiftingTabWidget(ProcessTabWidget):
                 return
             
             # Get parameters
-            start_time, end_time = self.time_widget.get_times()
+            split_time = float(self.split_time.text())
             selected_features = self.feature_selector.get_selected_features()
             
             # Get validated plate IDs
@@ -360,8 +358,6 @@ class RiftingTabWidget(ProcessTabWidget):
                 QMessageBox.warning(self, "Invalid Plate IDs", str(e))
                 return
             
-            # Use start_time as the split_time for rifting
-            split_time = start_time
             
             if not self.session._rotationFeatureCollection:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")

@@ -41,7 +41,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         super().__init__()
         self.session = session
         
-        self.setWindowTitle("Geological Operations Suite")
+        self.setWindowTitle("GPlates Operations Suite")
         # self.setMinimumSize(1200, 800)
         # self.resize(1200, 800)
 
@@ -262,13 +262,13 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
     def show_help(self):
         """Show help documentation."""
         help_dialog = QMessageBox(self)
-        help_dialog.setWindowTitle("Geological Operations Help")
+        help_dialog.setWindowTitle("GPlates Operations Help")
         help_dialog.setIcon(QMessageBox.Information)
         
         help_text = """
-        <h3>Geological Operations Suite Help</h3>
+        <h3>GPlates Operations Suite Help</h3>
         
-        <p>This comprehensive suite provides three main operation categories:</p>
+        <p>This suite provides three main operation categories:</p>
         
         <h4>🌋 Geological Processes</h4>
         <ul>
@@ -280,14 +280,14 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         <h4>🌍 Plate Operations</h4>
         <ul>
         <li><b>Plate Splitting:</b> Split plates using geological features</li>
-        <li><b>Line Splitting:</b> Create features at line intersections</li>
+        <li><b>Line Splitting:</b> Split lines at intersections</li>
         <li><b>Polygon Operations:</b> Intersection, union, and difference operations</li>
         </ul>
         
         <h4>🔄 Rotation Management</h4>
         <ul>
         <li><b>Initialize Rotations:</b> Create rotation models from features</li>
-        <li><b>Create Plates:</b> Add new plates with rotations</li>
+        <li><b>Create Plates:</b> Split features into new plates</li>
         <li><b>Maintenance:</b> Fix and validate rotation models</li>
         </ul>
         
@@ -305,8 +305,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         2. Follow the numbered workflow steps in each operation
         3. Use the filter controls to narrow down feature selections
         4. Check the append options when saving to existing files
-        5. Enable topology generation for complex geological models
-        6. Validate your results using the rotation management tools
+        5. Validate your results using the rotation management tools
         
         Common Issues:
         
@@ -319,7 +318,6 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         
         - Features: GPlates Markup Language (.gpml)
         - Rotations: PLATES4 Rotation File (.rot)
-        - Both formats are compatible with GPlates software
         """)
         
         help_dialog.exec()
@@ -327,9 +325,9 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
     def show_about(self):
         """Show about dialog."""
         about_text = """
-        <h2>Geological Operations Suite</h2>
+        <h2>GPlates Operations Suite</h2>
         
-        <p>A comprehensive geological modeling toolkit providing intuitive workflows for:</p>
+        <p>A geological modeling toolkit for:</p>
         <ul>
         <li>Subduction zone modeling</li>
         <li>Continental rifting simulation</li>
@@ -342,19 +340,22 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         <ul>
         <li>Guided step-by-step workflows</li>
         <li>Integrated validation and error checking</li>
-        <li>Flexible output options</li>
+        <li>Rotation model tools</li>
+        </ul>
+        
+        <p><b>Future:</b></p>
+        <ul>
         <li>Topology generation capabilities</li>
-        <li>Comprehensive rotation model tools</li>
         </ul>
         
         <p><b>Built with:</b> Python, PySide6, and pygplates</p>
         
         <p style="margin-top: 20px; color: #666; font-size: 11px;">
-        This software is designed for geological modeling and plate tectonic research.
+        This software is designed for worldbuilding tectonic histories with GPlates.
         </p>
         """
         
-        QMessageBox.about(self, "About Geological Operations Suite", about_text)
+        QMessageBox.about(self, "About GPlates Operations Suite", about_text)
     
     def closeEvent(self, event):
         """Handle window close event."""
@@ -372,8 +373,8 @@ if __name__ == "__main__":
     from core.session import Session
     
     app = QApplication(sys.argv)
-    app.setApplicationName("Geological Operations Suite")
-    app.setOrganizationName("Geological Modeling Tools")
+    app.setApplicationName("GPlates Operations Suite")
+    app.setOrganizationName("GPlates Modeling Tools")
     
     # Set application style
     app.setStyleSheet("""
