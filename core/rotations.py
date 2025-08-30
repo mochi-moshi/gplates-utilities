@@ -78,7 +78,39 @@ def replace_final_rotation(rotations: FeatureCollection, end_time: float = 0):
 
     return fc
 
-def create_new_rotation_plate(features: list[Feature], rotations: FeatureCollection, new_plate_id: int, split_time: float, end_time: float = 0):
+def split_rotation_features_by_plate_id(rotations: FeatureCollection, old_plate_id: int, new_plate_id: int, split_time: float):
+    max_time = split_time
+    min_time = split_time
+    for rotation in rotations:
+        _, rplate_id, sequence = rotation.get_total_reconstruction_pole()
+        sequence.sort(lambda ts: ts.get_time())
+        if rplate_id == old_plate_id:
+            max_time = max(sequence[-1].get_time(), max_time)
+            min_time = min(sequence[-1].get_time(), min_time)
+
+    rotationsModel = RotationModel(rotations)
+
+    # Already relative to default anchor_plate (0)
+    start_rotation = rotationsModel.get_rotation(split_time, old_plate_id)
+    end_rotation = rotationsModel.get_rotation(split_time, old_plate_id)
+
+    rc = FeatureCollection()
+    samples = GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(end_rotation), min_time), GpmlTimeSample(GpmlFiniteRotation(start_rotation), split_time)])
+    rc.add(Feature.create_total_reconstruction_sequence(0, new_plate_id, samples))
+    rc.add(Feature.create_total_reconstruction_sequence(
+        old_plate_id, new_plate_id,
+        GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), split_time)])
+        )
+    )
+    if max_time != split_time:
+        rc.add(Feature.create_total_reconstruction_sequence(
+            old_plate_id, new_plate_id,
+            GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), max_time)])
+            )
+        )
+    return rc
+
+def create_new_rotation_plate(features: list[Feature], rotations: FeatureCollection, new_plate_id: int, split_time: float):
     if len(set([f.get_reconstruction_plate_id() for f in features])) > 1:
         raise ValueError(f'Features must all have the same plateId')
 
@@ -99,23 +131,9 @@ def create_new_rotation_plate(features: list[Feature], rotations: FeatureCollect
 
     rotationsModel = RotationModel(rotations)
 
-    # Already relative to default anchor_plate (0)
-    start_rotation = rotationsModel.get_rotation(split_time, plateId)
-    end_rotation = rotationsModel.get_rotation(split_time, plateId)
+    new_rc = split_rotation_features_by_plate_id(rotations, plateId, new_plate_id, split_time)
 
     rc = rotations.clone()
-    samples = GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(end_rotation), end_time), GpmlTimeSample(GpmlFiniteRotation(start_rotation), split_time)])
-    rc.add(Feature.create_total_reconstruction_sequence(0, new_plate_id, samples))
-    rc.add(Feature.create_total_reconstruction_sequence(
-        plateId, new_plate_id,
-        GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), split_time)])
-        )
-    )
-    if max_time != split_time:
-        rc.add(Feature.create_total_reconstruction_sequence(
-            plateId, new_plate_id,
-            GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), max_time)])
-            )
-        )
+    rc.add(new_rc)
 
     return fc, rc

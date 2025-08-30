@@ -52,6 +52,7 @@ class OutputWidget(QWidget):
         # Only show topology generation option if enabled
         if self.enable_topology_generation:
             self.generate_topologies = QCheckBox("Generate topologies")
+            self.generate_topologies.setDisabled(True)
             self.generate_topologies.setToolTip("Generate topological features for the processed results")
             options_layout.addWidget(self.generate_topologies)
         else:

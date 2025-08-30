@@ -4,7 +4,7 @@ Feature Selector Widget
 A widget for selecting geological features with filtering and preview capabilities.
 """
 
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QItemSelection
 from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import (
     QAbstractItemView, QTreeView, QVBoxLayout, QWidget,
@@ -21,15 +21,16 @@ class FeatureSelectorWidget(QWidget):
     
     selectionChanged = Signal(int)  # number of features selected
     
-    def __init__(self, session: Session, feature_types: list[str] = None, parent=None):
+    def __init__(self, session: Session, single_selection: bool = False, single_plate_id: bool = False, parent=None):
         super().__init__(parent)
         self.session = session
         self._updating_filters = False
+        self._single_plate_id = single_plate_id
         
-        self.setup_ui()
+        self.setup_ui(single_selection)
         self.connect_signals()
         
-    def setup_ui(self):
+    def setup_ui(self, single_selection: bool):
         """Setup the UI components."""
         layout = QVBoxLayout(self)
         
@@ -53,7 +54,7 @@ class FeatureSelectorWidget(QWidget):
         self.feature_view.setColumnHidden(FeatureDataColumn.geometry_type, True)
         self.feature_view.setItemDelegateForColumn(FeatureDataColumn.start_time, TimeDecoratorDelegate(self.feature_view))
         self.feature_view.setItemDelegateForColumn(FeatureDataColumn.end_time, TimeDecoratorDelegate(self.feature_view))
-        self.feature_view.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        self.feature_view.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection if single_selection else QAbstractItemView.SelectionMode.MultiSelection)
         self.feature_view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         
         # Selection info
@@ -72,15 +73,19 @@ class FeatureSelectorWidget(QWidget):
         
     def update_plate_filter(self):
         """Update the plate ID filter."""
-        if self._updating_filters:
+        if self._updating_filters or self._single_plate_id:
             return
             
-        filter_text = self.plate_filter.text().strip()
-        if filter_text:
-            plate_ids = [id.strip() for id in filter_text.split(",") if id.strip()]
-            self.feature_model.setPlateIdFilter(plate_ids)
-        else:
-            self.feature_model.setPlateIdFilter([])
+        self._updating_filters = True
+        try:
+            filter_text = self.plate_filter.text().strip()
+            if filter_text:
+                plate_ids = [id.strip() for id in filter_text.split(",") if id.strip()]
+                self.feature_model.setPlateIdFilter(plate_ids)
+            else:
+                self.feature_model.setPlateIdFilter([])
+        finally:
+            self._updating_filters = False
     
     def set_time_filter(self, start_time: float, end_time: float):
         """Set the time range filter."""
@@ -90,17 +95,24 @@ class FeatureSelectorWidget(QWidget):
         finally:
             self._updating_filters = False
     
-    def on_selection_changed(self, selected, deselected):
+    def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
         """Handle selection changes."""
         selection_count = len(self.feature_view.selectedIndexes()) // self.feature_model.columnCount()
         self.selection_label.setText(f"{selection_count} features selected")
+        if self._single_plate_id and not (selected.isEmpty() and deselected.isEmpty()):
+          self._updating_filters = True
+          try:
+              ids = [i.data() for i in selected.indexes() if i.column() == FeatureDataColumn.plate_id] if not selected.isEmpty() else []
+              self.feature_model.setPlateIdFilter(ids)
+          finally:
+              self._updating_filters = False
         self.selectionChanged.emit(selection_count)
     
     def get_selected_features(self):
         """Get list of selected features."""
         selected_indexes = self.feature_view.selectedIndexes()
         selected_feature_ids = [i.data() for i in selected_indexes if i.column() == FeatureDataColumn.feature_id]
-        selected_feature_collections = [i.data() for i in selected_indexes if i.column() == FeatureDataColumn.feature_collection_name]
+        selected_feature_collections = [i.data() for i in selected_indexes if i.column() == FeatureDataColumn.feature_collection]
         
         selected_features = []
         for i in range(len(selected_feature_ids)):

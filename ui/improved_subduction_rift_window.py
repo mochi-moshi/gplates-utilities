@@ -256,7 +256,7 @@ class RiftingTabWidget(ProcessTabWidget):
         
         # Step 3: Feature selection
         self.feature_group = QGroupBox("Feature Selection")
-        self.feature_selector = FeatureSelectorWidget(self.session)
+        self.feature_selector = FeatureSelectorWidget(self.session, False, True)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
         
         feature_layout = QVBoxLayout(self.feature_group)
@@ -270,14 +270,25 @@ class RiftingTabWidget(ProcessTabWidget):
         self.plate_ids_widget = DualPlateIdWidget(self.session, enable_uniqueness_validation=True)
         self.plate_ids_widget.plateIdsChanged.connect(lambda left, right: self.update_step_status(3, True))
         
+        params_layout.addWidget(QLabel())
         params_layout.addWidget(self.plate_ids_widget)
         
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
-        self.output_widget = OutputWidget(self.session)
-        
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.addWidget(self.output_widget)
+        
+        # Feature output
+        feature_output_layout = QFormLayout()
+        self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)", enable_topology_generation=True)
+        feature_output_layout.addRow("Feature Output:", self.feature_output_widget)
+        
+        # Rotation output
+        rotation_output_layout = QFormLayout()  
+        self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
+        rotation_output_layout.addRow("Rotation Output:", self.rotation_output_widget)
+        
+        output_layout.addLayout(feature_output_layout)
+        output_layout.addLayout(rotation_output_layout)
         
         # Process button
         self.process_button = QPushButton("🏔️ Process Rifting")
@@ -322,9 +333,10 @@ class RiftingTabWidget(ProcessTabWidget):
         has_rift = self.rift_selection.currentIndex() >= 0
         has_time = bool(self.split_time.text())
         has_features = len(self.feature_selector.get_selected_features()) > 0
-        has_output, _ = self.output_widget.is_valid()
+        has_feature_output, _ = self.feature_output_widget.is_valid()
+        has_rotation_output, _ = self.rotation_output_widget.is_valid()
         
-        self.process_button.setEnabled(has_rift and has_time and has_features and has_output)
+        self.process_button.setEnabled(has_rift and has_time and has_features and has_feature_output and has_rotation_output)
     
     def process_rifting(self):
         """Execute the rifting process."""
@@ -364,14 +376,14 @@ class RiftingTabWidget(ProcessTabWidget):
                 return
             
             # Process rifting
-            result_fc = rift(
+            result_fc, result_rc = rift(
                 selected_features,
                 rift_feature,
                 self.session._rotationModel,
                 split_time,
                 left_plate_id,
                 right_plate_id,
-                use_topologies=self.output_widget.should_generate_topologies()
+                use_topologies=self.feature_output_widget.should_generate_topologies()
             )
             
             if len(result_fc) == 0:
@@ -379,21 +391,34 @@ class RiftingTabWidget(ProcessTabWidget):
                 return
             
             # Save results
-            output_path = self.output_widget.get_output_path()
+            feature_output_path = self.feature_output_widget.get_feature_output_path()
             
-            if self.output_widget.should_append() and path.exists(output_path):
-                existing_fc = FeatureCollection(output_path)
+            if self.feature_output_widget.should_append() and path.exists(feature_output_path):
+                existing_fc = FeatureCollection(feature_output_path)
                 for feature in result_fc:
                     existing_fc.add(feature)
-                existing_fc.write(output_path)
+                existing_fc.write(feature_output_path)
             else:
-                result_fc.write(output_path)
+                result_fc.write(feature_output_path)
+                
+            rotation_output_path = self.rotation_output_widget.get_rotation_output_path()
+            
+            if self.rotation_output_widget.should_append() and path.exists(rotation_output_path):
+                existing_fc = FeatureCollection(rotation_output_path)
+                for feature in result_rc:
+                    existing_fc.add(feature)
+                existing_fc.write(rotation_output_path)
+            else:
+                result_rc.write(rotation_output_path)
             
             self.update_step_status(4, True)
             QMessageBox.information(self, "Success", 
-                                  f"Rifting processing complete!\nResults saved to: {path.basename(output_path)}\n"
+                                  f"Rifting processing complete!\n"
+                                  f"Features saved to: {path.basename(feature_output_path)}\n"
+                                  f"Rotations saved to: {path.basename(rotation_output_path)}\n"
                                   f"Features processed: {len(selected_features)}\n"
-                                  f"Features generated: {len(result_fc)}")
+                                  f"Features generated: {len(result_fc)}"
+                                  f"Rotations generated: {len(result_rc)}")
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Rifting processing failed:\n{str(e)}")

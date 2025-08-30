@@ -1,11 +1,12 @@
 from pygplates import FeatureCollection, Feature, RotationModel, ReconstructSnapshot, FeatureType, reverse_reconstruct
-from pygplates import PointOnSphere, MultiPointOnSphere, PolylineOnSphere, PolygonOnSphere, GeoTimeInstant, GreatCircleArc, Vector3D
+from pygplates import PointOnSphere, MultiPointOnSphere, PolylineOnSphere, PolygonOnSphere, GpmlIrregularSampling, GreatCircleArc, Vector3D, GpmlTimeSample, GpmlFiniteRotation
 
 from ..line_splitter import split_lines
 from ..plate_splitter import split_plate_by_line
+from ..rotations import split_rotation_features_by_plate_id
 
 
-def rift(features: list[Feature], rift: Feature, rotation_model: RotationModel, split_time: float, left_plate_id: int, right_plate_id: int, max_transition_size = 10, *, use_topologies: bool = False):
+def rift(features: list[Feature], rift: Feature, rotation_features: FeatureCollection, split_time: float, left_plate_id: int, right_plate_id: int, max_transition_size = 10, *, use_topologies: bool = False):
   """
   Model continental rifting by splitting features along a rift line.
   
@@ -30,6 +31,16 @@ def rift(features: list[Feature], rift: Feature, rotation_model: RotationModel, 
   if not all(f.get_reconstruction_plate_id() == plate_id for f in features):
     raise ValueError("All features must have the same reconstruction plate ID")
 
+  rotation_model = RotationModel(rotation_features)
+
+  output_rc = FeatureCollection()
+
+  left_rc = split_rotation_features_by_plate_id(rotation_features, plate_id, left_plate_id, split_time)
+  right_rc = split_rotation_features_by_plate_id(rotation_features, plate_id, right_plate_id, split_time)
+
+  output_rc.add(left_rc)
+  output_rc.add(right_rc)
+  
   # Get rift geometry at split time
   rift_snapshot = ReconstructSnapshot([rift], rotation_model, split_time)
   rift_geometry = rift_snapshot.get_reconstructed_geometries()[0].get_reconstructed_geometry()
@@ -74,7 +85,7 @@ def rift(features: list[Feature], rift: Feature, rotation_model: RotationModel, 
     reverse_reconstruct(all_split_features, rotation_model, split_time)
     output_fc.add(all_split_features)
 
-  return output_fc
+  return output_fc, output_rc
 
 
 def _determine_side_of_rift(point: PointOnSphere, rift_geometry: PolylineOnSphere) -> str:
