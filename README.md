@@ -64,7 +64,7 @@ gplates-env\Scripts\activate
 source gplates-env/bin/activate
 
 # Clone the repository
-git clone https://github.com/mochi-moshi/gplates-utilities.git
+git clone -b claude-ui-overhaul https://github.com/mochi-moshi/gplates-utilities.git
 cd gplates-utilities
 
 # Install dependencies
@@ -79,7 +79,7 @@ python main.py
 For direct installation without virtual environment:
 
 ```bash
-git clone https://github.com/mochi-moshi/gplates-utilities.git
+git clone -b claude-ui-overhaul https://github.com/mochi-moshi/gplates-utilities.git
 cd gplates-utilities
 pip install -r requirements.txt
 python main.py
