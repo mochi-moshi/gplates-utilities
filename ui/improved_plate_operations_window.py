@@ -43,7 +43,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             ProcessStepWidget(1, "Select Splitting Feature", 
                             "Choose the geological feature that will split the plates"),
             ProcessStepWidget(2, "Set Split Time", 
-                            "Define when plate splitting occur (uses start time)"),
+                            "Define when plate splitting occur"),
             ProcessStepWidget(3, "Select Plates to Split", 
                             "Choose which plates will be affected by splitting"),
             ProcessStepWidget(4, "Process & Save", 
@@ -215,7 +215,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
             ProcessStepWidget(2, "Select Second Line", 
                             "Choose the second line feature to split"),
             ProcessStepWidget(3, "Set Split Time", 
-                            "Define when line splitting occurs (uses start time)"),
+                            "Define when line splitting occurs"),
             ProcessStepWidget(4, "Process & Save", 
                             "Split lines at intersections and save results")
         ]
@@ -417,7 +417,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
             ProcessStepWidget(1, "Select Polygon Features", 
                             "Choose polygon features for geometric operation"),
             ProcessStepWidget(2, "Set Split Time", 
-                            "Define the split time for operation (uses start time)"),
+                            "Define the split time for operation"),
             ProcessStepWidget(3, "Choose Operation Type", 
                             "Select intersection, union, or difference operation"),
             ProcessStepWidget(4, "Configure Parameters", 

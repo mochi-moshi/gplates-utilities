@@ -36,7 +36,7 @@ class RotationInitializationWidget(ProcessTabWidget):
         # Workflow steps
         self.steps = [
             ProcessStepWidget(1, "Select Features for Rotation Model", 
-                            "Choose features that will be used to create rotation model"),
+                            "Choose features that will be used to create rotation model.\nSelect none to generate for all plates."),
             ProcessStepWidget(2, "Set Time Parameters", 
                             "Define the time period for rotation model"),
             ProcessStepWidget(3, "Initialize & Save", 
@@ -98,6 +98,7 @@ class RotationInitializationWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+        self.steps[0].set_completed(True)
 
     
     def on_time_changed(self, start_time: float, end_time: float):
@@ -107,16 +108,14 @@ class RotationInitializationWidget(ProcessTabWidget):
     
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
-        if count > 0:
-            self.update_step_status(0, True)
         self.validate_and_enable_process()
     
     def validate_and_enable_process(self):
         """Validate inputs and enable process button if ready."""
-        has_features = len(self.feature_selector.get_selected_features()) > 0
         has_output, _ = self.output_widget.is_valid()
-        
-        self.process_button.setEnabled(has_features and self.time_widget._validate_times() and has_output)
+
+        # Does not need to select any features
+        self.process_button.setEnabled(self.time_widget._validate_times() and has_output)
     
     def initialize_rotations(self):
         """Initialize rotation model."""

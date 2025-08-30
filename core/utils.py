@@ -1,4 +1,4 @@
-from pygplates import FeatureCollection
+from pygplates import FeatureCollection, Feature
 from pygplates import PolylineOnSphere, PolygonOnSphere
 
 PartitionResult = PolygonOnSphere.PartitionResult
@@ -27,3 +27,6 @@ def generate_time_steps(rotation_features: FeatureCollection, plate_ids: set[int
     times.append((start, end))
 
   return times
+
+def get_all_reconstruction_plate_ids(features: list[Feature]) -> list[int]:
+  return [f.get_reconstruction_plate_id() for f in features if f.get_reconstruction_method() == 'ByPlateId'] + [f.get_right_plate() for f in features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']] + [f.get_left_plate() for f in features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']]

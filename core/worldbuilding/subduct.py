@@ -1,6 +1,6 @@
 from pygplates import FeatureCollection, Feature, RotationModel, ReconstructSnapshot, FeatureType, reverse_reconstruct
 from pygplates import PointOnSphere, MultiPointOnSphere, PolylineOnSphere, PolygonOnSphere
-from ..utils import generate_time_steps, lines_equal, is_valid
+from ..utils import generate_time_steps, lines_equal, is_valid, get_all_reconstruction_plate_ids
 
 PartitionResult = PolygonOnSphere.PartitionResult
 
@@ -29,9 +29,7 @@ def subduct(features: list[Feature], subduction_zone: Feature, rotation_features
     return fc
 
   # Collect plate IDs and generate time steps
-  plate_ids = set([f.get_reconstruction_plate_id() for f in valid_features if f.get_reconstruction_method() == 'ByPlateId'] + 
-                  [f.get_right_plate() for f in valid_features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2']] + 
-                  [f.get_left_plate() for f in valid_features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2']])
+  plate_ids = get_all_reconstruction_plate_ids(valid_features)
   
   plate_ids.add(subduction_zone.get_reconstruction_plate_id())
   times = generate_time_steps(rotation_features, plate_ids, start_time, end_time)

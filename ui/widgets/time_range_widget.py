@@ -40,8 +40,8 @@ class TimeRangeWidget(QWidget):
         self.start_time.textChanged.connect(lambda: self.validation_timer.start(500))
         self.end_time.textChanged.connect(lambda: self.validation_timer.start(500))
         
-        layout.addRow("Start Time (Ma):", self.start_time)
-        layout.addRow("End Time (Ma):", self.end_time)
+        layout.addRow("Start/Older Time (Mya):", self.start_time)
+        layout.addRow("End/Newer Time (Mya):", self.end_time)
         
         self.status_label = QLabel()
         self.status_label.setStyleSheet("color: #666; font-size: 11px;")
