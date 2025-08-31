@@ -1,7 +1,14 @@
 from pygplates import Feature, FeatureCollection, RotationModel, ReconstructSnapshot, reverse_reconstruct
-from pygplates.pygplates import PolygonOnSphere, PolylineOnSphere, PointOnSphere
+from pygplates.pygplates import PolygonOnSphere, PolylineOnSphere, PointOnSphere, GreatCircleArc, FiniteRotation
 from core.arc_geometry import get_arc_intersection
 from core.metadata import MetaPoint
+
+from .arc_geometry import is_point_on_arc as np_is_point_on_arc
+
+def is_point_on_arc(point: PointOnSphere, arc: GreatCircleArc, epsilon=0.001) -> bool:
+  return np_is_point_on_arc(point.to_xyz_array().squeeze(0), arc.get_start_point().to_xyz_array().squeeze(0), arc.get_end_point().to_xyz_array().squeeze())
+
+PartitionResult = PolygonOnSphere.PartitionResult
 
 def split_plate_features(plates: Feature, splitting_feature: Feature, rotation_model: RotationModel, split_time: float) -> FeatureCollection:
     initial_feature_collection = FeatureCollection(plates)
@@ -39,6 +46,107 @@ def split_plate_features(plates: Feature, splitting_feature: Feature, rotation_m
     return new_collection
 
 def split_plate_by_line(plate: PolygonOnSphere, line: PolylineOnSphere)-> list[PolygonOnSphere]:
+  inside = []
+  result = plate.partition(line, inside)
+
+  new_plates = [plate]
+  # debug = []
+  while len(inside) > 0:
+    inside_line = inside.pop()
+    if isinstance(inside_line, PointOnSphere) or len(inside_line) < 2 or all(p == inside_line[0] for p in inside_line):
+      continue
+    changed_plates = []
+    for new_plate in new_plates:
+      result = new_plate.partition(inside_line)
+      if result in [PartitionResult.inside or PartitionResult.intersecting]:
+        # debug.append(inside_line)
+        line_start = inside_line[0]
+        line_end = inside_line[-1]
+        current_group = []
+        after_start = None
+        after_end = None
+        for segment in new_plate.get_segments():
+          if segment.is_zero_length():
+            last_point = segment.get_end_point()
+            continue
+          
+          current_group.append(segment.get_start_point())
+          appended = True
+          if PointOnSphere.distance(line_start, segment.get_start_point()) < 0.0001:
+            appended = False
+            current_group.pop()
+            if not after_end:
+              after_end = current_group
+            after_end += inside_line[:]
+            # print(f'=start {2 + len(debug)}')
+            # debug.append(PolylineOnSphere(after_end))
+            if not after_start:
+              after_start = []
+            current_group = after_start
+          elif PointOnSphere.distance(line_end, segment.get_start_point()) < 0.0001:
+            appended = False
+            current_group.pop()
+            if not after_start:
+              after_start = current_group
+            after_start += inside_line[::-1]
+            # print(f'=end {2 + len(debug)}')
+            # debug.append(PolylineOnSphere(after_start))
+            if not after_end:
+              after_end = []
+            current_group = after_end
+          elif PointOnSphere.distance(line_start, segment.get_end_point()) < 0.0001 or PointOnSphere.distance(line_end, segment.get_end_point()) < 0.0001:
+            pass
+          elif is_point_on_arc(line_start, segment):
+            appended = False
+            # if len(current_group) > 1:
+            #   print(f'S append {2 + len(debug)}')
+            #   debug.append(PolylineOnSphere(current_group))
+            # elif current_group:
+            #   print(f'S append {2 + len(debug)}')
+            #   debug.append(PointOnSphere(current_group[0]))
+            if not after_end:
+              after_end = current_group
+            after_end += inside_line[:]
+            # print(f'start on {2 + len(debug)}')
+            # debug.append(PolylineOnSphere(after_end))
+            if not after_start:
+              after_start = []
+            current_group = after_start
+          elif is_point_on_arc(line_end, segment):
+            appended = False
+            # if len(current_group) > 1:
+            #   print(f'E append {2 + len(debug)}')
+            #   debug.append(PolylineOnSphere(current_group))
+            # elif current_group:
+            #   print(f'E append {2 + len(debug)}')
+            #   debug.append(PointOnSphere(current_group[0]))
+            if not after_start:
+              after_start = current_group
+            after_start += inside_line[::-1]
+            # print(f'end on {2 + len(debug)}')
+            # debug.append(PolylineOnSphere(after_start))
+            if not after_end:
+              after_end = []
+            current_group = after_end
+
+          # if appended:
+          #   if len(current_group) > 1:
+          #     print(f'append {2 + len(debug)}')
+          #     debug.append(PolylineOnSphere(current_group))
+          #   elif current_group:
+          #     print(f'append {2 + len(debug)}')
+          #     debug.append(PointOnSphere(current_group[0]))
+        
+        changed_plates.append(PolygonOnSphere(after_start))
+        changed_plates.append(PolygonOnSphere(after_end))
+      else:
+        changed_plates.append(new_plate)
+
+    new_plates = changed_plates
+
+  return new_plates #+ debug
+
+def old_split_plate_by_line(plate: PolygonOnSphere, line: PolylineOnSphere)-> list[PolygonOnSphere]:
     plate_points = plate.get_points()
     line_points = line.get_points()
     meta_points = []

@@ -19,7 +19,7 @@ class TimeRangeFilterModel(QSortFilterProxyModel):
         start_time = float(model.item(row_num, 5).text())
         end_time = float(model.item(row_num, 6).text())
 
-        return (len(self._accepted_ids) == 0 or data.plate_id in self._accepted_ids) and is_valid(self._start_time_filter, self._end_time_filter, (start_time, end_time))
+        return (len(self._accepted_ids) == 0 or (data.reconstruction_method == 'ByPlateId' and data.plate_id in self._accepted_ids or data.reconstruction_method in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3'] and (data.left_plate in self._accepted_ids or data.right_plate in self._accepted_ids))) and is_valid(self._start_time_filter, self._end_time_filter, (start_time, end_time))
     
     def setStartTimeFilter(self, time: float):
         self.beginFilterChange()

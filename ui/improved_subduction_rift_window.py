@@ -84,6 +84,7 @@ class SubductionTabWidget(ProcessTabWidget):
         # Step 4: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)
@@ -151,7 +152,7 @@ class SubductionTabWidget(ProcessTabWidget):
                 
             sz_model_index = self.sz_model.index(sz_index, FeatureDataColumn.feature_id)
             sz_feature_id = self.sz_model.data(sz_model_index)
-            sz_fc_name = self.sz_model.data(self.sz_model.index(sz_index, FeatureDataColumn.feature_collection_name))
+            sz_fc_name = self.sz_model.data(self.sz_model.index(sz_index, FeatureDataColumn.feature_collection))
             
             # Find the actual feature
             sz_fc = next(filter(lambda x: x.shortname == sz_fc_name, self.session.loaded_feature_collections)).feature_collection
@@ -250,7 +251,7 @@ class RiftingTabWidget(ProcessTabWidget):
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
-        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        self.split_time.editingFinished.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
         
         time_layout.addRow("Split Time (Ma):", self.split_time)
         
@@ -280,11 +281,13 @@ class RiftingTabWidget(ProcessTabWidget):
         # Feature output
         feature_output_layout = QFormLayout()
         self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)", enable_topology_generation=True)
+        self.feature_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         feature_output_layout.addRow("Feature Output:", self.feature_output_widget)
         
         # Rotation output
         rotation_output_layout = QFormLayout()  
         self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
+        self.rotation_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         rotation_output_layout.addRow("Rotation Output:", self.rotation_output_widget)
         
         output_layout.addLayout(feature_output_layout)
@@ -349,7 +352,7 @@ class RiftingTabWidget(ProcessTabWidget):
                 
             rift_model_index = self.rift_model.index(rift_index, FeatureDataColumn.feature_id)
             rift_feature_id = self.rift_model.data(rift_model_index)
-            rift_fc_name = self.rift_model.data(self.rift_model.index(rift_index, FeatureDataColumn.feature_collection_name))
+            rift_fc_name = self.rift_model.data(self.rift_model.index(rift_index, FeatureDataColumn.feature_collection))
             
             # Find the actual feature
             rift_fc = next(filter(lambda x: x.shortname == rift_fc_name, self.session.loaded_feature_collections)).feature_collection
@@ -379,7 +382,7 @@ class RiftingTabWidget(ProcessTabWidget):
             result_fc, result_rc = rift(
                 selected_features,
                 rift_feature,
-                self.session._rotationModel,
+                self.session._rotationFeatureCollection,
                 split_time,
                 left_plate_id,
                 right_plate_id,
@@ -391,7 +394,7 @@ class RiftingTabWidget(ProcessTabWidget):
                 return
             
             # Save results
-            feature_output_path = self.feature_output_widget.get_feature_output_path()
+            feature_output_path = self.feature_output_widget.get_output_path()
             
             if self.feature_output_widget.should_append() and path.exists(feature_output_path):
                 existing_fc = FeatureCollection(feature_output_path)
@@ -401,7 +404,7 @@ class RiftingTabWidget(ProcessTabWidget):
             else:
                 result_fc.write(feature_output_path)
                 
-            rotation_output_path = self.rotation_output_widget.get_rotation_output_path()
+            rotation_output_path = self.rotation_output_widget.get_output_path()
             
             if self.rotation_output_widget.should_append() and path.exists(rotation_output_path):
                 existing_fc = FeatureCollection(rotation_output_path)
@@ -470,6 +473,7 @@ class DivergenceTabWidget(ProcessTabWidget):
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)
@@ -528,7 +532,7 @@ class DivergenceTabWidget(ProcessTabWidget):
                 
             ridge_model_index = self.ridge_model.index(ridge_index, FeatureDataColumn.feature_id)
             ridge_feature_id = self.ridge_model.data(ridge_model_index)
-            ridge_fc_name = self.ridge_model.data(self.ridge_model.index(ridge_index, FeatureDataColumn.feature_collection_name))
+            ridge_fc_name = self.ridge_model.data(self.ridge_model.index(ridge_index, FeatureDataColumn.feature_collection))
             
             # Find the actual feature
             ridge_fc = next(filter(lambda x: x.shortname == ridge_fc_name, self.session.loaded_feature_collections)).feature_collection

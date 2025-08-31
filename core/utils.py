@@ -11,7 +11,7 @@ def is_valid(start: float, end: float, trange: tuple[float, float]):
 def lines_equal(a: PolylineOnSphere, b: PolylineOnSphere):
   return len(a) == len(b) and (all([p1 == p2 for p1, p2 in zip(a, b)]) or all([p1 == p2 for p1, p2 in zip(a, b[::-1])]))
 
-def generate_time_steps(rotation_features: FeatureCollection, plate_ids: set[int] | list[int], start_time: float, end_time: float) -> list[tuple[float, float]]:
+def generate_time_steps(rotation_features: FeatureCollection, plate_ids: set[int] | list[int], start_time: float, end_time: float, fixed_too: bool = True) -> list[tuple[float, float]]:
   """Generate time step ranges for subduction processing."""
   valid_rotation_times = set(itertools.chain.from_iterable((s.get_time() for s in sequence) for _, moving, sequence in (f.get_total_reconstruction_pole() for f in rotation_features) if moving in plate_ids))
   valid_rotation_times = sorted(valid_rotation_times, reverse=True)
@@ -28,5 +28,5 @@ def generate_time_steps(rotation_features: FeatureCollection, plate_ids: set[int
 
   return times
 
-def get_all_reconstruction_plate_ids(features: list[Feature]) -> list[int]:
-  return [f.get_reconstruction_plate_id() for f in features if f.get_reconstruction_method() == 'ByPlateId'] + [f.get_right_plate() for f in features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']] + [f.get_left_plate() for f in features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']]
+def get_all_reconstruction_plate_ids(features: list[Feature]) -> set[int]:
+  return set([f.get_reconstruction_plate_id() for f in features if f.get_reconstruction_method() == 'ByPlateId'] + [f.get_right_plate() for f in features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']] + [f.get_left_plate() for f in features if f.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']])

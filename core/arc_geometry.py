@@ -5,12 +5,38 @@ import numpy as np
 from pygplates.pygplates import LatLonPoint
 
 
-def is_point_on_arc(point, arc_start, arc_end, epsilon=0.001) -> bool:
-    theta_start_point = np.arccos(np.dot(arc_start, point)/(np.linalg.norm(arc_start) * np.linalg.norm(point)))
-    theta_end_point = np.arccos(np.dot(arc_end, point)/(np.linalg.norm(arc_end) * np.linalg.norm(point)))
-    theta_start_end = np.arccos(np.dot(arc_start, arc_end)/(np.linalg.norm(arc_start) * np.linalg.norm(arc_end)))
+def is_point_on_arc(point: np.ndarray, arc_start: np.ndarray, arc_end: np.ndarray, epsilon=0.001) -> bool:
+    start_dot = np.dot(arc_start, point)/(np.linalg.norm(arc_start) * np.linalg.norm(point))
+    end_dot = np.dot(arc_end, point)/(np.linalg.norm(arc_end) * np.linalg.norm(point))
+    if start_dot == 1.0 or end_dot == 1.0:
+      return True
+    
+    start_end_dot = np.dot(arc_start, arc_end)/(np.linalg.norm(arc_start) * np.linalg.norm(arc_end))
+    if start_end_dot == 0.0:
+      return False
+    
+    theta_start_point = np.arccos(start_dot)
+    theta_end_point = np.arccos(end_dot)
+    theta_start_end = np.arccos(start_end_dot)
 
     return (abs(theta_start_point + theta_end_point - theta_start_end) < epsilon)
+
+def debug_point_on_arc(point: np.ndarray, arc_start: np.ndarray, arc_end: np.ndarray, epsilon=0.001) -> bool:
+    start_dot = np.dot(arc_start, point)/(np.linalg.norm(arc_start) * np.linalg.norm(point))
+    end_dot = np.dot(arc_end, point)/(np.linalg.norm(arc_end) * np.linalg.norm(point))
+    print(f'start_dot: {start_dot} end_dot: {end_dot}')
+    if start_dot == 1.0 or end_dot == 1.0:
+      return True
+    
+    start_end_dot = np.dot(arc_start, arc_end)/(np.linalg.norm(arc_start) * np.linalg.norm(arc_end))
+    print(f'start_end_dot: {start_end_dot}')
+    if start_end_dot == 0.0:
+      return False
+    
+    theta_start_point = np.arccos(start_dot)
+    theta_end_point = np.arccos(end_dot)
+    theta_start_end = np.arccos(start_end_dot)
+    print(f'theta_start_point: {theta_start_point} theta_end_point: {theta_end_point} theta_start_end: {theta_start_end} test: {(abs(theta_start_point + theta_end_point - theta_start_end) < epsilon)} {abs(theta_start_point + theta_end_point - theta_start_end)} < {epsilon}')
 
 def get_arc_intersection(a1: LatLonPoint, a2: LatLonPoint, b1: LatLonPoint, b2: LatLonPoint) -> LatLonPoint | None:
     a1_lat = np.radians(a1.get_latitude()); a1_lon = np.radians(a1.get_longitude())

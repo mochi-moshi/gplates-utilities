@@ -12,7 +12,7 @@ class PolygonFilterModel(QSortFilterProxyModel):
         model = self.sourceModel()
         data = extractFeatureDataFromRow(model, row_num)
 
-        return data.geometry_type == "PolygonOnSphere" and (len(self._accepted_ids) == 0 or data.plate_id in self._accepted_ids) and (data.start_time >= self._time_filter >= data.end_time)
+        return data.geometry_type == "PolygonOnSphere" and (len(self._accepted_ids) == 0 or (data.reconstruction_method == 'ByPlateId' and data.plate_id in self._accepted_ids or data.reconstruction_method in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3'] and (data.left_plate in self._accepted_ids or data.right_plate in self._accepted_ids))) and (data.start_time >= self._time_filter >= data.end_time)
     
     def setTimeFilter(self, time: float):
         self.beginFilterChange()

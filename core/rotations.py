@@ -2,7 +2,7 @@ from pygplates import Feature, FeatureCollection, GpmlIrregularSampling, GpmlTim
 from .utils import get_all_reconstruction_plate_ids
 
 def create_initial_rotations(features: list[Feature], start_time: float, end_time: float):
-    plate_ids = set(get_all_reconstruction_plate_ids(features))
+    plate_ids = get_all_reconstruction_plate_ids(features)
     property_value = GpmlFiniteRotation(FiniteRotation.create_identity_rotation())
     return FeatureCollection([
         Feature.create_total_reconstruction_sequence(

@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QGroupBox, QFormLayout, QLineEdit, QLabel
 )
 
-from core.session import Session, FeatureDataColumn
+from core.session import Session, FeatureDataColumn, extractFeatureDataFromRow
 from models.time_range_filter_model import TimeRangeFilterModel
 from ui.delegates.time_decorator_delegate import TimeDecoratorDelegate
 
@@ -40,7 +40,7 @@ class FeatureSelectorWidget(QWidget):
         
         self.plate_filter = QLineEdit()
         self.plate_filter.setPlaceholderText("e.g., 701,801,802")
-        self.plate_filter.setValidator(QRegularExpressionValidator(r"\\d+(,\\s*\\d+)*"))
+        self.plate_filter.setValidator(QRegularExpressionValidator("\\d+(,\\s*\\d+)*"))
         
         filter_layout.addRow("Plate IDs:", self.plate_filter)
         
@@ -52,6 +52,9 @@ class FeatureSelectorWidget(QWidget):
         self.feature_view.setModel(self.feature_model)
         self.feature_view.setColumnHidden(FeatureDataColumn.feature_name_and_id, True)  # Hide internal columns
         self.feature_view.setColumnHidden(FeatureDataColumn.geometry_type, True)
+        self.feature_view.setColumnHidden(FeatureDataColumn.reconstruction_method, True)
+        self.feature_view.setColumnHidden(FeatureDataColumn.left_plate, True)
+        self.feature_view.setColumnHidden(FeatureDataColumn.right_plate, True)
         self.feature_view.setItemDelegateForColumn(FeatureDataColumn.start_time, TimeDecoratorDelegate(self.feature_view))
         self.feature_view.setItemDelegateForColumn(FeatureDataColumn.end_time, TimeDecoratorDelegate(self.feature_view))
         self.feature_view.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection if single_selection else QAbstractItemView.SelectionMode.MultiSelection)
@@ -68,22 +71,40 @@ class FeatureSelectorWidget(QWidget):
         
     def connect_signals(self):
         """Connect widget signals."""
-        self.plate_filter.textChanged.connect(self.update_plate_filter)
+        self.plate_filter.editingFinished.connect(self.update_plate_filter)
         self.feature_view.selectionModel().selectionChanged.connect(self.on_selection_changed)
         
     def update_plate_filter(self):
         """Update the plate ID filter."""
-        if self._updating_filters or self._single_plate_id:
+        if self._updating_filters:
             return
             
         self._updating_filters = True
         try:
+            if self._single_plate_id:
+              selected_rows = set([self.feature_model.mapToSource(i).row() for i in self.feature_view.selectedIndexes()])
+              selected_feature_data = [extractFeatureDataFromRow(self.feature_model.sourceModel(), row_num) for row_num in selected_rows]
+              selected_main_ids = set()
+              selected_half_ids = set()
+              for data in selected_feature_data:
+                if data.reconstruction_method == 'ByPlateId':
+                  selected_main_ids.add(data.plate_id)
+                else:
+                  selected_half_ids.add(data.left_plate)
+                  selected_half_ids.add(data.right_plate)
+
+              selected_ids = [i for i in selected_main_ids]
+              if not selected_ids:
+                selected_ids = [i for i in selected_half_ids]
+            else:
+              selected_ids = []
+            
             filter_text = self.plate_filter.text().strip()
             if filter_text:
-                plate_ids = [id.strip() for id in filter_text.split(",") if id.strip()]
+                plate_ids = selected_ids + [id.strip() for id in filter_text.split(",") if id.strip()]
                 self.feature_model.setPlateIdFilter(plate_ids)
             else:
-                self.feature_model.setPlateIdFilter([])
+                self.feature_model.setPlateIdFilter(selected_ids)
         finally:
             self._updating_filters = False
     
@@ -100,12 +121,7 @@ class FeatureSelectorWidget(QWidget):
         selection_count = len(self.feature_view.selectedIndexes()) // self.feature_model.columnCount()
         self.selection_label.setText(f"{selection_count} features selected")
         if self._single_plate_id and not (selected.isEmpty() and deselected.isEmpty()):
-          self._updating_filters = True
-          try:
-              ids = [i.data() for i in selected.indexes() if i.column() == FeatureDataColumn.plate_id] if not selected.isEmpty() else []
-              self.feature_model.setPlateIdFilter(ids)
-          finally:
-              self._updating_filters = False
+          self.update_plate_filter()
         self.selectionChanged.emit(selection_count)
     
     def get_selected_features(self):

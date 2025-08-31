@@ -81,7 +81,7 @@ def generate_ocean_crust_for_timestep(mid_ocean_ridge: Feature, plate_ids: set,
       
       # Create ocean crust feature with start time and distant future end time
       ocean_crust_feature = Feature.create_reconstructable_feature(
-        FeatureType.gpml_unclassified_feature,  # Use unclassified since oceanic_crust may not be available
+        FeatureType.gpml_oceanic_crust,  # Use unclassified since oceanic_crust may not be available
         ocean_crust_polygon,
         f"Ocean Crust Plate {plate_id} ({older_time} Ma)",
         valid_time=(younger_time, GeoTimeInstant.create_distant_future()),  # End time to distant future

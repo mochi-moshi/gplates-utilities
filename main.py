@@ -9,7 +9,7 @@ if __name__ == "__main__":
     
     app = QApplication(sys.argv)
     app.setApplicationName("Geological Operations Suite")
-
+    app.setWindowIcon(QIcon("./media/logo.png"))
     # session = Session()
 
     # main_window = MainWindow(session)
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     """)
     
     session = Session()
-    
+
     window = ImprovedGeologicalOperationsWindow(session)
     window.show()
     

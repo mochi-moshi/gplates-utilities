@@ -21,7 +21,6 @@ from core.line_splitter import split_line_features
 from core.polygon_operations import join_plate_features_by_intersect, join_plate_features_by_union, split_plate_features_by_difference
 from models.line_filter_model import LineFilterModel
 from models.polygon_filter_model import PolygonFilterModel
-from models.splitter_filter_model import SplitterFilterModel
 from ui.components.process_step_widget import ProcessStepWidget
 from ui.widgets.time_range_widget import TimeRangeWidget
 from ui.widgets.feature_selector_widget import FeatureSelectorWidget
@@ -57,7 +56,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         self.splitter_group = QGroupBox("Splitting Feature Selection")
         splitter_layout = QVBoxLayout(self.splitter_group)
         
-        self.splitter_model = SplitterFilterModel()
+        self.splitter_model = LineFilterModel()
         self.splitter_model.setSourceModel(self.session.get_feature_model())
         
         self.splitter_selection = QComboBox()
@@ -75,7 +74,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
-        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        self.split_time.textChanged.connect(lambda: self.on_time_changed())
         
         time_layout.addRow("Split Time (Ma):", self.split_time)
         
@@ -90,6 +89,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, enable_topology_generation=False)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)
@@ -124,6 +124,12 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+
+    def on_time_changed(self):
+        """Handle time changes."""
+        self.splitter_model.setTimeFilter(float(self.split_time.text()) if self.split_time.text() else None)
+        self.update_step_status(1, bool(self.split_time.text()))
+        self.validate_and_enable_process()
     
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
@@ -151,7 +157,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
                 
             splitter_model_index = self.splitter_model.index(splitter_index, FeatureDataColumn.feature_id)
             splitter_feature_id = self.splitter_model.data(splitter_model_index)
-            splitter_fc_name = self.splitter_model.data(self.splitter_model.index(splitter_index, FeatureDataColumn.feature_collection_name))
+            splitter_fc_name = self.splitter_model.data(self.splitter_model.index(splitter_index, FeatureDataColumn.feature_collection))
             
             # Find the actual feature
             splitter_fc = next(filter(lambda x: x.shortname == splitter_fc_name, self.session.loaded_feature_collections)).feature_collection
@@ -162,7 +168,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
                 return
             
             # Get parameters
-            start_time, end_time = self.time_widget.get_times()
+            split_time = float(self.split_time.text())
             selected_features = self.feature_selector.get_selected_features()
             
             if not self.session._rotationModel:
@@ -174,7 +180,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
                 selected_features,
                 splitter_feature,
                 self.session._rotationModel,
-                start_time
+                split_time
             )
             
             if len(result_fc) == 0:
@@ -200,7 +206,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Plate splitting failed:\n{str(e)}")
-
+            
 
 class LineSplittingTabWidget(ProcessTabWidget):
     """Tab for splitting line features at their intersections."""
@@ -267,6 +273,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         # Step 4: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, enable_topology_generation=False)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)
@@ -302,15 +309,6 @@ class LineSplittingTabWidget(ProcessTabWidget):
         # Set first step as active
         self.steps[0].set_active(True)
     
-    def validate_and_enable_process(self):
-        """Validate inputs and enable process button if ready."""
-        has_line1 = self.line1_selection.currentIndex() >= 0
-        has_line2 = self.line2_selection.currentIndex() >= 0
-        has_time = bool(self.split_time.text())
-        has_output, _ = self.output_widget.is_valid()
-        
-        self.process_button.setEnabled(has_line1 and has_line2 and has_time and has_output)
-    
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
         self.line_selector.set_time_filter(start_time, end_time)
@@ -325,11 +323,12 @@ class LineSplittingTabWidget(ProcessTabWidget):
     
     def validate_and_enable_process(self):
         """Validate inputs and enable process button if ready."""
-        has_lines = len(self.line_selector.get_selected_features()) >= 2
-        has_time = self.time_widget._validate_times()
+        has_line1 = self.line1_selection.currentIndex() >= 0
+        has_line2 = self.line2_selection.currentIndex() >= 0
+        has_time = bool(self.split_time.text())
         has_output, _ = self.output_widget.is_valid()
         
-        self.process_button.setEnabled(has_lines and has_time and has_output)
+        self.process_button.setEnabled(has_line1 and has_line2 and has_time and has_output)
     
     def process_line_splitting(self):
         """Execute the line splitting process."""
@@ -348,14 +347,14 @@ class LineSplittingTabWidget(ProcessTabWidget):
             # Get the actual features
             line1_model_index = self.line1_model.index(line1_index, FeatureDataColumn.feature_id)
             line1_feature_id = self.line1_model.data(line1_model_index)
-            line1_fc_name = self.line1_model.data(self.line1_model.index(line1_index, FeatureDataColumn.feature_collection_name))
+            line1_fc_name = self.line1_model.data(self.line1_model.index(line1_index, FeatureDataColumn.feature_collection))
             
             line1_fc = next(filter(lambda x: x.shortname == line1_fc_name, self.session.loaded_feature_collections)).feature_collection
             line1_feature = line1_fc.get(lambda f: f.get_feature_id().get_string() == line1_feature_id)
             
             line2_model_index = self.line2_model.index(line2_index, FeatureDataColumn.feature_id)
             line2_feature_id = self.line2_model.data(line2_model_index)
-            line2_fc_name = self.line2_model.data(self.line2_model.index(line2_index, FeatureDataColumn.feature_collection_name))
+            line2_fc_name = self.line2_model.data(self.line2_model.index(line2_index, FeatureDataColumn.feature_collection))
             
             line2_fc = next(filter(lambda x: x.shortname == line2_fc_name, self.session.loaded_feature_collections)).feature_collection
             line2_feature = line2_fc.get(lambda f: f.get_feature_id().get_string() == line2_feature_id)
@@ -527,6 +526,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, enable_topology_generation=False)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)

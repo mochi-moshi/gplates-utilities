@@ -1,7 +1,7 @@
 import os
 from typing import Sequence
 
-from PySide6.QtCore import QStringListModel, Qt
+from PySide6.QtCore import QStringListModel, QModelIndex, Qt
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QWidget
 import pygplates
@@ -24,6 +24,9 @@ class FeatureData:
   end_time: float
   feature_id: str
   feature_collection: str
+  reconstruction_method: str
+  left_plate: str
+  right_plate: str
 
 class FeatureDataColumn:
   feature_name = 0
@@ -35,6 +38,9 @@ class FeatureDataColumn:
   end_time = 6
   feature_id = 7
   feature_collection = 8
+  reconstruction_method = 9
+  left_plate = 10
+  right_plate = 11
 
 def extractFeatureDataFromRow(model: QStandardItemModel, row_num: int):
   return FeatureData(
@@ -46,8 +52,45 @@ def extractFeatureDataFromRow(model: QStandardItemModel, row_num: int):
     float(model.item(row_num, 5).text()),
     float(model.item(row_num, 6).text()),
     model.item(row_num, 7).text(),
-    model.item(row_num, 8).text()
+    model.item(row_num, 8).text(),
+    model.item(row_num, 9).text(),
+    model.item(row_num, 10).text(),
+    model.item(row_num, 11).text()
   )
+  
+def extractFeatureDataFromIndices(indices: list[QModelIndex]):
+  return FeatureData(
+    [i for i in indices if i.column() == 0][0],
+    [i for i in indices if i.column() == 1][0],
+    [i for i in indices if i.column() == 2][0],
+    [i for i in indices if i.column() == 3][0],
+    [i for i in indices if i.column() == 4][0],
+    float([i for i in indices if i.column() == 5][0]),
+    float([i for i in indices if i.column() == 6][0]),
+    [i for i in indices if i.column() == 7][0],
+    [i for i in indices if i.column() == 8][0],
+    [i for i in indices if i.column() == 9][0],
+    [i for i in indices if i.column() == 10][0],
+    [i for i in indices if i.column() == 11][0]
+  )
+
+def create_feature_item(lfc: LoadedFeatureCollection, feature: pygplates.Feature):
+  feature_item: Sequence[QStandardItem] = []
+
+  feature_item.append(QStandardItem(feature.get_name()))                          # Feature Name
+  feature_item.append(QStandardItem(f'{feature.get_name()} ({feature.get_feature_id().get_string()})'))      
+  feature_item.append(QStandardItem(feature.get_feature_type().get_name()))       # Feature Type
+  feature_item.append(QStandardItem(type(feature.get_geometry()).__name__))       # Geometry Type
+  feature_item.append(QStandardItem(str(feature.get_reconstruction_plate_id())))  # Plate ID
+  feature_item.append(QStandardItem(str(feature.get_valid_time()[0])))            # Start Time
+  feature_item.append(QStandardItem(str(feature.get_valid_time()[1])))            # End Time
+  feature_item.append(QStandardItem(feature.get_feature_id().get_string()))       # Feature ID
+  feature_item.append(QStandardItem(lfc.shortname))                               # Feature Collection (shortname)
+  feature_item.append(QStandardItem(feature.get_reconstruction_method()))         # Feature Method
+  feature_item.append(QStandardItem(str(feature.get_left_plate())))               # Left Plate
+  feature_item.append(QStandardItem(str(feature.get_right_plate())))              # Right Plate
+  return feature_item
+  
 class Session:
     def __init__(self) -> None:
         self.loaded_feature_collections: list[LoadedFeatureCollection] = []
@@ -55,8 +98,8 @@ class Session:
 
         self._feature_collection_names = QStringListModel()
         self._feature_model = QStandardItemModel()
-        self._feature_model.setColumnCount(7)
-        self._feature_model.setHorizontalHeaderLabels(["Feature Name", "Feature Name (ID)", "Feature Type", "Geometry Type", "Plate ID", "Start Time", "End Time", "Feature ID", "Feature Collection"])
+        self._feature_model.setColumnCount(12)
+        self._feature_model.setHorizontalHeaderLabels(["Feature Name", "Feature Name (ID)", "Feature Type", "Geometry Type", "Plate ID", "Start Time", "End Time", "Feature ID", "Feature Collection", "Reconstruction Method", "Left Plate", "Right Plate"])
 
         self._rotationModel_path: str = ""
         self._rotationModel: pygplates.RotationModel = None
@@ -118,19 +161,7 @@ class Session:
             lfc = LoadedFeatureCollection(path, pygplates.FeatureCollection(path))
             self.loaded_feature_collections.append(lfc)
             for feature in lfc.feature_collection:
-                feature_item: Sequence[QStandardItem] = []
-
-                feature_item.append(QStandardItem(feature.get_name()))                          # Feature Name
-                feature_item.append(QStandardItem(f'{feature.get_name()} ({feature.get_feature_id().get_string()})'))      
-                feature_item.append(QStandardItem(feature.get_feature_type().get_name()))       # Feature Type
-                feature_item.append(QStandardItem(type(feature.get_geometry()).__name__))       # Geometry Type
-                feature_item.append(QStandardItem(str(feature.get_reconstruction_plate_id())))  # Plate ID
-                feature_item.append(QStandardItem(str(feature.get_valid_time()[0])))            # Start Time
-                feature_item.append(QStandardItem(str(feature.get_valid_time()[1])))            # End Time
-                feature_item.append(QStandardItem(feature.get_feature_id().get_string()))       # Feature ID
-                feature_item.append(QStandardItem(lfc.shortname))                               # Feature Collection (shortname)
-
-                self._feature_model.appendRow(feature_item)
+                self._feature_model.appendRow(create_feature_item(lfc, feature))
 
         # Completely update our names model
         self._feature_collection_names.setStringList([x.shortname for x in self.loaded_feature_collections])
@@ -148,29 +179,17 @@ class Session:
         self._feature_collection_names.removeRow(index)
 
         # Update Feature Model
-        items = self._feature_model.findItems(shortname, Qt.MatchFlag.MatchFixedString, 7)
+        items = self._feature_model.findItems(shortname, Qt.MatchFlag.MatchFixedString, FeatureDataColumn.feature_collection)
         for i in items:
             self._feature_model.removeRow(i.row())
     
     def reload_features(self):
         self._feature_model.removeRows(0, self._feature_model.rowCount())
-        self._feature_model.setColumnCount(7)
-        self._feature_model.setHorizontalHeaderLabels(["Feature Name", "Feature Type", "Geometry Type", "Plate ID", "Start Time", "End Time", "Feature ID", "Feature Collection"])
+        self._feature_model.setColumnCount(12)
+        self._feature_model.setHorizontalHeaderLabels(["Feature Name", "Feature Name (ID)", "Feature Type", "Geometry Type", "Plate ID", "Start Time", "End Time", "Feature ID", "Feature Collection", "Reconstruction Method", "Left Plate", "Right Plate"])
 
         for lfc in self.loaded_feature_collections:
             lfc.feature_collection = pygplates.FeatureCollection(lfc.path)
 
             for feature in lfc.feature_collection:
-                feature_item: Sequence[QStandardItem] = []
-
-                feature_item.append(QStandardItem(feature.get_name()))                          # Feature Name
-                feature_item.append(QStandardItem(f'{feature.get_name()} ({feature.get_feature_id().get_string()})'))    
-                feature_item.append(QStandardItem(feature.get_feature_type().get_name()))       # Feature Type
-                feature_item.append(QStandardItem(type(feature.get_geometry()).__name__))       # Geometry Type
-                feature_item.append(QStandardItem(str(feature.get_reconstruction_plate_id())))  # Plate ID
-                feature_item.append(QStandardItem(str(feature.get_valid_time()[0])))            # Start Time
-                feature_item.append(QStandardItem(str(feature.get_valid_time()[1])))            # End Time
-                feature_item.append(QStandardItem(feature.get_feature_id().get_string()))       # Feature ID
-                feature_item.append(QStandardItem(lfc.shortname))                               # Feature Collection (shortname)
-
-                self._feature_model.appendRow(feature_item)
+                self._feature_model.appendRow(create_feature_item(lfc, feature))

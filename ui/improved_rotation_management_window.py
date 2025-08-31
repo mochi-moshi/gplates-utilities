@@ -65,6 +65,7 @@ class RotationInitializationWidget(ProcessTabWidget):
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
         output_layout.addWidget(self.output_widget)
@@ -218,11 +219,13 @@ class PlateCreationWidget(ProcessTabWidget):
         # Feature output
         feature_output_layout = QFormLayout()
         self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)", enable_topology_generation=False)
+        self.feature_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         feature_output_layout.addRow("Feature Output:", self.feature_output_widget)
         
         # Rotation output
         rotation_output_layout = QFormLayout()  
         self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
+        self.rotation_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         rotation_output_layout.addRow("Rotation Output:", self.rotation_output_widget)
         
         output_layout.addLayout(feature_output_layout)
