@@ -145,7 +145,7 @@ def recreate_reconstructable_feature_with_method(old_feature: Feature, new_geome
   method = old_feature.get_reconstruction_method()
   if method == 'ByPlateId':
     feature = Feature.create_reconstructable_feature(
-        old_feature.get_feature_type(), new_geometry, f'{new_name} Left',
+        old_feature.get_feature_type(), new_geometry, new_name,
         valid_time=valid_time or old_feature.get_valid_time(), reconstruction_plate_id=int(new_plate_id), reverse_reconstruct=(rotation_model, GeoTimeInstant(split_time))
       )
     return feature
@@ -160,7 +160,7 @@ def recreate_reconstructable_feature_with_method(old_feature: Feature, new_geome
       reverse_reconstruct=(rotation_model, GeoTimeInstant(split_time))
     )
     feature = Feature.create_reconstructable_feature(
-      old_feature.get_feature_type(), reconstruct_feature.get_geometry(), f'{new_name} Left',
+      old_feature.get_feature_type(), reconstruct_feature.get_geometry(), new_name,
       valid_time=valid_time or old_feature.get_valid_time(),
       other_properties=[(PropertyName.gpml_reconstruction_method, Enumeration(
     EnumerationType.create_gpml('ReconstructionMethodEnumeration'),

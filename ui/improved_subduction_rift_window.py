@@ -203,6 +203,7 @@ class SubductionTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Subduction processing failed:\n{str(e)}")
+            raise e
 
 
 class RiftingTabWidget(ProcessTabWidget):

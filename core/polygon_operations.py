@@ -1,4 +1,5 @@
-from pygplates import Feature, FeatureCollection, FeatureType, PolygonOnSphere, PolylineOnSphere, ReconstructSnapshot, reverse_reconstruct, RotationModel
+from pygplates import Feature, FeatureCollection, FeatureType, PolygonOnSphere, PolylineOnSphere, ReconstructSnapshot, reverse_reconstruct, RotationModel, GreatCircleArc, PointOnSphere
+import itertools
 
 def a_and_b(polyA: PolygonOnSphere, polyB: PolygonOnSphere) -> list[PolygonOnSphere]:
     inside = []
@@ -18,16 +19,42 @@ def a_xor_b(polyA: PolygonOnSphere, polyB: PolygonOnSphere) -> list[PolygonOnSph
     return disjointA + disjointB
 difference_of_polygons = a_xor_b
 
+def same_and_direction(a: GreatCircleArc, b: GreatCircleArc) -> int:
+  if PointOnSphere.distance(a.get_start_point(), b.get_start_point()) < 0.05 and PointOnSphere.distance(a.get_end_point(), b.get_end_point()) < 0.05:
+    return 1
+  if PointOnSphere.distance(a.get_start_point(), b.get_end_point()) < 0.05 and PointOnSphere.distance(a.get_end_point(), b.get_start_point()) < 0.05:
+    return -1
+  return 0
+
+def distances(a, b):
+  return PointOnSphere.distance(a.get_start_point(), b.get_start_point()), PointOnSphere.distance(a.get_end_point(), b.get_end_point()), PointOnSphere.distance(a.get_start_point(), b.get_end_point()), PointOnSphere.distance(a.get_end_point(), b.get_start_point())
+
+def arc_to_polyline(arc: GreatCircleArc, reverse: bool = False):
+  if reverse:
+    return PolylineOnSphere([arc.get_end_point(), arc.get_start_point()])
+  return PolylineOnSphere([arc.get_start_point(), arc.get_end_point()])
+
+def arc_to_points(arc: GreatCircleArc, reverse: bool = False):
+  if reverse:
+    return [arc.get_end_point(), arc.get_start_point()]
+  return [arc.get_start_point(), arc.get_end_point()]
+
 def union_of_polygons(polyA: PolygonOnSphere, polyB: PolygonOnSphere) -> list[PolygonOnSphere]:
+    if not polyA and not polyB:
+      return []
+    if not polyA:
+      return [polyB]
+    if not polyB:
+      return [polyA]
     outside = []
-    overlapA = polyA.partition(polyB, partitioned_geometries_outside=outside)
-    overlapB = polyB.partition(polyA, partitioned_geometries_outside=outside)
+    inside = []
+    overlapA = polyA.partition(polyB, inside, partitioned_geometries_outside=outside)
+    overlapB = polyB.partition(polyA, inside, partitioned_geometries_outside=outside)
 
     if overlapA == PolygonOnSphere.PartitionResult.outside and overlapB == PolygonOnSphere.PartitionResult.outside:
         return [polyA, polyB]
 
     return [PolygonOnSphere(g[:]) for g in PolylineOnSphere.join(outside)]
-  
 def a_not_b(polyA: PolygonOnSphere, polyB: PolygonOnSphere) -> list[PolygonOnSphere]:
     lines = []
     polyA.partition(polyB, partitioned_geometries_inside=lines)

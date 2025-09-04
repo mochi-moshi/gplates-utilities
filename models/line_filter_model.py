@@ -26,7 +26,7 @@ class LineFilterModel(QSortFilterProxyModel):
         return (
             data.geometry_type == "PolylineOnSphere" and
             (self._time_filter is None or data.start_time >= self._time_filter >= data.end_time) and
-            (self._start_time_filter is None or  self._start_time_filter >= data.start_time and self._start_time_filter >= data.end_time) and
+            (self._start_time_filter is None or  self._start_time_filter <= data.start_time and self._start_time_filter >= data.end_time) and
             (self._end_time_filter is None or  data.start_time >= self._end_time_filter) and
             (len(self._accepted_ids) == 0 or (data.reconstruction_method == 'ByPlateId' and data.plate_id in self._accepted_ids or data.reconstruction_method in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3'] and (data.left_plate in self._accepted_ids or data.right_plate in self._accepted_ids))) and
             (len(self._accepted_types) == 0 or data.feature_type in self._accepted_types)
