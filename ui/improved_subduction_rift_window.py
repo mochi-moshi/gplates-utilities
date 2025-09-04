@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from core.session import Session, FeatureDataColumn
-from core.worldbuilding.diverge import diverge
+from core.worldbuilding.diverge import diverge, divergeTriple
 from core.worldbuilding.rift import rift
 from core.worldbuilding.subduct import subduct
 from models.line_filter_model import LineFilterModel
@@ -426,9 +426,10 @@ class RiftingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Rifting processing failed:\n{str(e)}")
+            raise e
 
 
-class DivergenceTabWidget(ProcessTabWidget):
+class SimpleDivergenceTabWidget(ProcessTabWidget):
     """Tab for ocean spreading/divergence processing."""
     
     def setup_ui(self):
@@ -581,6 +582,250 @@ class DivergenceTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Ocean spreading processing failed:\n{str(e)}")
+            raise e
+
+
+class TripleDivergenceTabWidget(ProcessTabWidget):
+    """Tab for ocean spreading/divergence processing."""
+    
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        
+        # Workflow steps
+        self.steps = [
+            ProcessStepWidget(1, "Select Ridges", 
+                            "Choose the mid-ocean ridges for spreading"),
+            ProcessStepWidget(2, "Set Time Range", 
+                            "Define when ocean spreading occurs"),
+            ProcessStepWidget(3, "Process & Save", 
+                            "Execute spreading and save results")
+        ]
+        
+        for step in self.steps:
+            layout.addWidget(step)
+        
+        # Step 1: Ridge selector
+        self.ridge_group = QGroupBox("Ridge Selection")
+        ridge_layout = QVBoxLayout(self.ridge_group)
+        
+        self.ridgeA_model = LineFilterModel()
+        self.ridgeA_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridgeA_model.setSourceModel(self.session.get_feature_model())
+        
+        self.ridgeB_model = LineFilterModel()
+        self.ridgeB_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridgeB_model.setSourceModel(self.session.get_feature_model())
+        
+        self.ridgeC_model = LineFilterModel()
+        self.ridgeC_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridgeC_model.setSourceModel(self.session.get_feature_model())
+        
+        self.ridgeA_selection = QComboBox()
+        self.ridgeA_selection.setModel(self.ridgeA_model)
+        self.ridgeA_selection.setModelColumn(FeatureDataColumn.feature_name_and_id)
+        self.ridgeA_selection.setPlaceholderText("Select mid-ocean ridge...")
+        self.ridgeA_selection.currentIndexChanged.connect(lambda: self.on_ridge_select())
+
+        self.ridgeB_selection = QComboBox()
+        self.ridgeB_selection.setModel(self.ridgeB_model)
+        self.ridgeB_selection.setModelColumn(FeatureDataColumn.feature_name_and_id)
+        self.ridgeB_selection.setPlaceholderText("Select mid-ocean ridge...")
+        self.ridgeB_selection.currentIndexChanged.connect(lambda: self.on_ridge_select())
+
+        self.ridgeC_selection = QComboBox()
+        self.ridgeC_selection.setModel(self.ridgeC_model)
+        self.ridgeC_selection.setModelColumn(FeatureDataColumn.feature_name_and_id)
+        self.ridgeC_selection.setPlaceholderText("Select mid-ocean ridge...")
+        self.ridgeC_selection.currentIndexChanged.connect(lambda: self.on_ridge_select())
+        
+        ridge_layout.addWidget(self.ridgeA_selection)
+        ridge_layout.addWidget(self.ridgeB_selection)
+        ridge_layout.addWidget(self.ridgeC_selection)
+        
+        # Step 2: Time range
+        self.time_group = QGroupBox("Time Range")
+        self.time_widget = TimeRangeWidget()
+        self.time_widget.timeChanged.connect(self.on_time_changed)
+        
+        time_layout = QVBoxLayout(self.time_group)
+        time_layout.addWidget(self.time_widget)
+        
+        # Step 3: Output controls
+        self.output_group = QGroupBox("Output")
+        self.output_widget = OutputWidget(self.session)
+        self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
+        
+        output_layout = QVBoxLayout(self.output_group)
+        output_layout.addWidget(self.output_widget)
+        
+        # Process button
+        self.process_button = QPushButton("🌊 Process Ocean Spreading")
+        self.process_button.clicked.connect(self.process_divergence)
+        self.process_button.setEnabled(False)
+        self.process_button.setStyleSheet("""
+            QPushButton {
+                background-color: #2196F3;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1976D2;
+            }
+            QPushButton:disabled {
+                background-color: #ccc;
+                color: #999;
+            }
+        """)
+        output_layout.addWidget(self.process_button)
+        
+        layout.addWidget(self.ridge_group)
+        layout.addWidget(self.time_group)
+        layout.addWidget(self.output_group)
+        
+        # Set first step as active
+        self.steps[0].set_active(True)
+
+    def on_ridge_select(self):
+      ab = []
+      ac = []
+      bc = []
+      
+      ridgeA_index = self.ridgeA_selection.currentIndex()
+      if not ridgeA_index < 0:
+        feature_id = self.ridgeA_model.data(self.ridgeA_model.index(ridgeA_index, FeatureDataColumn.feature_id))
+        ab.append(feature_id)
+        ac.append(feature_id)
+      ridgeB_index = self.ridgeB_selection.currentIndex()
+      if not ridgeB_index < 0:
+        feature_id = self.ridgeB_model.data(self.ridgeB_model.index(ridgeB_index, FeatureDataColumn.feature_id))
+        ab.append(feature_id)
+        bc.append(feature_id)
+      ridgeC_index = self.ridgeC_selection.currentIndex()
+      if not ridgeC_index < 0:
+        feature_id = self.ridgeC_model.data(self.ridgeC_model.index(ridgeC_index, FeatureDataColumn.feature_id))
+        ac.append(feature_id)
+        bc.append(feature_id)
+
+      self.ridgeA_model.setFeatureIdFilter(bc)
+      self.ridgeB_model.setFeatureIdFilter(ac)
+      self.ridgeC_model.setFeatureIdFilter(ab)
+      
+      has_ridges = ridgeA_index > -1 and ridgeB_index > -1 and ridgeC_index > -1
+      self.update_step_status(0, has_ridges)
+      self.validate_and_enable_process()
+    
+    def on_time_changed(self, start_time: float, end_time: float):
+        """Handle time range changes."""
+        self.update_step_status(1, True)
+        self.validate_and_enable_process()
+    
+    def validate_and_enable_process(self):
+        """Validate inputs and enable process button if ready."""
+        has_ridge = self.ridgeA_selection.currentIndex() > -1 and self.ridgeB_selection.currentIndex() > -1 and self.ridgeC_selection.currentIndex() > -1
+        has_time = self.time_widget._validate_times()
+        has_output, _ = self.output_widget.is_valid()
+        
+        self.process_button.setEnabled(has_ridge and has_time and has_output)
+    
+    def process_divergence(self):
+        """Execute the ocean spreading process."""
+        try:
+            # Get selected ridge
+            ridgeA_index = self.ridgeA_selection.currentIndex()
+            if ridgeA_index < 0:
+                QMessageBox.warning(self, "Error", "Please select a first mid-ocean ridge")
+                return
+                
+            ridgeA_model_index = self.ridgeA_model.index(ridgeA_index, FeatureDataColumn.feature_id)
+            ridgeA_feature_id = self.ridgeA_model.data(ridgeA_model_index)
+            ridgeA_fc_name = self.ridgeA_model.data(self.ridgeA_model.index(ridgeA_index, FeatureDataColumn.feature_collection))
+            
+            # Find the actual feature
+            ridgeA_fc = next(filter(lambda x: x.shortname == ridgeA_fc_name, self.session.loaded_feature_collections)).feature_collection
+            ridgeA_feature = ridgeA_fc.get(lambda f: f.get_feature_id().get_string() == ridgeA_feature_id)
+            
+            if not ridgeA_feature:
+                QMessageBox.critical(self, "Error", "Could not find first selected ridge")
+                return
+            # Get selected ridge
+            ridgeB_index = self.ridgeB_selection.currentIndex()
+            if ridgeB_index < 0:
+                QMessageBox.warning(self, "Error", "Please select a first mid-ocean ridge")
+                return
+                
+            ridgeB_model_index = self.ridgeB_model.index(ridgeB_index, FeatureDataColumn.feature_id)
+            ridgeB_feature_id = self.ridgeB_model.data(ridgeB_model_index)
+            ridgeB_fc_name = self.ridgeB_model.data(self.ridgeB_model.index(ridgeB_index, FeatureDataColumn.feature_collection))
+            
+            # Find the actual feature
+            ridgeB_fc = next(filter(lambda x: x.shortname == ridgeB_fc_name, self.session.loaded_feature_collections)).feature_collection
+            ridgeB_feature = ridgeB_fc.get(lambda f: f.get_feature_id().get_string() == ridgeB_feature_id)
+            
+            if not ridgeB_feature:
+                QMessageBox.critical(self, "Error", "Could not find second selected ridge")
+                return
+            # Get selected ridge
+            ridgeC_index = self.ridgeC_selection.currentIndex()
+            if ridgeC_index < 0:
+                QMessageBox.warning(self, "Error", "Please select a third mid-ocean ridge")
+                return
+                
+            ridgeC_model_index = self.ridgeC_model.index(ridgeC_index, FeatureDataColumn.feature_id)
+            ridgeC_feature_id = self.ridgeC_model.data(ridgeC_model_index)
+            ridgeC_fc_name = self.ridgeC_model.data(self.ridgeC_model.index(ridgeC_index, FeatureDataColumn.feature_collection))
+            
+            # Find the actual feature
+            ridgeC_fc = next(filter(lambda x: x.shortname == ridgeC_fc_name, self.session.loaded_feature_collections)).feature_collection
+            ridgeC_feature = ridgeC_fc.get(lambda f: f.get_feature_id().get_string() == ridgeC_feature_id)
+            
+            if not ridgeC_feature:
+                QMessageBox.critical(self, "Error", "Could not find t hird selected ridge")
+                return
+            
+            # Get parameters
+            start_time, end_time = self.time_widget.get_times()
+            
+            if not self.session._rotationFeatureCollection:
+                QMessageBox.critical(self, "Error", "No rotation model loaded")
+                return
+            
+            # Process divergence
+            result_fc = divergeTriple(
+                ridgeA_feature,
+                ridgeB_feature,
+                ridgeC_feature,
+                self.session._rotationFeatureCollection,
+                start_time,
+                end_time,
+                use_topologies=self.output_widget.should_generate_topologies()
+            )
+            
+            if len(result_fc) == 0:
+                QMessageBox.information(self, "No Results", "Ocean spreading processing returned no features")
+                return
+            
+            # Save results
+            output_path = self.output_widget.get_output_path()
+            
+            if self.output_widget.should_append() and path.exists(output_path):
+                existing_fc = FeatureCollection(output_path)
+                for feature in result_fc:
+                    existing_fc.add(feature)
+                existing_fc.write(output_path)
+            else:
+                result_fc.write(output_path)
+            
+            self.update_step_status(2, True)
+            QMessageBox.information(self, "Success", 
+                                  f"Ocean spreading processing complete!\nResults saved to: {path.basename(output_path)}\n"
+                                  f"Features generated: {len(result_fc)}")
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Ocean spreading processing failed:\n{str(e)}")
+            raise e
 
 
 class ImprovedSubductionRiftHelperWindow(QWidget):
@@ -632,16 +877,19 @@ class ImprovedSubductionRiftHelperWindow(QWidget):
         # Create tabs
         self.subduction_tab = SubductionTabWidget(self.session)
         self.rifting_tab = RiftingTabWidget(self.session)
-        self.divergence_tab = DivergenceTabWidget(self.session)
+        self.divergence_tab = SimpleDivergenceTabWidget(self.session)
+        self.divergence_triple_tab = TripleDivergenceTabWidget(self.session)
         
         # Add tabs with emojis for visual appeal
         self.tab_widget.addTab(self.subduction_tab, "🌋 Subduction")
         self.tab_widget.addTab(self.rifting_tab, "🏔️ Rifting")  
         self.tab_widget.addTab(self.divergence_tab, "🌊 Ocean Spreading")
+        self.tab_widget.addTab(self.divergence_triple_tab, "🌊 Triple Juction Spreading")
         
         # Set tab tooltips
         self.tab_widget.setTabToolTip(0, "Process feature consumption through subduction zones")
         self.tab_widget.setTabToolTip(1, "Model continental rifting and plate splitting")
         self.tab_widget.setTabToolTip(2, "Generate ocean crust from mid-ocean ridges")
+        self.tab_widget.setTabToolTip(3, "Generate ocean crust at a triple juciton of mid-ocean ridges")
         
         layout.addWidget(self.tab_widget)
