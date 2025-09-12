@@ -116,6 +116,14 @@ class FeatureSelectorWidget(QWidget):
         finally:
             self._updating_filters = False
     
+    def set_excluded_features_filter(self, ids: list[str]):
+        """Set the excluded feature ids filter."""
+        self._updating_filters = True
+        try:
+            self.feature_model.setFeatureIdFilter(ids)
+        finally:
+            self._updating_filters = False
+    
     def on_selection_changed(self, selected: QItemSelection, deselected: QItemSelection):
         """Handle selection changes."""
         selection_count = len(self.feature_view.selectedIndexes()) // self.feature_model.columnCount()

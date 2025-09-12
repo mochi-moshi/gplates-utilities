@@ -31,6 +31,7 @@ class PlateIdWidget(QWidget):
         # Plate ID input
         self.plate_id_input = QSpinBox()
         self.plate_id_input.setRange(1, 9999)
+        self.plate_id_input.setSpecialValueText('')
         
         # Connect signals with delay to avoid rapid validation
         self.validation_timer = QTimer()
@@ -65,6 +66,18 @@ class PlateIdWidget(QWidget):
             finally:
                 self._updating = False
         return False
+
+    def is_unique(self):
+      plate_id = self.plate_id_input.value()
+      for rotation_feature in self.session._rotationFeatureCollection:
+          try:
+              fixed_id, moving_id, samples = rotation_feature.get_total_reconstruction_pole()
+              if moving_id == plate_id:
+                  return False
+          except Exception:
+              # If we can't read this rotation feature, skip it
+              continue
+      return True
     
     def _validate_plate_id(self, plate_id: int) -> bool:
         """Validate plate ID against rotation model if uniqueness checking is enabled."""
@@ -180,6 +193,13 @@ class DualPlateIdWidget(QWidget):
             left_id = self.left_plate_widget.get_plate_id()
             right_id = self.right_plate_widget.get_plate_id()
             self.plateIdsChanged.emit(left_id, right_id)
+        if self.left_plate_widget.is_valid() and self.left_plate_widget.is_unique():
+            self.right_plate_widget.enable_uniqueness_validation = False
+        elif self.right_plate_widget.is_valid() and self.right_plate_widget.is_unique():
+            self.left_plate_widget.enable_uniqueness_validation = False
+        else:
+            self.right_plate_widget.enable_uniqueness_validation = True
+            self.left_plate_widget.enable_uniqueness_validation = True
     
     def get_plate_ids(self) -> tuple[int, int]:
         """Get validated plate IDs."""

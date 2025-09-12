@@ -37,13 +37,15 @@ def rift(features: list[Feature], rift: Feature, rotation_features: FeatureColle
 
   output_rc = FeatureCollection()
 
-  left_rc = split_rotation_features_by_plate_id(rotation_features, plate_id, left_plate_id, split_time)
-  right_rc = split_rotation_features_by_plate_id(rotation_features, plate_id, right_plate_id, split_time)
+  to_add = []
+  if left_plate_id != plate_id:
+    to_add.extend(f for f in split_rotation_features_by_plate_id(rotation_features, plate_id, left_plate_id, split_time))
+  if right_plate_id != plate_id:
+    to_add.extend(f for f in split_rotation_features_by_plate_id(rotation_features, plate_id, right_plate_id, split_time))
 
-  output_rc.add(left_rc)
-  output_rc.add(right_rc)
+  output_rc.add(to_add)
 
-  rotation_model = RotationModel([f for f in rotation_features] + [left_rc, right_rc])
+  rotation_model = RotationModel([f for f in rotation_features] + to_add)
   
   # Get rift geometry at split time
   rift_snapshot = ReconstructSnapshot([rift], rotation_model, split_time)

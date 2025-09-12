@@ -166,7 +166,7 @@ class SubductionTabWidget(ProcessTabWidget):
             start_time, end_time = self.time_widget.get_times()
             selected_features = self.feature_selector.get_selected_features()
             
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             
@@ -241,7 +241,7 @@ class RiftingTabWidget(ProcessTabWidget):
         self.rift_selection.setModel(self.rift_model)
         self.rift_selection.setModelColumn(FeatureDataColumn.feature_name_and_id)
         self.rift_selection.setPlaceholderText("Select rift...")
-        self.rift_selection.currentIndexChanged.connect(lambda: self.update_step_status(0, True))
+        self.rift_selection.currentIndexChanged.connect(lambda: self.on_rift_selected())
         
         rift_layout.addWidget(self.rift_selection)
         
@@ -252,7 +252,7 @@ class RiftingTabWidget(ProcessTabWidget):
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
-        self.split_time.editingFinished.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        self.split_time.editingFinished.connect(lambda: self.on_split_time_set())
         
         time_layout.addRow("Split Time (Ma):", self.split_time)
         
@@ -325,6 +325,23 @@ class RiftingTabWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+
+    def on_rift_selected(self):
+        has_rift = self.rift_selection.currentIndex() >= 0
+        self.update_step_status(0, has_rift)
+
+        if has_rift:
+            rift_model_index = self.rift_model.index(self.rift_selection.currentIndex(), FeatureDataColumn.feature_id)
+            rift_feature_id = self.rift_model.data(rift_model_index)
+            self.feature_selector.set_excluded_features_filter([rift_feature_id])
+        else:
+            self.feature_selector.set_excluded_features_filter([])
+
+            
+    def on_split_time_set(self):
+        split_time = float(self.split_time.text())
+        self.feature_selector.set_time_filter(None, split_time if self.split_time.text() else None)
+        self.update_step_status(1, bool(self.split_time.text()))
     
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
@@ -375,7 +392,7 @@ class RiftingTabWidget(ProcessTabWidget):
                 return
             
             
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             
@@ -547,7 +564,7 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
             # Get parameters
             start_time, end_time = self.time_widget.get_times()
             
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             
@@ -788,7 +805,7 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
             # Get parameters
             start_time, end_time = self.time_widget.get_times()
             
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             

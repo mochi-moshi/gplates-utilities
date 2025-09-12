@@ -298,7 +298,7 @@ class PlateCreationWidget(ProcessTabWidget):
         """Create new plate with rotations."""
         try:
             # Validate rotation model
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             
@@ -487,7 +487,7 @@ class RotationMaintenanceWidget(QWidget):
     def fix_final_rotation(self):
         """Fix the final rotation in the rotation model."""
         try:
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             
@@ -510,7 +510,7 @@ class RotationMaintenanceWidget(QWidget):
     def validate_rotation_model(self):
         """Validate the rotation model for consistency."""
         try:
-            if not self.session._rotationFeatureCollection:
+            if not self.session._rotationModel:
                 QMessageBox.critical(self, "Error", "No rotation model loaded")
                 return
             
