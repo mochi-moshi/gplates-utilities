@@ -1,5 +1,5 @@
 from typing import List
-from PySide6.QtCore import QSortFilterProxyModel
+from PyQt5.QtCore import QSortFilterProxyModel
 from core.session import extractFeatureDataFromRow
 
 
@@ -24,21 +24,21 @@ class SplitterFilterModel(QSortFilterProxyModel):
         )
     
     def setTimeFilter(self, time: float):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._time_filter = time
-        self.invalidateFilter()
+        self.invalidate()
     
     def setPlateIdFilter(self, ids: List[str]):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._accepted_ids = ids
-        self.invalidateFilter()
+        self.invalidate()
         
     def setFeatureIdFilter(self, ids: List[str]):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._excluded_ids = ids
-        self.invalidateFilter()
+        self.invalidate()
     
     def setFeatureTypeFilter(self, types: List[str]):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._accepted_types = types
-        self.invalidateFilter()
+        self.invalidate()

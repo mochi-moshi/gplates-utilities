@@ -4,9 +4,9 @@ Feature Selector Widget
 A widget for selecting geological features with filtering and preview capabilities.
 """
 
-from PySide6.QtCore import Signal, QItemSelection
-from PySide6.QtGui import QRegularExpressionValidator
-from PySide6.QtWidgets import (
+from PyQt5.QtCore import pyqtSignal, QItemSelection, QRegularExpression
+from PyQt5.QtGui import QRegularExpressionValidator
+from PyQt5.QtWidgets import (
     QAbstractItemView, QTreeView, QVBoxLayout, QWidget,
     QGroupBox, QFormLayout, QLineEdit, QLabel
 )
@@ -19,7 +19,7 @@ from ui.delegates.time_decorator_delegate import TimeDecoratorDelegate
 class FeatureSelectorWidget(QWidget):
     """Enhanced feature selector with filtering and preview."""
     
-    selectionChanged = Signal(int)  # number of features selected
+    selectionChanged = pyqtSignal(int)  # number of features selected
     
     def __init__(self, session: Session, single_selection: bool = False, single_plate_id: bool = False, parent=None):
         super().__init__(parent)
@@ -40,7 +40,7 @@ class FeatureSelectorWidget(QWidget):
         
         self.plate_filter = QLineEdit()
         self.plate_filter.setPlaceholderText("e.g., 701,801,802")
-        self.plate_filter.setValidator(QRegularExpressionValidator("\\d+(,\\s*\\d+)*"))
+        self.plate_filter.setValidator(QRegularExpressionValidator(QRegularExpression("\\d+(,\\s*\\d+)*")))
         
         filter_layout.addRow("Plate IDs:", self.plate_filter)
         

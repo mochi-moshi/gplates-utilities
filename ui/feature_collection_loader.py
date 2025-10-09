@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QAbstractItemView, QFileDialog, QHBoxLayout, QLabel, QListView, QMessageBox, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHBoxLayout, QLabel, QListView, QMessageBox, QPushButton, QVBoxLayout, QWidget
 from core.session import Session
 
 class FeatureCollectionLoader(QWidget):

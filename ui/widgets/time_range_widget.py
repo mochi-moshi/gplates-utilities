@@ -4,15 +4,15 @@ Time Range Widget
 A widget for entering and validating geological time ranges with validation feedback.
 """
 
-from PySide6.QtCore import Signal, QTimer
-from PySide6.QtGui import QDoubleValidator
-from PySide6.QtWidgets import QWidget, QFormLayout, QLineEdit, QLabel
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import QWidget, QFormLayout, QLineEdit, QLabel
 
 
 class TimeRangeWidget(QWidget):
     """Widget for entering geological time ranges with validation."""
     
-    timeChanged = Signal(float, float)  # start_time, end_time
+    timeChanged = pyqtSignal(float, float)  # start_time, end_time
     
     def __init__(self, parent=None):
         super().__init__(parent)

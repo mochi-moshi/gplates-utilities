@@ -2,7 +2,7 @@
 
 GPlates Utilities is a comprehensive, open-source geological modeling suite designed to make advanced [GPlates](https://www.gplates.org/) operations accessible through an intuitive graphical interface. This tool bridges the gap between complex geological modeling and user-friendly software, enabling researchers and students to perform sophisticated plate tectonic reconstructions without extensive programming knowledge.
 
-Built with Python using PyGPlates, NumPy, and PySide6, the suite provides a modern tabbed interface with guided workflows for geological operations.
+Built with Python using PyGPlates, NumPy, and PyQt5, the suite provides a modern tabbed interface with guided workflows for geological operations.
 
 ## Key Features
 
@@ -47,7 +47,7 @@ Built with Python using PyGPlates, NumPy, and PySide6, the suite provides a mode
 
 - **Python 3.13+** (developed and tested with Python 3.13.1)
 - **PyGPlates 1.0.0** (essential for geological operations)
-- **PySide6** (for the modern Qt6-based interface)
+- **PyQt5** (for the modern Qt5-based interface)
 
 ### Recommended Installation (Virtual Environment)
 
@@ -90,8 +90,8 @@ python main.py
 The application requires these key packages:
 
 - `pygplates==1.0.0` - Core geological reconstruction library
-- `PySide6==6.9.1` - Modern Qt6-based GUI framework  
-- `numpy==2.3.1` - Numerical computing support
+- `PyQt5==5.15.11` - Qt5-based GUI framework
+- `numpy==2.3.3` - Numerical computing support
 
 ### Troubleshooting Installation
 
@@ -99,12 +99,11 @@ The application requires these key packages:
 
 - Ensure you have the correct Python version (3.9-3.13 recommended)
 - On Windows, you may need Visual C++ redistributables
-- Consider using conda: `conda install -c conda-forge pygplates`
 
-**Qt/PySide6 Issues**: If the GUI doesn't start:
+**Qt/PyQt5 Issues**: If the GUI doesn't start:
 
-- Verify PySide6 installation: `python -c "from PySide6.QtWidgets import QApplication"`
-- On Linux, you may need additional Qt6 system packages
+- Verify PyQt5 installation: `python -c "from PyQt5.QtWidgets import QApplication"`
+- On Linux, you may need additional Qt5 system packages
 
 ## Getting Started
 

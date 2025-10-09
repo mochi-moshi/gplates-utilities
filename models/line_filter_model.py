@@ -1,5 +1,5 @@
 from typing import List
-from PySide6.QtCore import QSortFilterProxyModel
+from PyQt5.QtCore import QSortFilterProxyModel
 from core.session import extractFeatureDataFromRow
 
 class LineFilterModel(QSortFilterProxyModel):
@@ -35,35 +35,35 @@ class LineFilterModel(QSortFilterProxyModel):
         )
     
     def setTimeFilter(self, time: float):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._time_filter = time
         self._start_time_filter = None
         self._end_time_filter = None
-        self.invalidateFilter()
+        self.invalidate()
         
     def setStartTimeFilter(self, time: float):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._start_time_filter = time
         self._time_filter = None
-        self.invalidateFilter()
+        self.invalidate()
         
     def setEndTimeFilter(self, time: float):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._end_time_filter = time
         self._time_filter = None
-        self.invalidateFilter()
+        self.invalidate()
     
     def setPlateIdFilter(self, ids: List[str]):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._accepted_ids = ids
-        self.invalidateFilter()
+        self.invalidate()
     
     def setFeatureTypeFilter(self, types: List[str]):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._accepted_types = types
-        self.invalidateFilter()
+        self.invalidate()
     
     def setFeatureIdFilter(self, ids: List[str]):
-        self.beginFilterChange()
+        # self.beginFilterChange()
         self._excluded_features = ids
-        self.invalidateFilter()
+        self.invalidate()

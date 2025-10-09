@@ -1,9 +1,9 @@
 import os
 from typing import Sequence
 
-from PySide6.QtCore import QStringListModel, QModelIndex, Qt
-from PySide6.QtGui import QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QWidget
+from PyQt5.QtCore import QStringListModel, QModelIndex, Qt
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets import QWidget
 import pygplates
 from dataclasses import dataclass
 

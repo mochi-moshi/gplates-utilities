@@ -4,8 +4,8 @@ Output Widget
 A reusable widget for handling file output with common options like append and topology generation.
 """
 
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import (
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, 
     QLineEdit, QPushButton, QCheckBox, QFileDialog, QLabel
 )
@@ -15,7 +15,7 @@ from core.session import Session
 class OutputWidget(QWidget):
     """Widget for handling file output options."""
     
-    pathChange = Signal(str)
+    pathChange = pyqtSignal(str)
     
     def __init__(self, session: Session, file_filter: str = "GPlates Markup Language (*.gpml)", 
                  enable_topology_generation: bool = True, parent=None):

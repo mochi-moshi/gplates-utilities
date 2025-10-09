@@ -6,9 +6,9 @@ tabbed window with consistent workflows and visual design patterns.
 """
 
 from os import path
-from PySide6.QtCore import QTimer, Slot, Signal, Qt
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import (
+from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import (
     QFileDialog, QHBoxLayout, QLabel, QMessageBox, QVBoxLayout, QWidget,
     QTabWidget, QGridLayout, QMainWindow, QFrame
 )
@@ -183,13 +183,13 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
             self.statusBar().showMessage(f"Status update error: {str(e)}")
     
     # File menu methods (similar to original MainWindow)
-    @Slot()
+    @pyqtSlot()
     def new_project(self):
         """Create a new project."""
         self.session.reset_project()
         self.statusBar().showMessage("New project created")
     
-    @Slot()
+    @pyqtSlot()
     def open_project(self):
         """Open an existing project."""
         file_name, _ = QFileDialog.getOpenFileName(self, "Open Project", ".", "JavaScript Object Notation (*.json)")
@@ -200,7 +200,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         else:
             self.statusBar().showMessage(f"Project loaded: {path.basename(file_name)}")
     
-    @Slot()
+    @pyqtSlot()
     def save_project(self):
         """Save the current project."""
         file_name: str = ""
@@ -216,7 +216,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         else:
             self.statusBar().showMessage(f"Project saved: {path.basename(file_name)}")
     
-    @Slot()
+    @pyqtSlot()
     def open_feature_collections(self):
         """Open feature collection files."""
         fc_filepaths, _ = QFileDialog.getOpenFileNames(self, "Open Feature Collection(s)", 
@@ -228,7 +228,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         self.session.load_feature_collections(fc_filepaths)
         self.statusBar().showMessage(f"Loaded {len(fc_filepaths)} feature collection(s)")
     
-    @Slot()
+    @pyqtSlot()
     def open_rotation_model(self):
         """Open a rotation model file."""
         file_name, _ = QFileDialog.getOpenFileName(self, "Open Rotation Model", 
@@ -238,7 +238,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
             self.session.load_rotation_model(file_name)
             self.statusBar().showMessage(f"Rotation model loaded: {path.basename(file_name)}")
     
-    @Slot()
+    @pyqtSlot()
     def reload_files(self):
         """Reload all loaded files."""
         self.session.reload_features()
@@ -348,7 +348,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         <li>Topology generation capabilities</li>
         </ul>
         
-        <p><b>Built with:</b> Python, PySide6, and pygplates</p>
+        <p><b>Built with:</b> Python, PyQt5, and pygplates</p>
         
         <p style="margin-top: 20px; color: #666; font-size: 11px;">
         This software is designed for worldbuilding tectonic histories with GPlates.
@@ -369,7 +369,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
 if __name__ == "__main__":
     # Example usage
     import sys
-    from PySide6.QtWidgets import QApplication
+    from PyQt5.QtWidgets import QApplication
     from core.session import Session
     
     app = QApplication(sys.argv)
@@ -419,4 +419,4 @@ if __name__ == "__main__":
     window = ImprovedGeologicalOperationsWindow(session)
     window.show()
     
-    sys.exit(app.exec())
+    sys.exit(app.exec_())

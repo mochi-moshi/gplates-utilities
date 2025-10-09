@@ -6,8 +6,8 @@ workflows with guided steps and clear visual feedback.
 """
 
 from os import path
-from PySide6.QtGui import QDoubleValidator
-from PySide6.QtWidgets import (
+from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import (
     QComboBox, QLabel, QLineEdit, QFormLayout,
     QMessageBox, QPushButton, QVBoxLayout, QWidget,
     QTabWidget, QGroupBox

@@ -4,15 +4,15 @@ Plate ID Widget
 A widget for entering and validating plate IDs with optional uniqueness validation.
 """
 
-from PySide6.QtCore import Signal, QTimer
-from PySide6.QtGui import QIntValidator
-from PySide6.QtWidgets import QWidget, QFormLayout, QSpinBox, QLabel, QCheckBox, QVBoxLayout
+from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtGui import QIntValidator
+from PyQt5.QtWidgets import QWidget, QFormLayout, QSpinBox, QLabel, QCheckBox, QVBoxLayout
 from core.session import Session
 
 class PlateIdWidget(QWidget):
     """Widget for entering plate IDs with validation."""
     
-    plateIdChanged = Signal(int)  # plate_id
+    plateIdChanged = pyqtSignal(int)  # plate_id
     
     def __init__(self, session: Session, label: str = "Plate ID", 
                  enable_uniqueness_validation: bool = True, parent=None):
@@ -159,7 +159,7 @@ class PlateIdWidget(QWidget):
 class DualPlateIdWidget(QWidget):
     """Widget for entering left and right plate IDs for rifting operations."""
     
-    plateIdsChanged = Signal(int, int)  # left_plate_id, right_plate_id
+    plateIdsChanged = pyqtSignal(int, int)  # left_plate_id, right_plate_id
     
     def __init__(self, session: Session, 
                  enable_uniqueness_validation: bool = True, parent=None):

@@ -4,8 +4,8 @@ Process Step Widget
 A visual step indicator for geological process workflows with completion and active states.
 """
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 
 class ProcessStepWidget(QFrame):

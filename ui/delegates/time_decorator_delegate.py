@@ -1,5 +1,5 @@
-from PySide6.QtCore import QLocale, QObject
-from PySide6.QtWidgets import QStyledItemDelegate
+from PyQt5.QtCore import QLocale, QObject
+from PyQt5.QtWidgets import QStyledItemDelegate
 
 
 class TimeDecoratorDelegate(QStyledItemDelegate):

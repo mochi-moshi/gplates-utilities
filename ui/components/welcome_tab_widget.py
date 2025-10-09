@@ -4,8 +4,8 @@ Welcome Tab Widget
 A reusable welcome tab with operation overview and quick access functionality.
 """
 
-from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel
 
 from ui.components.operation_summary_widget import OperationSummaryWidget
 
@@ -13,7 +13,7 @@ from ui.components.operation_summary_widget import OperationSummaryWidget
 class WelcomeTabWidget(QWidget):
     """Welcome tab with operation overview and quick access."""
     
-    operationSelected = Signal(str)  # operation category name
+    operationSelected = pyqtSignal(str)  # operation category name
     
     def __init__(self, title: str = "Geological Operations Suite", 
                  description: str = None, operations_config: list[dict] = None, parent=None):

@@ -6,9 +6,9 @@ including initialization, plate creation, and rotation management with guided wo
 """
 
 from os import path
-from PySide6.QtCore import Signal
-from PySide6.QtGui import QDoubleValidator
-from PySide6.QtWidgets import (
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import (
     QFileDialog, QHBoxLayout, QLabel, 
     QLineEdit, QMessageBox, QPushButton, QVBoxLayout, QWidget,
     QTabWidget, QGroupBox, QTextEdit, QCheckBox, QSpinBox,

@@ -1,8 +1,8 @@
 
 if __name__ == "__main__":
     import sys
-    from PySide6.QtWidgets import QApplication
-    from PySide6.QtGui import QIcon
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtGui import QIcon
     from core.session import Session
     from ui.improved_geological_operations_window import ImprovedGeologicalOperationsWindow
     
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     window = ImprovedGeologicalOperationsWindow(session)
     window.show()
     
-    sys.exit(app.exec())
+    sys.exit(app.exec_())

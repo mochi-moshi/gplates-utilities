@@ -4,7 +4,7 @@ Process Tab Base Widget
 Base class for geological process tabs with common workflow functionality.
 """
 
-from PySide6.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget
 from core.session import Session
 from pygplates import FeatureCollection
 

@@ -4,8 +4,8 @@ Operation Summary Widget
 A clickable widget showing a summary of available operations in a category.
 """
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel
 
 
 class OperationSummaryWidget(QFrame):
