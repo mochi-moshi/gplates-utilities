@@ -21,6 +21,7 @@ from ui.improved_rotation_management_window import ImprovedRotationManagementWin
 from ui.components.operation_summary_widget import OperationSummaryWidget
 from ui.components.welcome_tab_widget import WelcomeTabWidget
 from util.project_storage import load_project, save_project
+from media import LOGO_PATH
 
 
 class ImprovedGeologicalOperationsWindow(QMainWindow):
@@ -48,8 +49,8 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         self.feature_collection_manager = FeatureCollectionLoader(self.session)
         
         # Set application icon (if available)
-        self.setWindowIcon(QIcon("./media/logo.png"))
-        
+        self.setWindowIcon(QIcon(LOGO_PATH))
+      
         self.setup_menu_bar()
         self.setup_ui()
         self.setup_status_bar()
