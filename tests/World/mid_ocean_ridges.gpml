@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpml:FeatureCollection xmlns:gpml="http://www.gplates.org/gplates" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/XMLSchema-instance" gpml:version="1.6.0339" xsi:schemaLocation="http://www.gplates.org/gplates ../xsd/gpml.xsd http://www.opengis.net/gml ../../../gml/current/base">
+    <gml:featureMember>
+        <gpml:MidOceanRidge>
+            <gpml:identity>GPlates-a3c7908d-73fb-4421-bf70-074df047610f</gpml:identity>
+            <gpml:revision>GPlates-01d067f6-6c84-4c00-b18a-78f81a6b819f</gpml:revision>
+            <gml:name>MOR 100 200 (1000)</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">1000</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">1000</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+            <gpml:reconstructionMethod>HalfStageRotationVersion3</gpml:reconstructionMethod>
+            <gpml:leftPlate>100</gpml:leftPlate>
+            <gpml:rightPlate>200</gpml:rightPlate>
+            <gpml:centerLineOf>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">27.897391710830565 31.851234802154419 24.441761902261632 30.390916509390408 21.023966398202724 30.328419760310499 15.433421513205891 28.008857217328494 11.763416594220107 25.956156831238221 9.7809004525418572 22.061274012681622 5.6274823562429734 18.33368328853026 2.4465035205594923 17.694802536764197 -1.5618799308825815 16.104028413025379 -4.6007510230156212 13.779896429125021 -10.074859609270719 10.275056303788567 -11.742771217817081 9.5024909182819393 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:centerLineOf>
+        </gpml:MidOceanRidge>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:MidOceanRidge>
+            <gpml:identity>GPlates-6f0f6875-10b5-4ed1-b40d-e4ba0cc2ee9c</gpml:identity>
+            <gpml:revision>GPlates-f12b17a2-5cd0-4119-bef0-fa2114f9f505</gpml:revision>
+            <gml:name>MOR 200 300</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+            <gpml:reconstructionMethod>HalfStageRotationVersion3</gpml:reconstructionMethod>
+            <gpml:leftPlate>200</gpml:leftPlate>
+            <gpml:rightPlate>300</gpml:rightPlate>
+            <gpml:centerLineOf>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">38.153942675803414 -11.318063516806133 36.029574782491515 -10.210373086854126 33.428740637151712 -6.959906391730903 28.611388599863311 1.0313506885101882 24.087081615702445 3.402139701286679 18.720047217364659 9.8556628918212592 14.270009118571783 12.785031329495281 11.805091698125384 15.023352697694625 9.3357272607240951 19.789546940591386 6.1673638117910121 23.332095175539273 4.6082685822515952 25.68809134318732 2.196952396059503 29.00979261773135 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:centerLineOf>
+        </gpml:MidOceanRidge>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:MidOceanRidge>
+            <gpml:identity>GPlates-2bf4a821-e5e1-4b9a-b460-f7eb01f880f5</gpml:identity>
+            <gpml:revision>GPlates-08aeb4d7-3210-474a-a033-ddded13f3836</gpml:revision>
+            <gml:name>MOR 100 200 (950)</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionMethod>HalfStageRotationVersion3</gpml:reconstructionMethod>
+            <gpml:leftPlate>100</gpml:leftPlate>
+            <gpml:rightPlate>200</gpml:rightPlate>
+            <gpml:centerLineOf>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">9.7902147155607437 8.3159775657266657 9.3369114706593255 7.927362613596971 6.1427629619796891 7.3545443524102208 2.0988993500958304 5.8524516999379816 -0.9972395949385966 3.6085581169174898 -6.5676377166731372 0.28180062596826899 -8.2581436541502917 -0.43097543104400354 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:centerLineOf>
+        </gpml:MidOceanRidge>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:MidOceanRidge>
+            <gpml:identity>GPlates-068cf0ef-7b08-44d9-bf23-7d8665f9968e</gpml:identity>
+            <gpml:revision>GPlates-2653ed2e-f034-42f4-b0aa-20207a89c3e4</gpml:revision>
+            <gml:name>MOR 100 300</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionMethod>HalfStageRotationVersion3</gpml:reconstructionMethod>
+            <gpml:leftPlate>100</gpml:leftPlate>
+            <gpml:rightPlate>300</gpml:rightPlate>
+            <gpml:centerLineOf>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">31.79054322406002 21.418739834855582 28.325250420616104 19.934194187127115 24.907096698427797 19.901149816712341 19.295994297869274 17.580241937343462 15.60256881240436 15.53461548101021 13.561810010669687 11.612729024054083 9.7902147155607437 8.3159775657266657 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:centerLineOf>
+        </gpml:MidOceanRidge>
+    </gml:featureMember>
+</gpml:FeatureCollection>

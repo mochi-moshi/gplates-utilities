@@ -1,0 +1,8 @@
+{
+    "version": 1,
+    "feature_collections": [
+        "triple_diverge_crust.gpml",
+        "tripe_diverge_mor.gpml"
+    ],
+    "rotation_model": "triple_diverge_rotations.rot"
+}

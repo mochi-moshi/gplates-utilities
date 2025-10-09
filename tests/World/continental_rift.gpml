@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpml:FeatureCollection xmlns:gpml="http://www.gplates.org/gplates" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/XMLSchema-instance" gpml:version="1.6.0339" xsi:schemaLocation="http://www.gplates.org/gplates ../xsd/gpml.xsd http://www.opengis.net/gml ../../../gml/current/base">
+    <gml:featureMember>
+        <gpml:ContinentalRift>
+            <gpml:identity>GPlates-651b1def-52e3-49c1-9bae-fdeed8ec9f2d</gpml:identity>
+            <gpml:revision>GPlates-dd1bdb4e-b561-433b-893a-fc008f203c23</gpml:revision>
+            <gml:name>Initial Continental Rift</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">1000</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>0</gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">1000</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+            <gpml:centerLineOf>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">27.897391710830565 31.851234802154419 24.441761902261632 30.390916509390408 21.023966398202724 30.328419760310499 15.433421513205891 28.008857217328494 11.763416594220107 25.956156831238221 9.7809004525418572 22.061274012681622 5.6274823562429734 18.33368328853026 2.4465035205594923 17.694802536764197 -1.5618799308825815 16.104028413025379 -4.6007510230156212 13.779896429125021 -10.074859609270719 10.275056303788567 -11.742771217817081 9.5024909182819393 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:centerLineOf>
+        </gpml:ContinentalRift>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:ContinentalRift>
+            <gpml:identity>GPlates-635c63b4-aaf5-4dd8-8088-6cd597514af7</gpml:identity>
+            <gpml:revision>GPlates-484a065f-92d5-4579-b177-a6ac91ecbaeb</gpml:revision>
+            <gml:name>Continental Rift 950</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">950</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>0</gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:centerLineOf>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">41.518642186321905 -23.477967202392254 39.451111092891061 -22.150696757993803 37.001518119423736 -18.572561917068978 32.49781879003659 -9.9804545716609407 28.052647364228875 -7.3337542787780734 22.85811333538631 -0.51270953288816357 18.46825622220322 2.5889520153269068 16.041188018279314 4.9163996246668962 13.629637840255334 9.7944088679549797 10.484556911833629 13.405165917330859 8.9316375240120873 15.78899117153593 6.3119401484346893 19.412428219810831 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gml:description></gml:description>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:centerLineOf>
+        </gpml:ContinentalRift>
+    </gml:featureMember>
+</gpml:FeatureCollection>

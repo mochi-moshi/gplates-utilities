@@ -1,0 +1,9 @@
+{
+    "version": 1,
+    "feature_collections": [
+        "polygons.gpml",
+        "subduction_zones.gpml",
+        "lines.gpml"
+    ],
+    "rotation_model": "rotations.rot"
+}

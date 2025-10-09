@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpml:FeatureCollection xmlns:gpml="http://www.gplates.org/gplates" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/XMLSchema-instance" gpml:version="1.6.0339" xsi:schemaLocation="http://www.gplates.org/gplates ../xsd/gpml.xsd http://www.opengis.net/gml ../../../gml/current/base">
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-08ad0707-5783-494f-9c74-17c8beadb3d7</gpml:identity>
+            <gpml:revision>GPlates-c841929e-fe2d-48b5-9467-849d2a656f95</gpml:revision>
+            <gml:name>Box Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">9.5290273609878078 -19.475764132598098 9.8916370627519878 -12.779575274174997 10.194598494447915 -7.7067362206958858 9.9805156491608926 -7.7123070066029262 9.6672725112609115 -7.7204449554387216 9.5055627122522832 -7.7246401581542976 8.1062593868848722 -7.7607840624374447 6.396135256150095 -7.8046205575639798 6.2362567541237723 -7.8087026049998132 5.538045874492493 -7.8265011428222193 5.2309213231502865 -7.8343166206457351 4.579951203751655 -7.85085723621214 4.9086494853091773 -19.246048260059155 4.9406540160521759 -19.390241868434067 9.5290273609878078 -19.475764132598098 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-98061faf-618d-4c36-a113-a5f5f4a6aa96</gpml:identity>
+            <gpml:revision>GPlates-5b6e663f-af4c-4cb2-b786-d6c998ced8e2</gpml:revision>
+            <gml:name>Box Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">0.32734393377987819 -19.305441076972279 1.5757633904908435 -7.9268687246738256 1.0968361320509028 -7.9389553740161993 0.79022868904459975 -7.9466910638569148 -1.1596287589628953 -7.9958776644188312 -2.1357263736297618 -8.0205187935700479 -3.3949017580433281 -8.0523544414910262 -3.5662697502667027 -8.0566928625777408 -3.627517189338695 -8.0582438158580452 -3.9312227280841654 -8.0659376505748206 -3.9508190559631609 -14.826809662436492 -4.0020365864527365 -19.225951062314564 0.32734393377987819 -19.305441076972279 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-0fcecaef-959d-4910-af4b-31647671e947</gpml:identity>
+            <gpml:revision>GPlates-03ef6167-f676-4de8-a1e0-4a615de51078</gpml:revision>
+            <gml:name>Box Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">4.579951203751655 -7.85085723621214 4.9086494853091773 -19.246048260059155 4.9406540160521768 -19.390241868434064 5.5922972523612691 -19.402290076040519 5.7589405985468787 -19.405375325004869 7.4626708340287911 -19.437031778894138 8.8511212893011528 -19.463010584873661 9.4839310849210658 -19.474914196074586 9.5290273609878078 -19.475764132598098 9.8916370627519878 -12.779575274174997 10.194598494447915 -7.7067362206958858 4.579951203751655 -7.85085723621214 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-15ca4647-a904-4698-a5cd-fa2628fa13b4</gpml:identity>
+            <gpml:revision>GPlates-d6bd4e71-3821-4f45-a841-de5077b1c04d</gpml:revision>
+            <gml:name>Box Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">-3.9312227280841654 -8.0659376505748206 -3.9508190559631609 -14.826809662436492 -4.0020365864527365 -19.225951062314561 -3.9854070214024455 -19.226257417830023 -2.740493403373184 -19.249160105287256 -1.7669362344399102 -19.267036374210225 0.17265333634091667 -19.302605084103043 0.3273439337798783 -19.305441076972283 1.5757633904908435 -7.9268687246738256 -3.9312227280841654 -8.0659376505748206 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-548e9ad4-2b93-4f85-9267-a247a5efffb4</gpml:identity>
+            <gpml:revision>GPlates-ab7130e9-5738-4f64-a77a-bc0ffd4bf67a</gpml:revision>
+            <gml:name>Line B Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">10.142592108181365 -8.6786159252507815 9.9694279663483343 -8.6808701786533575 9.6672227455603768 -8.6847985826127019 9.4585116717715447 -8.6875075122415968 8.0614085937136988 -8.7055601230900734 6.3517172972376459 -8.7274849879063527 6.1894527127262045 -8.7295576704355735 5.4877201437862659 -8.7385070161006766 5.264272267397776 -8.7413521471845126 4.6126343597777817 -8.7496380130617482 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-2aebcc1f-e66b-45c4-8272-f2f7fa94fd58</gpml:identity>
+            <gpml:revision>GPlates-2fbb6b8e-19a4-419d-a85d-f70007695c96</gpml:revision>
+            <gml:name>Line B Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">1.4827442686340357 -8.789262495079857 1.0125297257171695 -8.7951999530645892 0.74745546656751283 -8.7985462685311973 -1.2014113247926805 -8.8231458060349954 -2.1767844542886796 -8.8354670602904619 -3.4333106663008666 -8.8513644785584304 -3.566574179142223 -8.8530526992853069 -3.6682658215764254 -8.8543412867910067 -3.9363477169496091 -8.857739718737319 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-7993f712-36be-42af-9bb4-7ccd1b4d3b60</gpml:identity>
+            <gpml:revision>GPlates-82fb135b-5b47-49d0-a7a7-8bbc3df8cb9e</gpml:revision>
+            <gml:name>Line A Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">9.5534906922426739 -19.089476901023158 9.4962538846900308 -19.088572467106786 8.8745250342262558 -19.078767208381837 7.4854833452804295 -19.056976897626765 5.7814364397515021 -19.030431327540327 5.6149234889040578 -19.0278467261261 4.9224587032893172 -19.017113673704145 4.9039075227836468 -19.016826455806072 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-aab8c668-95de-44d9-8ba0-aa9470ac2534</gpml:identity>
+            <gpml:revision>GPlates-9276cb71-d437-484d-80fb-1513c77d03e0</gpml:revision>
+            <gml:name>Line A Dead</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">0.36714819529563614 -18.946917034534724 0.19383574114478205 -18.944253350722569 -1.7458322296836513 -18.914434511276344 -2.7200699886630297 -18.899438439867076 -3.9675648163590034 -18.880199618887954 -3.9988548263389245 -18.879716394573212 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-2bd63e4a-a0ff-40af-853c-a2d172b224bb</gpml:identity>
+            <gpml:revision>GPlates-159de5cc-7920-4f88-a90f-7c4dd98e5ca0</gpml:revision>
+            <gml:name>Box Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">10.194598494447915 -7.7067362206958858 9.8916370627519878 -12.779575274174997 9.5290273609878078 -19.475764132598098 16.329784044884804 -19.607193000150417 16.42740609918587 -7.5405312923695602 10.194598494447915 -7.7067362206958858 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-eb76ada4-dd74-48e7-b836-f830092bcdc3</gpml:identity>
+            <gpml:revision>GPlates-49d60a1e-4311-406b-8304-a93120db1676</gpml:revision>
+            <gml:name>Box Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">4.9406540160521759 -19.390241868434067 4.9086494853091773 -19.246048260059155 4.579951203751655 -7.85085723621214 1.5757633904908435 -7.9268687246738256 0.32734393377987819 -19.305441076972279 4.9406540160521759 -19.390241868434067 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-a526a975-f62d-4d61-92bf-2ff68391a492</gpml:identity>
+            <gpml:revision>GPlates-fde3a565-b48b-48fa-8ae1-fed37b20ee26</gpml:revision>
+            <gml:name>Box Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">-4.0020365864527365 -19.225951062314564 -3.9508190559631609 -14.826809662436492 -3.9312227280841654 -8.0659376505748206 -19.579237475071359 -8.4806444813847346 -18.785898604552063 -18.942140142714138 -4.0020365864527365 -19.225951062314564 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-5b081def-f9a5-46d7-abf2-3c19af1cd00b</gpml:identity>
+            <gpml:revision>GPlates-c4b29e2f-91cd-4d65-b434-bc1a525d6a3d</gpml:revision>
+            <gml:name>Box Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:Polygon>
+                            <gml:exterior>
+                                <gml:LinearRing>
+                                    <gml:posList gml:dimension="2">1.5757633904908435 -7.9268687246738256 0.3273439337798783 -19.305441076972283 4.9406540160521768 -19.390241868434064 4.9086494853091773 -19.246048260059155 4.579951203751655 -7.85085723621214 1.5757633904908435 -7.9268687246738256 </gml:posList>
+                                </gml:LinearRing>
+                            </gml:exterior>
+                        </gml:Polygon>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:Polygon</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-9de6bdf2-96fa-42a0-a1c7-030a5ddf60ec</gpml:identity>
+            <gpml:revision>GPlates-796264a2-ca0e-430d-8473-dbcf3923f9a7</gpml:revision>
+            <gml:name>Line B Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">17.441523710780338 -8.5807877934543697 10.142592108181365 -8.6786159252507815 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-cb1941f7-905f-49f6-99ce-b7b3f3b43030</gpml:identity>
+            <gpml:revision>GPlates-3a090d2b-af22-416c-ad30-dd720314502a</gpml:revision>
+            <gml:name>Line B Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">4.6126343597777817 -8.7496380130617482 1.4827442686340357 -8.789262495079857 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-3d333d5d-ac20-436b-905b-481bf7c00628</gpml:identity>
+            <gpml:revision>GPlates-33840219-2ec2-4076-a6ba-771a1ae2065e</gpml:revision>
+            <gml:name>Line B Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">-3.9363477169496091 -8.857739718737319 -20.03238171815272 -9.0716435644774407 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-3950c1b4-3c38-47e3-91a5-1f52fff84e49</gpml:identity>
+            <gpml:revision>GPlates-373cb2a2-7817-4549-a333-ef142292d2ab</gpml:revision>
+            <gml:name>Line A Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">17.719745077167673 -19.222636156860244 9.5534906922426739 -19.089476901023158 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-464c5539-134e-4310-8900-361fc27a2968</gpml:identity>
+            <gpml:revision>GPlates-97881e12-e001-4e34-ad7e-28909a6a9586</gpml:revision>
+            <gml:name>Line A Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">4.9039075227836468 -19.016826455806072 0.36714819529563614 -18.946917034534724 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+    <gml:featureMember>
+        <gpml:UnclassifiedFeature>
+            <gpml:identity>GPlates-7c7411ae-386b-4c87-84f5-dea39608acfc</gpml:identity>
+            <gpml:revision>GPlates-3771e627-6b3b-4460-816c-95ec4793a586</gpml:revision>
+            <gml:name>Line A Alive</gml:name>
+            <gml:validTime>
+                <gml:TimePeriod>
+                    <gml:begin>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantPast</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant>
+                            <gml:timePosition gml:frame="http://gplates.org/TRS/flat">http://gplates.org/times/distantFuture</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                </gml:TimePeriod>
+            </gml:validTime>
+            <gpml:reconstructionPlateId>
+                <gpml:ConstantValue>
+                    <gpml:value>100</gpml:value>
+                    <gpml:valueType xmlns:gpml="http://www.gplates.org/gplates">gpml:plateId</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:reconstructionPlateId>
+            <gpml:unclassifiedGeometry>
+                <gpml:ConstantValue>
+                    <gpml:value>
+                        <gml:OrientableCurve gml:orientation="+">
+                            <gml:baseCurve>
+                                <gml:LineString>
+                                    <gml:posList gml:dimension="2">-3.9988548263389245 -18.879716394573212 -19.60948804635013 -18.627550887675664 </gml:posList>
+                                </gml:LineString>
+                            </gml:baseCurve>
+                        </gml:OrientableCurve>
+                    </gpml:value>
+                    <gpml:valueType xmlns:gml="http://www.opengis.net/gml">gml:OrientableCurve</gpml:valueType>
+                </gpml:ConstantValue>
+            </gpml:unclassifiedGeometry>
+            <gpml:geometryImportTime>
+                <gml:TimeInstant>
+                    <gml:timePosition gml:frame="http://gplates.org/TRS/flat">900</gml:timePosition>
+                </gml:TimeInstant>
+            </gpml:geometryImportTime>
+        </gpml:UnclassifiedFeature>
+    </gml:featureMember>
+</gpml:FeatureCollection>

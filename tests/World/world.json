@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "feature_collections": [
+        "continental_crust.gpml",
+        "continental_rift.gpml",
+        "cratons.gpml",
+        "mid_ocean_ridges.gpml",
+        "oceanic_crust.gpml"
+    ],
+    "rotation_model": "rotations.rot"
+}
