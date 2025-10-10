@@ -6,11 +6,11 @@ tabbed window with consistent workflows and visual design patterns.
 """
 
 from os import path
-from PyQt5.QtCore import QTimer, pyqtSlot, pyqtSignal, Qt
+from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
-    QFileDialog, QHBoxLayout, QLabel, QMessageBox, QVBoxLayout, QWidget,
-    QTabWidget, QGridLayout, QMainWindow, QFrame
+    QFileDialog, QMessageBox, QVBoxLayout, QWidget,
+    QTabWidget, QMainWindow, QLayout
 )
 
 from core.session import Session
@@ -44,7 +44,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         
         self.setWindowTitle("GPlates Operations Suite")
         # self.setMinimumSize(1200, 800)
-        # self.resize(1200, 800)
+        self.resize(800, 600)
 
         self.feature_collection_manager = FeatureCollectionLoader(self.session)
         
@@ -62,6 +62,7 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         
         layout = QVBoxLayout(central_widget)
+        # layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         layout.setContentsMargins(5, 5, 5, 5)
         
         # Main tab widget

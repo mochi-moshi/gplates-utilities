@@ -6,7 +6,7 @@ A widget for entering and validating geological time ranges with validation feed
 
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtGui import QDoubleValidator
-from PyQt5.QtWidgets import QWidget, QFormLayout, QLineEdit, QLabel
+from PyQt5.QtWidgets import QWidget, QFormLayout, QLineEdit, QLabel, QLayout
 
 
 class TimeRangeWidget(QWidget):
@@ -21,7 +21,8 @@ class TimeRangeWidget(QWidget):
         
     def setup_ui(self):
         """Setup the UI components."""
-        layout = QFormLayout(self)
+        layout = QFormLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Time inputs with validators
         self.start_time = QLineEdit()
@@ -46,6 +47,10 @@ class TimeRangeWidget(QWidget):
         self.status_label = QLabel()
         self.status_label.setStyleSheet("color: #666; font-size: 11px;")
         layout.addRow(self.status_label)
+        self.status_label.setDisabled(True)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
         
     def validate_times(self):
         """Validate time range and emit signal if valid."""
@@ -73,19 +78,23 @@ class TimeRangeWidget(QWidget):
                 if start <= end:
                     self.status_label.setText("⚠️ Start time should be greater than end time")
                     self.status_label.setStyleSheet("color: orange; font-size: 11px;")
+                    self.status_label.setDisabled(False)
                     return False
                 else:
                     duration = start - end
                     self.status_label.setText(f"✓ Duration: {duration:.1f} million years")
                     self.status_label.setStyleSheet("color: green; font-size: 11px;")
+                    self.status_label.setDisabled(False)
                     return True
             else:
                 self.status_label.setText("Enter both start and end times")
                 self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+                self.status_label.setDisabled(False)
                 
         except ValueError:
             self.status_label.setText("⚠️ Please enter valid numbers")
             self.status_label.setStyleSheet("color: red; font-size: 11px;")
+            self.status_label.setDisabled(False)
         
         return False
     

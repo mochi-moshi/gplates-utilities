@@ -5,7 +5,7 @@ A visual step indicator for geological process workflows with completion and act
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QSizePolicy, QLayout
 
 
 class ProcessStepWidget(QFrame):
@@ -19,7 +19,8 @@ class ProcessStepWidget(QFrame):
         
         self.setFrameStyle(QFrame.StyledPanel)
         
-        layout = QHBoxLayout(self)
+        layout = QHBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         
         # Step number circle
         self.step_label = QLabel(str(step_number))
@@ -41,6 +42,7 @@ class ProcessStepWidget(QFrame):
         
         # Step content
         content_layout = QVBoxLayout()
+        content_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         self.title_label = QLabel(f"<b>{title}</b>")
         self.description_label = QLabel(description)
         self.description_label.setWordWrap(True)
@@ -53,6 +55,10 @@ class ProcessStepWidget(QFrame):
         
         layout.addWidget(self.step_label)
         layout.addLayout(content_layout, 1)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
+        # self.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
         
     def set_active(self, active: bool):
         """Set this step as active/current."""

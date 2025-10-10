@@ -7,7 +7,7 @@ A reusable widget for handling file output with common options like append and t
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, 
-    QLineEdit, QPushButton, QCheckBox, QFileDialog, QLabel
+    QLineEdit, QPushButton, QCheckBox, QFileDialog, QLabel, QLayout
 )
 from core.session import Session
 
@@ -27,12 +27,15 @@ class OutputWidget(QWidget):
         
     def setup_ui(self):
         """Setup the UI components."""
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # File path selection
         file_layout = QFormLayout()
+        file_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         path_layout = QHBoxLayout()
+        path_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         self.output_path = QLineEdit()
         self.output_path.setReadOnly(True)
         self.output_path.setPlaceholderText("Select output file location...")
@@ -47,6 +50,7 @@ class OutputWidget(QWidget):
         
         # Output options
         options_layout = QVBoxLayout()
+        options_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.append_to_file = QCheckBox("Append to existing file")
         self.append_to_file.setToolTip("If checked, results will be added to existing file instead of overwriting it")
@@ -68,6 +72,9 @@ class OutputWidget(QWidget):
         layout.addLayout(file_layout)
         layout.addLayout(options_layout)
         layout.addWidget(self.status_label)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
         
     def select_output_path(self):
         """Open file dialog to select output path."""

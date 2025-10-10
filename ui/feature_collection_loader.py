@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHBoxLayout, QLabel, QListView, QMessageBox, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QAbstractItemView, QFileDialog, QHBoxLayout, QLabel, QListView, QMessageBox, QPushButton, QVBoxLayout, QWidget, QLayout
 from core.session import Session
 
 class FeatureCollectionLoader(QWidget):
@@ -23,15 +23,18 @@ class FeatureCollectionLoader(QWidget):
         self.fc_list.clicked.connect(self.on_selection_changed)
 
         button_layout = QHBoxLayout()
+        button_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         button_layout.addWidget(add_button)
         button_layout.addWidget(self.remove_button)
 
-        v_layout = QVBoxLayout()
-        v_layout.addWidget(QLabel("Here is a list of all loaded feature collections:"))
-        v_layout.addWidget(self.fc_list)
-        v_layout.addLayout(button_layout)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
+        layout.addWidget(QLabel("Here is a list of all loaded feature collections:"))
+        layout.addWidget(self.fc_list)
+        layout.addLayout(button_layout)
 
-        self.setLayout(v_layout)
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
     
     def load_feature_collection(self):
         fc_filepaths, _ = QFileDialog.getOpenFileNames(self, "Open Feature Collection(s)", self.session._project_path if self.session._project_path else ".", "GPlates Markup Language (*.gpml)")

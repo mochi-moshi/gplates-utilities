@@ -9,10 +9,10 @@ from os import path
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import (
-    QComboBox, QFileDialog, QHBoxLayout, QLabel, 
+    QComboBox, QLabel, 
     QLineEdit, QMessageBox, QPushButton, QVBoxLayout, QWidget,
-    QTabWidget, QGroupBox, QCheckBox, QSpinBox,
-    QFormLayout
+    QTabWidget, QGroupBox, QCheckBox,
+    QFormLayout, QLayout, QMainWindow
 )
 
 from core.session import Session, FeatureDataColumn
@@ -35,7 +35,8 @@ class PlateSplittingTabWidget(ProcessTabWidget):
     """Tab for splitting plates using geological features."""
     
     def setup_ui(self):
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Workflow steps
         self.steps = [
@@ -55,6 +56,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         # Step 1: Splitting feature selector
         self.splitter_group = QGroupBox("Splitting Feature Selection")
         splitter_layout = QVBoxLayout(self.splitter_group)
+        splitter_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.splitter_model = LineFilterModel()
         self.splitter_model.setSourceModel(self.session.get_feature_model())
@@ -70,6 +72,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
+        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
@@ -84,6 +87,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
         
         feature_layout = QVBoxLayout(self.feature_group)
+        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         feature_layout.addWidget(self.feature_selector)
         
         # Step 5: Output controls
@@ -92,6 +96,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
+        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -124,6 +129,9 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
 
     def on_time_changed(self):
         """Handle time changes."""
@@ -212,7 +220,8 @@ class LineSplittingTabWidget(ProcessTabWidget):
     """Tab for splitting line features at their intersections."""
     
     def setup_ui(self):
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Workflow steps  
         self.steps = [
@@ -232,6 +241,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         # Step 1: First line selection
         self.line1_group = QGroupBox("First Line Selection")
         line1_layout = QVBoxLayout(self.line1_group)
+        line1_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.line1_model = LineFilterModel()
         self.line1_model.setSourceModel(self.session.get_feature_model())
@@ -247,6 +257,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         # Step 2: Second line selection
         self.line2_group = QGroupBox("Second Line Selection")
         line2_layout = QVBoxLayout(self.line2_group)
+        line2_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.line2_model = LineFilterModel()
         self.line2_model.setSourceModel(self.session.get_feature_model())
@@ -262,6 +273,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         # Step 3: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
+        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
@@ -276,6 +288,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
+        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -308,6 +321,9 @@ class LineSplittingTabWidget(ProcessTabWidget):
         
         # Set first step as active
         self.steps[0].set_active(True)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
@@ -409,7 +425,8 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
     """Tab for geometric polygon operations (intersection, union, difference)."""
     
     def setup_ui(self):
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Workflow steps
         self.steps = [
@@ -431,6 +448,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Step 1: Polygon selection
         self.polygon_group = QGroupBox("Polygon Feature Selection")
         polygon_layout = QVBoxLayout(self.polygon_group)
+        polygon_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.polygon_model = PolygonFilterModel()
         self.polygon_model.setSourceModel(self.session.get_feature_model())
@@ -443,6 +461,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
+        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
@@ -454,6 +473,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Step 3: Operation selection
         self.operation_group = QGroupBox("Operation Type")
         operation_layout = QVBoxLayout(self.operation_group)
+        operation_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Operation buttons with different colors
         self.intersection_button = QPushButton("∩ Intersection")
@@ -514,6 +534,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Step 4: Parameters
         self.params_group = QGroupBox("Operation Parameters")
         params_layout = QVBoxLayout(self.params_group)
+        params_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Plate ID widget with validation
         self.plate_id_widget = PlateIdWidget(self.session, "New Plate ID", enable_uniqueness_validation=True)
@@ -529,6 +550,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         
         output_layout = QVBoxLayout(self.output_group)
+        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -547,6 +569,9 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         # Set first step as active
         self.steps[0].set_active(True)
         self.selected_operation = None
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
     
     def select_operation(self, operation: str):
         """Select operation type and update UI."""
@@ -693,7 +718,8 @@ class ImprovedPlateOperationsWindow(QWidget):
         
     def setup_ui(self):
         """Setup the main UI components."""
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Header info
         header_label = QLabel("""
@@ -731,5 +757,16 @@ class ImprovedPlateOperationsWindow(QWidget):
         self.tab_widget.setTabToolTip(0, "Split plates using geological features")
         self.tab_widget.setTabToolTip(1, "Find and create features at line intersections")
         self.tab_widget.setTabToolTip(2, "Perform geometric operations on polygon features")
+
+        self.tab_widget.currentChanged.connect(self.tabChange)
         
         layout.addWidget(self.tab_widget)
+
+        self.setLayout(layout)
+        # self.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
+        self.tab_widget.setMinimumSize(self.tab_widget.currentWidget().layout().minimumSize())
+        self.setMinimumSize(self.layout().minimumSize())
+
+    def tabChange(self, idx):
+        self.tab_widget.setMinimumSize(self.tab_widget.currentWidget().layout().minimumSize())
+        self.setMinimumSize(self.layout().minimumSize())

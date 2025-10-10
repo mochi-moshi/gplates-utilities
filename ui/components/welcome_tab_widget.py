@@ -5,7 +5,7 @@ A reusable welcome tab with operation overview and quick access functionality.
 """
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QLayout
 
 from ui.components.operation_summary_widget import OperationSummaryWidget
 
@@ -77,7 +77,8 @@ class WelcomeTabWidget(QWidget):
         
     def setup_ui(self):
         """Setup the UI components."""
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Welcome header
         welcome_label = QLabel(f"""
@@ -97,6 +98,7 @@ class WelcomeTabWidget(QWidget):
         
         # Create operation summary widgets
         categories_layout = QGridLayout()
+        categories_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.operation_widgets = {}
         
@@ -126,6 +128,9 @@ class WelcomeTabWidget(QWidget):
         self.add_quick_start_section(layout)
         
         layout.addStretch()
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
         
     def add_quick_start_section(self, layout):
         """Add quick start section to layout."""

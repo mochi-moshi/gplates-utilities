@@ -5,7 +5,7 @@ A clickable widget showing a summary of available operations in a category.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QLayout
 
 
 class OperationSummaryWidget(QFrame):
@@ -32,10 +32,12 @@ class OperationSummaryWidget(QFrame):
             }
         """)
         
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Header
         header_layout = QHBoxLayout()
+        header_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         if icon:
             icon_label = QLabel(icon)
@@ -66,6 +68,9 @@ class OperationSummaryWidget(QFrame):
             layout.addWidget(op_label)
         
         self.setCursor(Qt.PointingHandCursor)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
     
     def mousePressEvent(self, event):
         """Handle click events."""

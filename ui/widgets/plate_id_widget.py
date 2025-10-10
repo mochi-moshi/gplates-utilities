@@ -6,7 +6,7 @@ A widget for entering and validating plate IDs with optional uniqueness validati
 
 from PyQt5.QtCore import pyqtSignal, QTimer
 from PyQt5.QtGui import QIntValidator
-from PyQt5.QtWidgets import QWidget, QFormLayout, QSpinBox, QLabel, QCheckBox, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QFormLayout, QSpinBox, QLabel, QLayout, QVBoxLayout
 from core.session import Session
 
 class PlateIdWidget(QWidget):
@@ -26,7 +26,8 @@ class PlateIdWidget(QWidget):
         
     def setup_ui(self):
         """Setup the UI components."""
-        layout = QFormLayout(self)
+        layout = QFormLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Plate ID input
         self.plate_id_input = QSpinBox()
@@ -49,6 +50,8 @@ class PlateIdWidget(QWidget):
         
         # Initial validation
         self.validate_plate_id()
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
         
     def validate_plate_id(self):
         """Validate plate ID and emit signal if valid."""
@@ -169,7 +172,8 @@ class DualPlateIdWidget(QWidget):
         
     def setup_ui(self, session: Session):
         """Setup the UI components."""
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Description
         description_label = QLabel("Features split by the rift will be assigned to left or right plates based on their position relative to the rift line:")
@@ -186,6 +190,9 @@ class DualPlateIdWidget(QWidget):
         self.right_plate_widget = PlateIdWidget(session, "Right Plate ID", self.enable_uniqueness_validation)
         self.right_plate_widget.plateIdChanged.connect(self._emit_plate_ids_changed)
         layout.addWidget(self.right_plate_widget)
+
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
     
     def _emit_plate_ids_changed(self):
         """Emit signal when either plate ID changes and both are valid."""

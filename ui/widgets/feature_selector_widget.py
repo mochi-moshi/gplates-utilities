@@ -8,7 +8,7 @@ from PyQt5.QtCore import pyqtSignal, QItemSelection, QRegularExpression
 from PyQt5.QtGui import QRegularExpressionValidator
 from PyQt5.QtWidgets import (
     QAbstractItemView, QTreeView, QVBoxLayout, QWidget,
-    QGroupBox, QFormLayout, QLineEdit, QLabel
+    QGroupBox, QFormLayout, QLineEdit, QLabel,  QLayout
 )
 
 from core.session import Session, FeatureDataColumn, extractFeatureDataFromRow
@@ -32,17 +32,24 @@ class FeatureSelectorWidget(QWidget):
         
     def setup_ui(self, single_selection: bool):
         """Setup the UI components."""
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Filter controls
         filter_group = QGroupBox("Filters")
-        filter_layout = QFormLayout(filter_group)
+        filter_layout = QFormLayout()
+        filter_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.plate_filter = QLineEdit()
         self.plate_filter.setPlaceholderText("e.g., 701,801,802")
         self.plate_filter.setValidator(QRegularExpressionValidator(QRegularExpression("\\d+(,\\s*\\d+)*")))
         
         filter_layout.addRow("Plate IDs:", self.plate_filter)
+        filter_group.setLayout(filter_layout)
+        
+        feature_group = QGroupBox("Available Features")
+        feature_layout = QVBoxLayout()
+        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Feature view
         self.feature_model = TimeRangeFilterModel()
@@ -59,15 +66,22 @@ class FeatureSelectorWidget(QWidget):
         self.feature_view.setItemDelegateForColumn(FeatureDataColumn.end_time, TimeDecoratorDelegate(self.feature_view))
         self.feature_view.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection if single_selection else QAbstractItemView.SelectionMode.MultiSelection)
         self.feature_view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+
+        self.feature_view.setMinimumHeight(150)
         
         # Selection info
         self.selection_label = QLabel("No features selected")
         self.selection_label.setStyleSheet("color: #666; font-size: 11px;")
+
+        feature_layout.addWidget(self.feature_view)
+        feature_layout.addWidget(self.selection_label)
+        feature_group.setLayout(feature_layout)
+        # feature_group.setFixedHeight(50)
         
         layout.addWidget(filter_group)
-        layout.addWidget(QLabel("<b>Available Features:</b>"))
-        layout.addWidget(self.feature_view)
-        layout.addWidget(self.selection_label)
+        layout.addWidget(feature_group)
+        self.setLayout(layout)
+        self.setMinimumSize(layout.minimumSize())
         
     def connect_signals(self):
         """Connect widget signals."""
