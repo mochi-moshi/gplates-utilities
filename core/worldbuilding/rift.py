@@ -1,4 +1,4 @@
-from pygplates import FeatureCollection, Feature, RotationModel, ReconstructSnapshot, PropertyName, reverse_reconstruct
+from pygplates import FeatureCollection, Feature, RotationModel, ReconstructSnapshot, PropertyName, FeatureType
 from pygplates import PointOnSphere, MultiPointOnSphere, PolylineOnSphere, PolygonOnSphere, GreatCircleArc, Vector3D, GeometryOnSphere, GpmlPlateId, Enumeration, EnumerationType, GeoTimeInstant
 
 from ..line_splitter import split_lines
@@ -6,7 +6,7 @@ from ..plate_splitter import split_plate_by_line
 from ..rotations import split_rotation_features_by_plate_id
 
 
-def rift(features: list[Feature], rift: Feature, rotation_features: FeatureCollection, split_time: float, left_plate_id: int, right_plate_id: int, max_transition_size = 10, *, use_topologies: bool = False):
+def rift(features: list[Feature], rift: Feature, rotation_features: FeatureCollection, split_time: float, left_plate_id: int, right_plate_id: int, max_transition_size = 10, *, generate_mor: bool = False, use_topologies: bool = False):
   """
   Model continental rifting by splitting features along a rift line.
   
@@ -18,6 +18,7 @@ def rift(features: list[Feature], rift: Feature, rotation_features: FeatureColle
     left_plate_id: Plate ID for features on the left side of the rift
     right_plate_id: Plate ID for features on the right side of the rift
     max_transition_size: Maximum size for transition zones (unused in basic implementation)
+    generate_mor: Whether to generate a MOR from the rift
     use_topologies: Whether to use topological networks (unused in basic implementation)
     
   Returns:
@@ -90,6 +91,15 @@ def rift(features: list[Feature], rift: Feature, rotation_features: FeatureColle
     # Dont need to reconstruct because functions handled it
     # reverse_reconstruct(all_split_features, rotation_model, split_time)
     output_fc.add(all_split_features)
+
+  if generate_mor:
+    output_fc.add(Feature.create_reconstructable_feature(
+      FeatureType.gpml_mid_ocean_ridge, rift_geometry, f'MOR {split_time:.2f}',
+      valid_time=(split_time, GeoTimeInstant.create_distant_future()),
+      other_properties=[(PropertyName.gpml_reconstruction_method, Enumeration(
+    EnumerationType.create_gpml('ReconstructionMethodEnumeration'),
+    'HalfStageRotationVersion3')), (PropertyName.gpml_left_plate, GpmlPlateId(left_plate_id)), (PropertyName.gpml_right_plate, GpmlPlateId(right_plate_id))], reverse_reconstruct=(rotation_model, GeoTimeInstant(split_time))
+    ))
 
   return output_fc, output_rc
 

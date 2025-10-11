@@ -10,7 +10,7 @@ from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import (
     QComboBox, QLabel, QLineEdit, QFormLayout,
     QMessageBox, QPushButton, QVBoxLayout, QWidget,
-    QTabWidget, QGroupBox, QLayout, QSizePolicy
+    QTabWidget, QGroupBox, QLayout, QCheckBox
 )
 
 from core.session import Session, FeatureDataColumn
@@ -286,9 +286,13 @@ class RiftingTabWidget(ProcessTabWidget):
         # Dual plate ID widget with validation
         self.plate_ids_widget = DualPlateIdWidget(self.session, enable_uniqueness_validation=True)
         self.plate_ids_widget.plateIdsChanged.connect(lambda left, right: self.update_step_status(3, True))
+
+        self.generate_mor_checkbox = QCheckBox("Generate Mid Ocean Ridge")
         
-        params_layout.addWidget(QLabel())
+        # params_layout.addWidget(QLabel())
         params_layout.addWidget(self.plate_ids_widget)
+        params_layout.addWidget(self.generate_mor_checkbox)
+
         
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
@@ -425,6 +429,7 @@ class RiftingTabWidget(ProcessTabWidget):
                 split_time,
                 left_plate_id,
                 right_plate_id,
+                generate_mor=self.generate_mor_checkbox.isChecked(),
                 use_topologies=self.feature_output_widget.should_generate_topologies()
             )
             
