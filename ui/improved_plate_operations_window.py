@@ -19,14 +19,12 @@ from core.session import Session, FeatureDataColumn
 from core.plate_splitter import split_plate_features
 from core.line_splitter import split_line_features
 from core.polygon_operations import join_plate_features_by_intersect, join_plate_features_by_union, split_plate_features_by_difference
-from models.line_filter_model import LineFilterModel
-from models.polygon_filter_model import PolygonFilterModel
 from ui.components.process_step_widget import ProcessStepWidget
-from ui.widgets.time_range_widget import TimeRangeWidget
 from ui.widgets.feature_selector_widget import FeatureSelectorWidget
 from ui.widgets.output_widget import OutputWidget
 from ui.widgets.plate_id_widget import PlateIdWidget
 from ui.base.process_tab_widget import ProcessTabWidget
+from ui.models.feature_filter_model import FeatureFilterModel
 
 from pygplates import FeatureCollection
 
@@ -58,7 +56,8 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         splitter_layout = QVBoxLayout(self.splitter_group)
         splitter_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.splitter_model = LineFilterModel()
+        self.splitter_model = FeatureFilterModel()
+        self.splitter_model.setGeometryFilter(['PolylineOnSphere'])
         self.splitter_model.setSourceModel(self.session.get_feature_model())
         
         self.splitter_selection = QComboBox()
@@ -135,7 +134,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
 
     def on_time_changed(self):
         """Handle time changes."""
-        self.splitter_model.setTimeFilter(float(self.split_time.text()) if self.split_time.text() else None)
+        self.splitter_model.setStartTimeFilter(float(self.split_time.text()) if self.split_time.text() else None)
         self.update_step_status(1, bool(self.split_time.text()))
         self.validate_and_enable_process()
     
@@ -243,7 +242,8 @@ class LineSplittingTabWidget(ProcessTabWidget):
         line1_layout = QVBoxLayout(self.line1_group)
         line1_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.line1_model = LineFilterModel()
+        self.line1_model = FeatureFilterModel()
+        self.line1_model.setGeometryFilter(['PolylineOnSphere'])
         self.line1_model.setSourceModel(self.session.get_feature_model())
         
         self.line1_selection = QComboBox()
@@ -259,7 +259,8 @@ class LineSplittingTabWidget(ProcessTabWidget):
         line2_layout = QVBoxLayout(self.line2_group)
         line2_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.line2_model = LineFilterModel()
+        self.line2_model = FeatureFilterModel()
+        self.line1_model.setGeometryFilter(['PolylineOnSphere'])
         self.line2_model.setSourceModel(self.session.get_feature_model())
         
         self.line2_selection = QComboBox()
@@ -327,7 +328,8 @@ class LineSplittingTabWidget(ProcessTabWidget):
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
-        self.line_selector.set_time_filter(start_time, end_time)
+        self.line1_model.setTimeRangeFilter(start_time, end_time)
+        self.line2_model.setTimeRangeFilter(start_time, end_time)
         self.update_step_status(1, True)
         self.validate_and_enable_process()
         
@@ -450,7 +452,8 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         polygon_layout = QVBoxLayout(self.polygon_group)
         polygon_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.polygon_model = PolygonFilterModel()
+        self.polygon_model = FeatureFilterModel()
+        self.polygon_model.setGeometryFilter(['PolygonOnSphere'])
         self.polygon_model.setSourceModel(self.session.get_feature_model())
         
         self.polygon_selector = FeatureSelectorWidget(self.session)
@@ -466,7 +469,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
-        self.split_time.textChanged.connect(lambda: self.update_step_status(1, bool(self.split_time.text())))
+        self.split_time.textChanged.connect(lambda: self.on_time_changed())
         
         time_layout.addRow("Split Time (Ma):", self.split_time)
         
@@ -572,6 +575,12 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
 
         self.setLayout(layout)
         self.setMinimumSize(layout.minimumSize())
+    
+    def on_time_changed(self):
+        """Handle time range changes."""
+        self.polygon_model.setStartTimeFilter(float(self.split_time.text()) if bool(self.split_time.text()) else None)
+        self.update_step_status(1, bool(self.split_time.text()))
+        self.validate_and_enable_process()
     
     def select_operation(self, operation: str):
         """Select operation type and update UI."""

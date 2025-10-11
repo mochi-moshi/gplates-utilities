@@ -17,7 +17,6 @@ from PyQt5.QtWidgets import (
 
 from core.session import Session, FeatureDataColumn
 from core.rotations import create_initial_rotations, create_new_rotation_plate, replace_final_rotation
-from models.polygon_filter_model import PolygonFilterModel
 from ui.components.process_step_widget import ProcessStepWidget
 from ui.widgets.time_range_widget import TimeRangeWidget
 from ui.widgets.feature_selector_widget import FeatureSelectorWidget

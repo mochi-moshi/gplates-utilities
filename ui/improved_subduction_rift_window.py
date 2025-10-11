@@ -17,7 +17,7 @@ from core.session import Session, FeatureDataColumn
 from core.worldbuilding.diverge import diverge, divergeTriple
 from core.worldbuilding.rift import rift
 from core.worldbuilding.subduct import subduct
-from models.line_filter_model import LineFilterModel
+from ui.models.feature_filter_model import FeatureFilterModel
 from ui.components.process_step_widget import ProcessStepWidget
 from ui.widgets.time_range_widget import TimeRangeWidget
 from ui.widgets.feature_selector_widget import FeatureSelectorWidget
@@ -55,8 +55,9 @@ class SubductionTabWidget(ProcessTabWidget):
         sz_layout = QVBoxLayout(self.sz_group)
         sz_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.sz_model = LineFilterModel()
-        self.sz_model.setFeatureTypeFilter(["SubductionZone"])
+        self.sz_model = FeatureFilterModel()
+        self.sz_model.setGeometryFilter(['PolylineOnSphere'])
+        self.sz_model.setTypeFilter(["SubductionZone"])
         self.sz_model.setSourceModel(self.session.get_feature_model())
         
         self.sz_selection = QComboBox()
@@ -129,6 +130,7 @@ class SubductionTabWidget(ProcessTabWidget):
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
+        self.sz_model.setTimeRangeFilter(start_time, end_time)
         self.feature_selector.set_time_filter(start_time, end_time)
         self.update_step_status(1, True)
         self.validate_and_enable_process()
@@ -242,8 +244,9 @@ class RiftingTabWidget(ProcessTabWidget):
         rift_layout = QVBoxLayout(self.rift_group)
         rift_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.rift_model = LineFilterModel()
-        self.rift_model.setFeatureTypeFilter(["ContinentalRift"])
+        self.rift_model = FeatureFilterModel()
+        self.rift_model.setGeometryFilter(['PolylineOnSphere'])
+        self.rift_model.setTypeFilter(["ContinentalRift"])
         self.rift_model.setSourceModel(self.session.get_feature_model())
         
         self.rift_selection = QComboBox()
@@ -357,6 +360,7 @@ class RiftingTabWidget(ProcessTabWidget):
             
     def on_split_time_set(self):
         split_time = float(self.split_time.text())
+        self.rift_model.setStartTimeFilter(split_time if self.split_time.text() else None)
         self.feature_selector.set_time_filter(None, split_time if self.split_time.text() else None)
         self.update_step_status(1, bool(self.split_time.text()))
     
@@ -488,8 +492,9 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
         ridge_layout = QVBoxLayout(self.ridge_group)
         ridge_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.ridge_model = LineFilterModel()
-        self.ridge_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridge_model = FeatureFilterModel()
+        self.ridge_model.setGeometryFilter(['PolylineOnSphere'])
+        self.ridge_model.setTypeFilter(["MidOceanRidge"])
         self.ridge_model.setSourceModel(self.session.get_feature_model())
         
         self.ridge_selection = QComboBox()
@@ -552,6 +557,7 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
+        self.ridge_model.setTimeRangeFilter(start_time, end_time)
         self.update_step_status(1, True)
         self.validate_and_enable_process()
     
@@ -650,16 +656,19 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
         ridge_layout = QVBoxLayout(self.ridge_group)
         ridge_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
-        self.ridgeA_model = LineFilterModel()
-        self.ridgeA_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridgeA_model = FeatureFilterModel()
+        self.ridgeA_model.setGeometryFilter(['PolylineOnSphere'])
+        self.ridgeA_model.setTypeFilter(["MidOceanRidge"])
         self.ridgeA_model.setSourceModel(self.session.get_feature_model())
         
-        self.ridgeB_model = LineFilterModel()
-        self.ridgeB_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridgeB_model = FeatureFilterModel()
+        self.ridgeB_model.setGeometryFilter(['PolylineOnSphere'])
+        self.ridgeB_model.setTypeFilter(["MidOceanRidge"])
         self.ridgeB_model.setSourceModel(self.session.get_feature_model())
         
-        self.ridgeC_model = LineFilterModel()
-        self.ridgeC_model.setFeatureTypeFilter(["MidOceanRidge"])
+        self.ridgeC_model = FeatureFilterModel()
+        self.ridgeC_model.setGeometryFilter(['PolylineOnSphere'])
+        self.ridgeC_model.setTypeFilter(["MidOceanRidge"])
         self.ridgeC_model.setSourceModel(self.session.get_feature_model())
         
         self.ridgeA_selection = QComboBox()
@@ -765,6 +774,9 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
+        self.ridgeA_model.setTimeRangeFilter(start_time, end_time)
+        self.ridgeB_model.setTimeRangeFilter(start_time, end_time)
+        self.ridgeC_model.setTimeRangeFilter(start_time, end_time)
         self.update_step_status(1, True)
         self.validate_and_enable_process()
     

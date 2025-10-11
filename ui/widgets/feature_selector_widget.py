@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
 )
 
 from core.session import Session, FeatureDataColumn, extractFeatureDataFromRow
-from models.time_range_filter_model import TimeRangeFilterModel
+from ui.models.feature_filter_model import FeatureFilterModel
 from ui.delegates.time_decorator_delegate import TimeDecoratorDelegate
 
 
@@ -40,11 +40,23 @@ class FeatureSelectorWidget(QWidget):
         filter_layout = QFormLayout()
         filter_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
+        self.name_filter = QLineEdit()
+        self.name_filter.setPlaceholderText("Feature name")
+        
         self.plate_filter = QLineEdit()
         self.plate_filter.setPlaceholderText("e.g., 701,801,802")
         self.plate_filter.setValidator(QRegularExpressionValidator(QRegularExpression("\\d+(,\\s*\\d+)*")))
         
+        self.type_filter = QLineEdit()
+        self.type_filter.setPlaceholderText("e.g., OceanicCrust, ContinentalCrust")
+        
+        self.collection_filter = QLineEdit()
+        self.collection_filter.setPlaceholderText("e.g., crust.gpml")
+        
+        filter_layout.addRow("Name:", self.name_filter)
         filter_layout.addRow("Plate IDs:", self.plate_filter)
+        filter_layout.addRow("Type:", self.type_filter)
+        filter_layout.addRow("Collection:", self.collection_filter)
         filter_group.setLayout(filter_layout)
         
         feature_group = QGroupBox("Available Features")
@@ -52,7 +64,7 @@ class FeatureSelectorWidget(QWidget):
         feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Feature view
-        self.feature_model = TimeRangeFilterModel()
+        self.feature_model = FeatureFilterModel()
         self.feature_model.setSourceModel(self.session.get_feature_model())
         
         self.feature_view = QTreeView()
@@ -85,8 +97,26 @@ class FeatureSelectorWidget(QWidget):
         
     def connect_signals(self):
         """Connect widget signals."""
+        self.name_filter.editingFinished.connect(self.update_name_filter)
         self.plate_filter.editingFinished.connect(self.update_plate_filter)
+        self.type_filter.editingFinished.connect(self.update_type_filter)
+        self.collection_filter.editingFinished.connect(self.update_collection_filter)
         self.feature_view.selectionModel().selectionChanged.connect(self.on_selection_changed)
+
+    def update_name_filter(self):
+        """Update the name filter."""
+        if self._updating_filters:
+            return
+
+        self._updating_filters = True
+        try:
+            if not self.name_filter.text():
+                self.feature_model.setNameFilter([])
+            else:
+                names = [self.name_filter.text().strip()] + [name.strip() for name in self.name_filter.text().split(',')]
+                self.feature_model.setNameFilter(names)
+        finally:
+            self._updating_filters = False
         
     def update_plate_filter(self):
         """Update the plate ID filter."""
@@ -122,6 +152,36 @@ class FeatureSelectorWidget(QWidget):
         finally:
             self._updating_filters = False
     
+    def update_type_filter(self):
+        """Update the type filter."""
+        if self._updating_filters:
+            return
+
+        self._updating_filters = True
+        try:
+            if not self.type_filter.text():
+                self.feature_model.setTypeFilter([])
+            else:
+                types = [typ.strip() for typ in self.type_filter.text().split(',')]
+                self.feature_model.setTypeFilter(types)
+        finally:
+            self._updating_filters = False
+
+    def update_collection_filter(self):
+        """Update the collection filter."""
+        if self._updating_filters:
+            return
+
+        self._updating_filters = True
+        try:
+            if not self.collection_filter.text():
+                self.feature_model.setCollectionFilter([])
+            else:
+                collections = [collection.strip() for collection in self.collection_filter.text().split(',')]
+                self.feature_model.setCollectionFilter(collections)
+        finally:
+            self._updating_filters = False
+            
     def set_time_filter(self, start_time: float, end_time: float):
         """Set the time range filter."""
         self._updating_filters = True
