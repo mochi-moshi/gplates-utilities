@@ -27,10 +27,14 @@ class FeatureCollectionLoader(QWidget):
         button_layout.addWidget(add_button)
         button_layout.addWidget(self.remove_button)
 
+        reload_button = QPushButton('Reload All')
+        reload_button.clicked.connect(lambda: (self.session.reload_features(), self.session.reload_rotation_model()))
+
         layout = QVBoxLayout()
         layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         layout.addWidget(QLabel("Here is a list of all loaded feature collections:"))
         layout.addWidget(self.fc_list)
+        layout.addWidget(reload_button)
         layout.addLayout(button_layout)
 
         self.setLayout(layout)
