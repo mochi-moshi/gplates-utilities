@@ -888,7 +888,7 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Ocean spreading processing failed:\n{str(e)}")
-            raise e
+            print(e)
 
 
 class ImprovedSubductionRiftHelperWindow(QWidget):

@@ -42,8 +42,8 @@ def subduct(features: list[Feature], subduction_zone: Feature, rotation_features
   # Process each time step
   for older_time, younger_time in times:
     
-    snapshots_older = ReconstructSnapshot(valid_features, rotation_model, older_time).get_reconstructed_geometries()
-    snapshots_younger = ReconstructSnapshot(valid_features, rotation_model, younger_time).get_reconstructed_geometries()
+    snapshots_older = ReconstructSnapshot(valid_features, rotation_model, older_time).get_reconstructed_geometries(same_order_as_reconstructable_features=True)
+    snapshots_younger = ReconstructSnapshot(valid_features, rotation_model, younger_time).get_reconstructed_geometries(same_order_as_reconstructable_features=True)
 
     to_reconstruct_and_process = []
     to_reconstruct_and_add = []

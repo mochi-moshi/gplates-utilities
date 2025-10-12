@@ -1,5 +1,5 @@
 from pygplates import Feature, FeatureCollection, RotationModel, ReconstructSnapshot, reverse_reconstruct
-from pygplates.pygplates import PolygonOnSphere, PolylineOnSphere, PointOnSphere, GreatCircleArc, FiniteRotation
+from pygplates.pygplates import PolygonOnSphere, PolylineOnSphere, PointOnSphere, GreatCircleArc
 from core.arc_geometry import get_arc_intersection
 from core.metadata import MetaPoint
 
@@ -13,7 +13,7 @@ PartitionResult = PolygonOnSphere.PartitionResult
 def split_plate_features(plates: Feature, splitting_feature: Feature, rotation_model: RotationModel, split_time: float) -> FeatureCollection:
     initial_feature_collection = FeatureCollection(plates)
     snapshot = ReconstructSnapshot(initial_feature_collection, rotation_model, split_time)
-    splitter_snapshot = ReconstructSnapshot(FeatureCollection(splitting_feature), rotation_model, split_time)
+    splitter_snapshot = ReconstructSnapshot(splitting_feature, rotation_model, split_time)
     snapshot_features = snapshot.get_reconstructed_geometries()
     splitter_feature = splitter_snapshot.get_reconstructed_geometries()[0]
     splitter_geometry = splitter_feature.get_reconstructed_geometry()

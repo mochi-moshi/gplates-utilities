@@ -1,7 +1,7 @@
-from pygplates import FeatureCollection, Feature, RotationModel, ReconstructSnapshot, PropertyName, FeatureType
+from pygplates import FeatureCollection, Feature, RotationModel, ReconstructSnapshot, PropertyName, FeatureType, reverse_reconstruct
 from pygplates import PointOnSphere, MultiPointOnSphere, PolylineOnSphere, PolygonOnSphere, GreatCircleArc, Vector3D, GeometryOnSphere, GpmlPlateId, Enumeration, EnumerationType, GeoTimeInstant
 
-from ..line_splitter import split_lines
+from ..line_splitter import split_line_by
 from ..plate_splitter import split_plate_by_line
 from ..rotations import split_rotation_features_by_plate_id
 
@@ -40,9 +40,9 @@ def rift(features: list[Feature], rift: Feature, rotation_features: FeatureColle
 
   to_add = []
   if left_plate_id != plate_id:
-    to_add.extend(f for f in split_rotation_features_by_plate_id(rotation_features, plate_id, left_plate_id, split_time))
+    to_add.extend(split_rotation_features_by_plate_id(rotation_features, plate_id, left_plate_id, split_time))
   if right_plate_id != plate_id:
-    to_add.extend(f for f in split_rotation_features_by_plate_id(rotation_features, plate_id, right_plate_id, split_time))
+    to_add.extend(split_rotation_features_by_plate_id(rotation_features, plate_id, right_plate_id, split_time))
 
   output_rc.add(to_add)
 
@@ -57,7 +57,7 @@ def rift(features: list[Feature], rift: Feature, rotation_features: FeatureColle
 
   # Get feature geometries at split time
   features_snapshot = ReconstructSnapshot(features, rotation_model, split_time)
-  feature_geometries = [rg.get_reconstructed_geometry() for rg in features_snapshot.get_reconstructed_geometries()]
+  feature_geometries = [rg.get_reconstructed_geometry() for rg in features_snapshot.get_reconstructed_geometries(same_order_as_reconstructable_features=True)]
 
   output_fc = FeatureCollection()
   
@@ -153,7 +153,7 @@ def _determine_side_of_rift(point: PointOnSphere, rift_geometry: PolylineOnSpher
   else:
     return 'right'
 
-def recreate_reconstructable_feature_with_method(old_feature: Feature, new_geometry: GeometryOnSphere, new_name: str, new_plate_id: int, old_plate_id: int, valid_time: tuple[float, float], rotation_model: RotationModel, split_time: float):
+def recreate_reconstructable_feature_with_method(old_feature: Feature, new_geometry: GeometryOnSphere, new_name: str, new_plate_id: int, old_plate_id: int, valid_time: tuple[float, float], rotation_model: RotationModel, split_time: float) -> Feature:
   method = old_feature.get_reconstruction_method()
   if method == 'ByPlateId':
     feature = Feature.create_reconstructable_feature(
@@ -162,23 +162,20 @@ def recreate_reconstructable_feature_with_method(old_feature: Feature, new_geome
       )
     return feature
   if method in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']:
-    left_plate = new_plate_id if old_feature.get_left_plate() == int(old_plate_id) else old_feature.get_left_plate()
-    right_plate = new_plate_id if old_feature.get_right_plate() == int(old_plate_id) else old_feature.get_right_plate()
-    reconstruct_feature = Feature.create_reconstructable_feature(
-      old_feature.get_feature_type(), new_geometry, f'',
-      other_properties=[(PropertyName.gpml_reconstruction_method, Enumeration(
-    EnumerationType.create_gpml('ReconstructionMethodEnumeration'),
-    method)), (PropertyName.gpml_left_plate, GpmlPlateId(old_feature.get_left_plate())), (PropertyName.gpml_right_plate, GpmlPlateId(int(old_feature.get_right_plate())))],
+    left_plate = int(new_plate_id) if old_feature.get_left_plate() == int(old_plate_id) else old_feature.get_left_plate()
+    right_plate = int(new_plate_id) if old_feature.get_right_plate() == int(old_plate_id) else old_feature.get_right_plate()
+    feature = Feature.create_reconstructable_feature(
+      old_feature.get_feature_type(), new_geometry, new_name,
+      valid_time=valid_time or old_feature.get_valid_time(),
+      other_properties=[
+        (PropertyName.gpml_reconstruction_method, Enumeration(EnumerationType.create_gpml('ReconstructionMethodEnumeration'), method)),
+        (PropertyName.gpml_left_plate, GpmlPlateId(left_plate)),
+        (PropertyName.gpml_right_plate, GpmlPlateId(right_plate))
+      ],
       reverse_reconstruct=(rotation_model, GeoTimeInstant(split_time))
     )
-    feature = Feature.create_reconstructable_feature(
-      old_feature.get_feature_type(), reconstruct_feature.get_geometry(), new_name,
-      valid_time=valid_time or old_feature.get_valid_time(),
-      other_properties=[(PropertyName.gpml_reconstruction_method, Enumeration(
-    EnumerationType.create_gpml('ReconstructionMethodEnumeration'),
-    method)), (PropertyName.gpml_left_plate, GpmlPlateId(int(left_plate))), (PropertyName.gpml_right_plate, GpmlPlateId(int(right_plate)))]
-    )
     return feature
+  raise ValueError(f'Unknown reconstruction method: {method}')
 
 def _split_point_features(feature: Feature, geometry, rift_geometry: PolylineOnSphere, 
                          feature_name: str, feature_end: float, split_time: float, old_plate_id: int,
@@ -243,7 +240,7 @@ def _split_polyline_features(feature: Feature, geometry: PolylineOnSphere, rift_
   right_features = []
   
   # Use the line splitter to split the geometry by the rift line
-  split_geometries, _ = split_lines(geometry, rift_geometry)
+  split_geometries = split_line_by(geometry, rift_geometry)
   
   # Classify each split segment by determining which side of the rift it's on
   for split_geometry in split_geometries:
@@ -256,7 +253,7 @@ def _split_polyline_features(feature: Feature, geometry: PolylineOnSphere, rift_
     side = _determine_side_of_rift(midpoint, rift_geometry)
     
     # If the midpoint is on the rift, check other points
-    if side == 'on_rift' and len(split_geometry) > 2:
+    if side == 'on_rift':
       for point in split_geometry:
         side = _determine_side_of_rift(point, rift_geometry)
         if side != 'on_rift':
@@ -275,6 +272,8 @@ def _split_polyline_features(feature: Feature, geometry: PolylineOnSphere, rift_
         valid_time=(split_time, feature_end), rotation_model=rotation_model, split_time=split_time
       )
       right_features.append(right_feature)
+    else:
+      print(f'{feature_name} is entirely on the rift')
     # Segments exactly on the rift are not assigned to either side
   
   return left_features, right_features

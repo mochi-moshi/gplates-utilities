@@ -213,6 +213,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Plate splitting failed:\n{str(e)}")
+            print(e)
             
 
 class LineSplittingTabWidget(ProcessTabWidget):
@@ -260,7 +261,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         line2_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.line2_model = FeatureFilterModel()
-        self.line1_model.setGeometryFilter(['PolylineOnSphere'])
+        self.line2_model.setGeometryFilter(['PolylineOnSphere'])
         self.line2_model.setSourceModel(self.session.get_feature_model())
         
         self.line2_selection = QComboBox()
@@ -421,6 +422,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Line splitting failed:\n{str(e)}")
+            print(e)
 
 
 class PolygonOperationsTabWidget(ProcessTabWidget):
@@ -703,6 +705,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Polygon operation failed:\n{str(e)}")
+            print(e)
 
 
 class ImprovedPlateOperationsWindow(QWidget):

@@ -79,34 +79,32 @@ def replace_final_rotation(rotations: FeatureCollection, end_time: float = 0):
 
     return fc
 
-def split_rotation_features_by_plate_id(rotations: FeatureCollection, old_plate_id: int, new_plate_id: int, split_time: float):
-    max_time = split_time
-    min_time = split_time
+def split_rotation_features_by_plate_id(rotations: FeatureCollection, old_plate_id: int, new_plate_id: int, split_time: float) -> list[Feature]:
+    oldest_time = split_time
+    youngest_time = split_time
     for rotation in rotations:
         _, rplate_id, sequence = rotation.get_total_reconstruction_pole()
         sequence.sort(lambda ts: ts.get_time())
         if rplate_id == old_plate_id:
-            max_time = max(sequence[-1].get_time(), max_time)
-            min_time = min(sequence[0].get_time(), min_time)
+            oldest_time = max(sequence[-1].get_time(), oldest_time)
+            youngest_time = min(sequence[0].get_time(), youngest_time)
 
     rotationsModel = RotationModel(rotations)
 
     # Already relative to default anchor_plate (0)
-    start_rotation = rotationsModel.get_rotation(max_time, old_plate_id)
-    end_rotation = rotationsModel.get_rotation(min_time, old_plate_id)
+    split_rotation = rotationsModel.get_rotation(split_time, old_plate_id)
 
-    rc = FeatureCollection()
-    samples = GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(end_rotation), min_time), GpmlTimeSample(GpmlFiniteRotation(start_rotation), split_time)])
-    rc.add(Feature.create_total_reconstruction_sequence(
+    rc = [Feature.create_total_reconstruction_sequence(
+        0, new_plate_id,
+        GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(split_rotation), youngest_time), GpmlTimeSample(GpmlFiniteRotation(split_rotation), split_time)])
+      ), Feature.create_total_reconstruction_sequence(
         old_plate_id, new_plate_id,
         GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), split_time)])
-        )
-    )
-    rc.add(Feature.create_total_reconstruction_sequence(0, new_plate_id, samples))
-    if max_time != split_time:
-        rc.add(Feature.create_total_reconstruction_sequence(
+      )]
+    if oldest_time != split_time:
+        rc.append(Feature.create_total_reconstruction_sequence(
             old_plate_id, new_plate_id,
-            GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), max_time)])
+            GpmlIrregularSampling([GpmlTimeSample(GpmlFiniteRotation(FiniteRotation.create_identity_rotation()), oldest_time)])
             )
         )
     return rc

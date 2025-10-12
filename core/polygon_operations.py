@@ -63,9 +63,8 @@ def a_not_b(polyA: PolygonOnSphere, polyB: PolygonOnSphere) -> list[PolygonOnSph
     return [PolygonOnSphere(g[:]) for g in PolylineOnSphere.join(lines)]
 
 def join_plate_features_by_intersect(plates: list[Feature], rotation_model: RotationModel, split_time: float, *, feature_type: FeatureType = FeatureType.gpml_unclassified_feature, reconstruction_plate_id: int | None = None) -> FeatureCollection:
-    initial_feature_collection = FeatureCollection(plates)
-    snapshot = ReconstructSnapshot(initial_feature_collection, rotation_model, split_time)
-    snapshot_features = snapshot.get_reconstructed_geometries()
+    snapshot = ReconstructSnapshot(plates, rotation_model, split_time)
+    snapshot_features = snapshot.get_reconstructed_geometries(same_order_as_reconstructable_features=True)
 
     new_collection = FeatureCollection()
 
@@ -99,9 +98,8 @@ def join_plate_features_by_intersect(plates: list[Feature], rotation_model: Rota
     return new_collection
   
 def join_plate_features_by_union(plates: list[Feature], rotation_model: RotationModel, split_time: float, *, feature_type: FeatureType = FeatureType.gpml_unclassified_feature, reconstruction_plate_id: int | None = None) -> FeatureCollection:
-    initial_feature_collection = FeatureCollection(plates)
-    snapshot = ReconstructSnapshot(initial_feature_collection, rotation_model, split_time)
-    snapshot_features = snapshot.get_reconstructed_geometries()
+    snapshot = ReconstructSnapshot(plates, rotation_model, split_time)
+    snapshot_features = snapshot.get_reconstructed_geometries(same_order_as_reconstructable_features=True)
 
     new_collection = FeatureCollection()
 
@@ -135,9 +133,8 @@ def join_plate_features_by_union(plates: list[Feature], rotation_model: Rotation
     return new_collection
   
 def split_plate_features_by_difference(plates: list[Feature], rotation_model: RotationModel, split_time: float, *, feature_type: FeatureType = FeatureType.gpml_unclassified_feature, reconstruction_plate_id: int | None = None) -> FeatureCollection:
-    initial_feature_collection = FeatureCollection(plates)
-    snapshot = ReconstructSnapshot(initial_feature_collection, rotation_model, split_time)
-    snapshot_features = snapshot.get_reconstructed_geometries()
+    snapshot = ReconstructSnapshot(plates, rotation_model, split_time)
+    snapshot_features = snapshot.get_reconstructed_geometries(same_order_as_reconstructable_features=True)
 
     new_collection = FeatureCollection()
 

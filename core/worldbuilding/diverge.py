@@ -96,13 +96,23 @@ def generate_ocean_crust_for_timestep(mid_ocean_ridge: Feature, plate_ids: set,
   
   return ocean_crust_features
 
-def divergeTriple(ridgeA: Feature, ridgeB: Feature, ridgeC: Feature, rotation_features: FeatureCollection, start_time: float, end_time: float, *, use_topologies: bool = False):
+def divergeTriple(ridgeA: Feature, ridgeB: Feature, ridgeC: Feature, rotation_features: FeatureCollection, start_time: float, end_time: float, *, generate_new_plate: bool = False, use_topologies: bool = False):
   if not ridgeA.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']:
     raise ValueError(f'Expected ridgeA reconstruction method to be [\'HalfStageRotation\', \'HalfStageRotationVersion2\', \'HalfStageRotationVersion3\'], got: {ridgeA.get_reconstruction_method()}')
   if not ridgeB.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']:
     raise ValueError(f'Expected ridgeB reconstruction method to be [\'HalfStageRotation\', \'HalfStageRotationVersion2\', \'HalfStageRotationVersion3\'], got: {ridgeB.get_reconstruction_method()}')
   if not ridgeC.get_reconstruction_method() in ['HalfStageRotation', 'HalfStageRotationVersion2', 'HalfStageRotationVersion3']:
     raise ValueError(f'Expected ridgeC reconstruction method to be [\'HalfStageRotation\', \'HalfStageRotationVersion2\', \'HalfStageRotationVersion3\'], got: {ridgeC.get_reconstruction_method()}')
+  
+  ridgeA_geometry = ridgeA.get_geometry()
+  if not isinstance(ridgeA_geometry, PolylineOnSphere):
+    raise TypeError("RidgeA must have PolylineOnSphere geometry")
+  ridgeB_geometry = ridgeB.get_geometry()
+  if not isinstance(ridgeB_geometry, PolylineOnSphere):
+    raise TypeError("RidgeB must have PolylineOnSphere geometry")
+  ridgeC_geometry = ridgeC.get_geometry()
+  if not isinstance(ridgeC_geometry, PolylineOnSphere):
+    raise TypeError("RidgeC must have PolylineOnSphere geometry")
   
   morA_start, morA_end = ridgeA.get_valid_time()
   morB_start, morB_end = ridgeB.get_valid_time()
@@ -114,22 +124,12 @@ def divergeTriple(ridgeA: Feature, ridgeB: Feature, ridgeC: Feature, rotation_fe
 
   if len(plate_ids) != 3:
     raise ValueError(f'Mid ocean ridges do not form triple juction, plate ids: {', '.join(plate_ids)}')
-  
-  ridgeA_geometry = ridgeA.get_geometry()
-  if not isinstance(ridgeA_geometry, PolylineOnSphere):
-    raise TypeError("RidgeA must have PolylineOnSphere geometry")
-  ridgeB_geometry = ridgeB.get_geometry()
-  if not isinstance(ridgeB_geometry, PolylineOnSphere):
-    raise TypeError("RidgeB must have PolylineOnSphere geometry")
-  ridgeC_geometry = ridgeC.get_geometry()
-  if not isinstance(ridgeC_geometry, PolylineOnSphere):
-    raise TypeError("RidgeC must have PolylineOnSphere geometry")
 
   rotation_model = RotationModel(rotation_features)
 
   times = generate_time_steps(rotation_features, plate_ids, start_time, end_time)
   
-  ridge_a, ridge_b, ridge_c = [geom.get_reconstructed_geometry() for geom in ReconstructSnapshot([ridgeA, ridgeB, ridgeC], rotation_model, times[0][0]).get_reconstructed_geometries()]
+  ridge_a, ridge_b, ridge_c = [geom.get_reconstructed_geometry() for geom in ReconstructSnapshot([ridgeA, ridgeB, ridgeC], rotation_model, times[0][0]).get_reconstructed_geometries(same_order_as_reconstructable_features=True)]
 
 
   output_fc = FeatureCollection()
@@ -163,15 +163,18 @@ def divergeTriple(ridgeA: Feature, ridgeB: Feature, ridgeC: Feature, rotation_fe
         valid_time=(times[0][0], GeoTimeInstant.create_distant_future()),
         reconstruction_plate_id=plate_id
       ) for plate_id in plate_ids]
+  reverse_reconstruct(points, rotation_model, times[0][0])
   reverse_reconstruct(ridges, rotation_model, times[0][0])
   # output_fc.add(ridges)
   
-  ridge_extentions = [ridgeA, ridgeB, ridgeC, recreate_reconstructable_feature_with_method(ridgeA, PolylineOnSphere([ridge_a[a_idx], midpoint]), ''), recreate_reconstructable_feature_with_method(ridgeB, PolylineOnSphere([ridge_b[b_idx], midpoint]), ''), recreate_reconstructable_feature_with_method(ridgeC, PolylineOnSphere([ridge_c[c_idx], midpoint]), '')]
+  ridge_extentions = [recreate_reconstructable_feature_with_method(ridgeA, PolylineOnSphere([ridge_a[a_idx], midpoint]), ''), recreate_reconstructable_feature_with_method(ridgeB, PolylineOnSphere([ridge_b[b_idx], midpoint]), ''), recreate_reconstructable_feature_with_method(ridgeC, PolylineOnSphere([ridge_c[c_idx], midpoint]), '')]
   reverse_reconstruct(ridge_extentions, rotation_model, times[0][0])
+
+  ridge_extentions = [ridgeA, ridgeB, ridgeC] + ridge_extentions
   
   
   for older_time, younger_time in times:
-    ridge_a, ridge_b, ridge_c = [geom.get_reconstructed_geometry() for geom in ReconstructSnapshot(ridges, rotation_model, younger_time).get_reconstructed_geometries()]
+    ridge_a, ridge_b, ridge_c = [geom.get_reconstructed_geometry() for geom in ReconstructSnapshot(ridges, rotation_model, younger_time).get_reconstructed_geometries(same_order_as_reconstructable_features=True)]
     end_a = ridge_a.to_xyz_array()[0]
     end_b = ridge_b.to_xyz_array()[0]
     end_c = ridge_c.to_xyz_array()[0]
@@ -188,7 +191,7 @@ def divergeTriple(ridgeA: Feature, ridgeB: Feature, ridgeC: Feature, rotation_fe
       PointOnSphere((midpoint[0], midpoint[1], midpoint[2])),
       ridges,
       [ridge_a, ridge_b, ridge_c],
-      [geom.get_reconstructed_geometry() for geom in ReconstructSnapshot(points, rotation_model, younger_time).get_reconstructed_geometries()],
+      [geom.get_reconstructed_geometry() for geom in ReconstructSnapshot(points, rotation_model, younger_time).get_reconstructed_geometries(same_order_as_reconstructable_features=True)],
       plate_ids, older_time, younger_time
     )
     

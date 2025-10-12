@@ -170,6 +170,7 @@ class RotationInitializationWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Rotation model initialization failed:\n{str(e)}")
+            print(e)
 
 
 class PlateCreationWidget(ProcessTabWidget):
@@ -366,6 +367,7 @@ class PlateCreationWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Plate creation failed:\n{str(e)}")
+            print(e)
 
 
 class RotationMaintenanceWidget(QWidget):
