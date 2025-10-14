@@ -90,6 +90,8 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         self.main_tab_widget.setTabToolTip(3, "Rotation model creation and management")
         
         layout.addWidget(self.main_tab_widget)
+
+        self.setStyleSheet('* { color: black; }\nQLineEdit { background-color: white; }\nQTreeView { background-color: white; }\nQTreeView::section { background-color: lightgray; }')
         
         # Connect welcome tab signals
         self.welcome_tab.operationSelected.connect(self.navigate_to_operation)

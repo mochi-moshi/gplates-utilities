@@ -9,7 +9,6 @@ if __name__ == "__main__":
     from ui.improved_geological_operations_window import ImprovedGeologicalOperationsWindow
     from media import LOGO_PATH
     
-    print(os.path.dirname(__file__), LOGO_PATH)
     try:
         from ctypes import windll  # Only exists on Windows.
         myappid = 'moshi-mochi.gplates-utilities.app.0.3.0'
