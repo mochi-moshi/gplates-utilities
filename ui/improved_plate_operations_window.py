@@ -543,7 +543,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         params_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Plate ID widget with validation
-        self.plate_id_widget = PlateIdWidget(self.session, "New Plate ID", enable_uniqueness_validation=True)
+        self.plate_id_widget = PlateIdWidget(self.session, "Plate ID", enable_uniqueness_validation=False)
         
         self.duplicate_per_plate = QCheckBox("Create separate result per plate")
         
