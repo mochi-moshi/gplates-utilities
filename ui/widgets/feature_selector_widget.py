@@ -79,7 +79,7 @@ class FeatureSelectorWidget(QWidget):
         self.feature_view.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection if single_selection else QAbstractItemView.SelectionMode.MultiSelection)
         self.feature_view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
-        self.feature_view.setMinimumHeight(150)
+        self.feature_view.setMinimumHeight(50)
         
         # Selection info
         self.selection_label = QLabel("No features selected")

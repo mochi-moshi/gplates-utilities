@@ -27,6 +27,7 @@ from ui.base.process_tab_widget import ProcessTabWidget
 from ui.models.feature_filter_model import FeatureFilterModel
 
 from pygplates import FeatureCollection
+import traceback
 
 
 class PlateSplittingTabWidget(ProcessTabWidget):
@@ -213,7 +214,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Plate splitting failed:\n{str(e)}")
-            print(e)
+            traceback.print_exception(e)
             
 
 class LineSplittingTabWidget(ProcessTabWidget):
@@ -422,7 +423,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Line splitting failed:\n{str(e)}")
-            print(e)
+            traceback.print_exception(e)
 
 
 class PolygonOperationsTabWidget(ProcessTabWidget):
@@ -705,7 +706,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Polygon operation failed:\n{str(e)}")
-            print(e)
+            traceback.print_exception(e)
 
 
 class ImprovedPlateOperationsWindow(QWidget):

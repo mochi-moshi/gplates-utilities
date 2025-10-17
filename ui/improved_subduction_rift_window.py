@@ -26,6 +26,7 @@ from ui.widgets.plate_id_widget import DualPlateIdWidget
 from ui.base.process_tab_widget import ProcessTabWidget
 
 from pygplates import FeatureCollection
+import traceback
 
 
 class SubductionTabWidget(ProcessTabWidget):
@@ -212,7 +213,7 @@ class SubductionTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Subduction processing failed:\n{str(e)}")
-            raise e
+            traceback.print_exception(e)
 
 
 class RiftingTabWidget(ProcessTabWidget):
@@ -469,7 +470,7 @@ class RiftingTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Rifting processing failed:\n{str(e)}")
-            raise e
+            traceback.print_exception(e)
 
 
 class SimpleDivergenceTabWidget(ProcessTabWidget):
@@ -633,7 +634,7 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Ocean spreading processing failed:\n{str(e)}")
-            raise e
+            traceback.print_exception(e)
 
 
 class TripleDivergenceTabWidget(ProcessTabWidget):
@@ -888,7 +889,7 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Ocean spreading processing failed:\n{str(e)}")
-            print(e)
+            traceback.print_exception(e)
 
 
 class ImprovedSubductionRiftHelperWindow(QWidget):

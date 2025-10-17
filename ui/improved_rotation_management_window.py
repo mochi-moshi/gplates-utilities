@@ -24,6 +24,7 @@ from ui.widgets.output_widget import OutputWidget
 from ui.base.process_tab_widget import ProcessTabWidget
 
 from pygplates import FeatureCollection
+import traceback
 
 
 class RotationInitializationWidget(ProcessTabWidget):
@@ -170,7 +171,7 @@ class RotationInitializationWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Rotation model initialization failed:\n{str(e)}")
-            print(e)
+            traceback.print_exception(e)
 
 
 class PlateCreationWidget(ProcessTabWidget):
@@ -367,7 +368,7 @@ class PlateCreationWidget(ProcessTabWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Plate creation failed:\n{str(e)}")
-            print(e)
+            traceback.print_exception(e)
 
 
 class RotationMaintenanceWidget(QWidget):

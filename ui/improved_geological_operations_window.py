@@ -21,7 +21,7 @@ from ui.improved_rotation_management_window import ImprovedRotationManagementWin
 from ui.components.operation_summary_widget import OperationSummaryWidget
 from ui.components.welcome_tab_widget import WelcomeTabWidget
 from util.project_storage import load_project, save_project
-from media import LOGO_PATH
+from resources import LOGO_PATH
 
 
 class ImprovedGeologicalOperationsWindow(QMainWindow):
