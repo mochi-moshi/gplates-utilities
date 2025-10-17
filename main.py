@@ -1,13 +1,13 @@
 
 if __name__ == "__main__":
-    import sys, os
+    import sys
 
 
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtGui import QIcon
     from core.session import Session
     from ui.improved_geological_operations_window import ImprovedGeologicalOperationsWindow
-    from media import LOGO_PATH
+    from resources import LOGO_PATH
     
     try:
         from ctypes import windll  # Only exists on Windows.
