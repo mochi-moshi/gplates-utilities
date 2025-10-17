@@ -4,19 +4,35 @@ Process Tab Base Widget
 Base class for geological process tabs with common workflow functionality.
 """
 
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QScrollArea, QVBoxLayout, QFrame
 from core.session import Session
 from pygplates import FeatureCollection
 
 
 class ProcessTabWidget(QWidget):
     """Base class for geological process tabs."""
-    
+
     def __init__(self, session: Session, parent=None):
         super().__init__(parent)
         self.session = session
         self.setup_ui()
         self.setup_workflow()
+
+    def wrap_in_scroll_area(self, content_widget: QWidget) -> QScrollArea:
+        """
+        Wrap a widget in a scroll area for scrollable content.
+
+        Args:
+            content_widget: The widget to wrap
+
+        Returns:
+            QScrollArea containing the widget
+        """
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(content_widget)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setFrameShape(QFrame.NoFrame)
+        return scroll_area
     
     def setup_ui(self):
         """Setup the UI components - to be implemented by subclasses."""

@@ -32,30 +32,28 @@ import traceback
 
 class PlateSplittingTabWidget(ProcessTabWidget):
     """Tab for splitting plates using geological features."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Splitting Feature", 
+            ProcessStepWidget(1, "Select Splitting Feature",
                             "Choose the geological feature that will split the plates"),
-            ProcessStepWidget(2, "Set Split Time", 
+            ProcessStepWidget(2, "Set Split Time",
                             "Define when plate splitting occur"),
-            ProcessStepWidget(3, "Select Plates to Split", 
+            ProcessStepWidget(3, "Select Plates to Split",
                             "Choose which plates will be affected by splitting"),
-            ProcessStepWidget(4, "Process & Save", 
+            ProcessStepWidget(4, "Process & Save",
                             "Execute splitting and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Splitting feature selector
         self.splitter_group = QGroupBox("Splitting Feature Selection")
         splitter_layout = QVBoxLayout(self.splitter_group)
-        splitter_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.splitter_model = FeatureFilterModel()
         self.splitter_model.setGeometryFilter(['PolylineOnSphere'])
@@ -72,31 +70,28 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
         self.split_time.textChanged.connect(lambda: self.on_time_changed())
-        
+
         time_layout.addRow("Split Time (Ma):", self.split_time)
-        
+
         # Step 3: Feature selection
         self.feature_group = QGroupBox("Plate Selection")
         self.feature_selector = FeatureSelectorWidget(self.session)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
-        
+
         feature_layout = QVBoxLayout(self.feature_group)
-        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         feature_layout.addWidget(self.feature_selector)
-        
+
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, enable_topology_generation=False)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -121,17 +116,23 @@ class PlateSplittingTabWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.splitter_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.feature_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.splitter_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.feature_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
 
     def on_time_changed(self):
         """Handle time changes."""
@@ -219,30 +220,28 @@ class PlateSplittingTabWidget(ProcessTabWidget):
 
 class LineSplittingTabWidget(ProcessTabWidget):
     """Tab for splitting line features at their intersections."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
-        # Workflow steps  
+        content_layout = QVBoxLayout()
+
+        # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select First Line", 
+            ProcessStepWidget(1, "Select First Line",
                             "Choose the first line feature to split"),
-            ProcessStepWidget(2, "Select Second Line", 
+            ProcessStepWidget(2, "Select Second Line",
                             "Choose the second line feature to split"),
-            ProcessStepWidget(3, "Set Split Time", 
+            ProcessStepWidget(3, "Set Split Time",
                             "Define when line splitting occurs"),
-            ProcessStepWidget(4, "Process & Save", 
+            ProcessStepWidget(4, "Process & Save",
                             "Split lines at intersections and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: First line selection
         self.line1_group = QGroupBox("First Line Selection")
         line1_layout = QVBoxLayout(self.line1_group)
-        line1_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.line1_model = FeatureFilterModel()
         self.line1_model.setGeometryFilter(['PolylineOnSphere'])
@@ -255,43 +254,40 @@ class LineSplittingTabWidget(ProcessTabWidget):
         self.line1_selection.currentIndexChanged.connect(lambda: self.update_step_status(0, True))
         
         line1_layout.addWidget(self.line1_selection)
-        
+
         # Step 2: Second line selection
         self.line2_group = QGroupBox("Second Line Selection")
         line2_layout = QVBoxLayout(self.line2_group)
-        line2_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         self.line2_model = FeatureFilterModel()
         self.line2_model.setGeometryFilter(['PolylineOnSphere'])
         self.line2_model.setSourceModel(self.session.get_feature_model())
-        
+
         self.line2_selection = QComboBox()
         self.line2_selection.setModel(self.line2_model)
         self.line2_selection.setModelColumn(FeatureDataColumn.feature_name_and_id)
         self.line2_selection.setPlaceholderText("Select second line...")
         self.line2_selection.currentIndexChanged.connect(lambda: self.update_step_status(1, True))
-        
+
         line2_layout.addWidget(self.line2_selection)
-        
+
         # Step 3: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
         self.split_time.textChanged.connect(lambda: self.update_step_status(2, bool(self.split_time.text())))
-        
+
         time_layout.addRow("Split Time (Ma):", self.split_time)
-        
+
         # Step 4: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, enable_topology_generation=False)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -316,17 +312,23 @@ class LineSplittingTabWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.line1_group)
-        layout.addWidget(self.line2_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.line1_group)
+        content_layout.addWidget(self.line2_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
@@ -428,32 +430,30 @@ class LineSplittingTabWidget(ProcessTabWidget):
 
 class PolygonOperationsTabWidget(ProcessTabWidget):
     """Tab for geometric polygon operations (intersection, union, difference)."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Polygon Features", 
+            ProcessStepWidget(1, "Select Polygon Features",
                             "Choose polygon features for geometric operation"),
-            ProcessStepWidget(2, "Set Split Time", 
+            ProcessStepWidget(2, "Set Split Time",
                             "Define the split time for operation"),
-            ProcessStepWidget(3, "Choose Operation Type", 
+            ProcessStepWidget(3, "Choose Operation Type",
                             "Select intersection, union, or difference operation"),
-            ProcessStepWidget(4, "Configure Parameters", 
+            ProcessStepWidget(4, "Configure Parameters",
                             "Set operation parameters and output options"),
-            ProcessStepWidget(5, "Process & Save", 
+            ProcessStepWidget(5, "Process & Save",
                             "Execute operation and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Polygon selection
         self.polygon_group = QGroupBox("Polygon Feature Selection")
         polygon_layout = QVBoxLayout(self.polygon_group)
-        polygon_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.polygon_model = FeatureFilterModel()
         self.polygon_model.setGeometryFilter(['PolygonOnSphere'])
@@ -463,23 +463,21 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         self.polygon_selector.selectionChanged.connect(self.on_polygons_selected)
         
         polygon_layout.addWidget(self.polygon_selector)
-        
+
         # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
         self.split_time.setPlaceholderText("e.g., 10.0")
         self.split_time.textChanged.connect(lambda: self.on_time_changed())
-        
+
         time_layout.addRow("Split Time (Ma):", self.split_time)
-        
+
         # Step 3: Operation selection
         self.operation_group = QGroupBox("Operation Type")
         operation_layout = QVBoxLayout(self.operation_group)
-        operation_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Operation buttons with different colors
         self.intersection_button = QPushButton("∩ Intersection")
@@ -536,48 +534,52 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         operation_layout.addWidget(self.intersection_button)
         operation_layout.addWidget(self.union_button)
         operation_layout.addWidget(self.difference_button)
-        
+
         # Step 4: Parameters
         self.params_group = QGroupBox("Operation Parameters")
         params_layout = QVBoxLayout(self.params_group)
-        params_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         # Plate ID widget with validation
         self.plate_id_widget = PlateIdWidget(self.session, "Plate ID", enable_uniqueness_validation=False)
-        
+
         self.duplicate_per_plate = QCheckBox("Create separate result per plate")
-        
+
         params_layout.addWidget(self.plate_id_widget)
         params_layout.addWidget(self.duplicate_per_plate)
-        
+
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, enable_topology_generation=False)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
         self.process_button = QPushButton("⚙️ Process Operation")
         self.process_button.clicked.connect(self.process_operation)
         self.process_button.setEnabled(False)
-        
+
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.polygon_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.operation_group)
-        layout.addWidget(self.params_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.polygon_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.operation_group)
+        content_layout.addWidget(self.params_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
         self.selected_operation = None
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
     
     def on_time_changed(self):
         """Handle time range changes."""
@@ -723,16 +725,15 @@ class ImprovedPlateOperationsWindow(QWidget):
     def __init__(self, session: Session):
         super().__init__()
         self.session = session
-        
+
         self.setWindowTitle("Plate Operations Helper")
-        self.setMinimumSize(1000, 700)
-        
+        self.resize(800, 600)
+
         self.setup_ui()
-        
+
     def setup_ui(self):
         """Setup the main UI components."""
         layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Header info
         header_label = QLabel("""

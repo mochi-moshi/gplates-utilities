@@ -33,28 +33,26 @@ class SubductionTabWidget(ProcessTabWidget):
     """Tab for subduction zone processing."""
     
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Subduction Zone", 
+            ProcessStepWidget(1, "Select Subduction Zone",
                             "Choose the subduction zone that will consume features"),
-            ProcessStepWidget(2, "Set Time Range", 
+            ProcessStepWidget(2, "Set Time Range",
                             "Define when subduction occurs"),
-            ProcessStepWidget(3, "Select Features to Subduct", 
+            ProcessStepWidget(3, "Select Features to Subduct",
                             "Choose features that will be processed by subduction"),
-            ProcessStepWidget(4, "Process & Save", 
+            ProcessStepWidget(4, "Process & Save",
                             "Execute subduction and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Subduction zone selector
         self.sz_group = QGroupBox("Subduction Zone Selection")
         sz_layout = QVBoxLayout(self.sz_group)
-        sz_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.sz_model = FeatureFilterModel()
         self.sz_model.setGeometryFilter(['PolylineOnSphere'])
@@ -73,27 +71,24 @@ class SubductionTabWidget(ProcessTabWidget):
         self.time_group = QGroupBox("Time Range")
         self.time_widget = TimeRangeWidget()
         self.time_widget.timeChanged.connect(self.on_time_changed)
-        
+
         time_layout = QVBoxLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         time_layout.addWidget(self.time_widget)
-        
+
         # Step 3: Feature selection
         self.feature_group = QGroupBox("Feature Selection")
         self.feature_selector = FeatureSelectorWidget(self.session)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
-        
+
         feature_layout = QVBoxLayout(self.feature_group)
-        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         feature_layout.addWidget(self.feature_selector)
-        
+
         # Step 4: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -118,16 +113,23 @@ class SubductionTabWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.sz_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.feature_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.sz_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.feature_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
     
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
@@ -218,11 +220,10 @@ class SubductionTabWidget(ProcessTabWidget):
 
 class RiftingTabWidget(ProcessTabWidget):
     """Tab for continental rifting processing."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
             ProcessStepWidget(1, "Select Rift", 
@@ -238,12 +239,11 @@ class RiftingTabWidget(ProcessTabWidget):
         ]
         
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Rift selector
         self.rift_group = QGroupBox("Rift Selection")
         rift_layout = QVBoxLayout(self.rift_group)
-        rift_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.rift_model = FeatureFilterModel()
         self.rift_model.setGeometryFilter(['PolylineOnSphere'])
@@ -261,7 +261,6 @@ class RiftingTabWidget(ProcessTabWidget):
         # Step 2: Split time
         self.time_group = QGroupBox("Split Time")
         time_layout = QFormLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
@@ -274,15 +273,13 @@ class RiftingTabWidget(ProcessTabWidget):
         self.feature_group = QGroupBox("Feature Selection")
         self.feature_selector = FeatureSelectorWidget(self.session, False, True)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
-        
+
         feature_layout = QVBoxLayout(self.feature_group)
-        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         feature_layout.addWidget(self.feature_selector)
-        
+
         # Step 4: Rift parameters
         self.params_group = QGroupBox("Rifting Parameters")
         params_layout = QVBoxLayout(self.params_group)
-        params_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Dual plate ID widget with validation
         self.plate_ids_widget = DualPlateIdWidget(self.session, enable_uniqueness_validation=True)
@@ -298,18 +295,15 @@ class RiftingTabWidget(ProcessTabWidget):
         # Step 5: Output controls
         self.output_group = QGroupBox("Output")
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         # Feature output
         feature_output_layout = QFormLayout()
-        feature_output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)", enable_topology_generation=True)
         self.feature_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         feature_output_layout.addRow("Feature Output:", self.feature_output_widget)
-        
+
         # Rotation output
-        rotation_output_layout = QFormLayout()  
-        rotation_output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
+        rotation_output_layout = QFormLayout()
         self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
         self.rotation_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         rotation_output_layout.addRow("Rotation Output:", self.rotation_output_widget)
@@ -339,17 +333,24 @@ class RiftingTabWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.rift_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.feature_group)
-        layout.addWidget(self.params_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.rift_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.feature_group)
+        content_layout.addWidget(self.params_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
 
     def on_rift_selected(self):
         has_rift = self.rift_selection.currentIndex() >= 0
@@ -475,28 +476,26 @@ class RiftingTabWidget(ProcessTabWidget):
 
 class SimpleDivergenceTabWidget(ProcessTabWidget):
     """Tab for ocean spreading/divergence processing."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Ridge", 
+            ProcessStepWidget(1, "Select Ridge",
                             "Choose the mid-ocean ridge for spreading"),
-            ProcessStepWidget(2, "Set Time Range", 
+            ProcessStepWidget(2, "Set Time Range",
                             "Define when ocean spreading occurs"),
-            ProcessStepWidget(3, "Process & Save", 
+            ProcessStepWidget(3, "Process & Save",
                             "Execute spreading and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Ridge selector
         self.ridge_group = QGroupBox("Ridge Selection")
         ridge_layout = QVBoxLayout(self.ridge_group)
-        ridge_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.ridge_model = FeatureFilterModel()
         self.ridge_model.setGeometryFilter(['PolylineOnSphere'])
@@ -510,23 +509,21 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
         self.ridge_selection.currentIndexChanged.connect(lambda: self.update_step_status(0, True))
         
         ridge_layout.addWidget(self.ridge_selection)
-        
+
         # Step 2: Time range
         self.time_group = QGroupBox("Time Range")
         self.time_widget = TimeRangeWidget()
         self.time_widget.timeChanged.connect(self.on_time_changed)
-        
+
         time_layout = QVBoxLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         time_layout.addWidget(self.time_widget)
-        
+
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -551,16 +548,23 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.ridge_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.ridge_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
-    
+
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
+
     def on_time_changed(self, start_time: float, end_time: float):
         """Handle time range changes."""
         self.ridge_model.setTimeRangeFilter(start_time, end_time)
@@ -639,28 +643,26 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
 
 class TripleDivergenceTabWidget(ProcessTabWidget):
     """Tab for ocean spreading/divergence processing."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Ridges", 
+            ProcessStepWidget(1, "Select Ridges",
                             "Choose the mid-ocean ridges for spreading"),
-            ProcessStepWidget(2, "Set Time Range", 
+            ProcessStepWidget(2, "Set Time Range",
                             "Define when ocean spreading occurs"),
-            ProcessStepWidget(3, "Process & Save", 
+            ProcessStepWidget(3, "Process & Save",
                             "Execute spreading and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Ridge selector
         self.ridge_group = QGroupBox("Ridge Selection")
         ridge_layout = QVBoxLayout(self.ridge_group)
-        ridge_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.ridgeA_model = FeatureFilterModel()
         self.ridgeA_model.setGeometryFilter(['PolylineOnSphere'])
@@ -698,23 +700,21 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
         ridge_layout.addWidget(self.ridgeA_selection)
         ridge_layout.addWidget(self.ridgeB_selection)
         ridge_layout.addWidget(self.ridgeC_selection)
-        
+
         # Step 2: Time range
         self.time_group = QGroupBox("Time Range")
         self.time_widget = TimeRangeWidget()
         self.time_widget.timeChanged.connect(self.on_time_changed)
-        
+
         time_layout = QVBoxLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         time_layout.addWidget(self.time_widget)
-        
+
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -739,15 +739,22 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.ridge_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.ridge_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
 
     def on_ridge_select(self):
       ab = []
@@ -906,16 +913,15 @@ class ImprovedSubductionRiftHelperWindow(QWidget):
     def __init__(self, session: Session):
         super().__init__()
         self.session = session
-        
+
         self.setWindowTitle("Geological Process Helper")
-        self.setMinimumSize(1000, 700)
-        
+        self.resize(800, 600)
+
         self.setup_ui()
-        
+
     def setup_ui(self):
         """Setup the main UI components."""
         layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Header info
         header_label = QLabel("""
@@ -957,15 +963,6 @@ class ImprovedSubductionRiftHelperWindow(QWidget):
         self.tab_widget.setTabToolTip(2, "Generate ocean crust from mid-ocean ridges")
         self.tab_widget.setTabToolTip(3, "Generate ocean crust at a triple juciton of mid-ocean ridges")
 
-        self.tab_widget.currentChanged.connect(self.tabChange)
-        
         layout.addWidget(self.tab_widget)
 
         self.setLayout(layout)
-        # self.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
-        self.tab_widget.setMinimumSize(self.tab_widget.currentWidget().layout().minimumSize())
-        self.setMinimumSize(self.layout().minimumSize())
-
-    def tabChange(self, idx):
-        self.tab_widget.setMinimumSize(self.tab_widget.currentWidget().layout().minimumSize())
-        self.setMinimumSize(self.layout().minimumSize())

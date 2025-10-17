@@ -5,7 +5,7 @@ A reusable welcome tab with operation overview and quick access functionality.
 """
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QLayout, QScrollArea, QFrame
 
 from ui.components.operation_summary_widget import OperationSummaryWidget
 
@@ -77,9 +77,8 @@ class WelcomeTabWidget(QWidget):
         
     def setup_ui(self):
         """Setup the UI components."""
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Welcome header
         welcome_label = QLabel(f"""
         <h1>{self.title}</h1>
@@ -89,16 +88,15 @@ class WelcomeTabWidget(QWidget):
         """)
         welcome_label.setWordWrap(True)
         welcome_label.setStyleSheet("padding: 20px; background-color: #f0f8ff; border-radius: 8px; margin-bottom: 20px;")
-        
-        layout.addWidget(welcome_label)
-        
+
+        content_layout.addWidget(welcome_label)
+
         # Operation categories
         categories_label = QLabel("<h2>Operation Categories</h2>")
-        layout.addWidget(categories_label)
-        
+        content_layout.addWidget(categories_label)
+
         # Create operation summary widgets
         categories_layout = QGridLayout()
-        categories_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.operation_widgets = {}
         
@@ -121,16 +119,25 @@ class WelcomeTabWidget(QWidget):
                 categories_layout.addWidget(widget, row, 0, 1, 2)
             else:
                 categories_layout.addWidget(widget, row, col)
-        
-        layout.addLayout(categories_layout)
-        
-        # Quick start section
-        self.add_quick_start_section(layout)
-        
-        layout.addStretch()
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        content_layout.addLayout(categories_layout)
+
+        # Quick start section
+        self.add_quick_start_section(content_layout)
+
+        content_layout.addStretch()
+
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(content_widget)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setFrameShape(QFrame.NoFrame)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
         
     def add_quick_start_section(self, layout):
         """Add quick start section to layout."""

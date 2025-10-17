@@ -166,13 +166,6 @@ Please open a new issue on this project, or comment on existing issues that matc
 
 ## Development Roadmap
 
-### Current Version: v0.3.0
-
-- [x] Comprehensive UI overhaul with tabbed interface
-- [x] Advanced geological process modeling (rift, subduct, diverge)
-- [x] Rotation management and validation tools
-- [x] Boolean operations for polygon features
-
 ### Future Enhancements
 
 - [ ] **Statistics & Analysis**: Feature area calculations, plate motion statistics
@@ -222,6 +215,4 @@ GPlates Utilities is an open-source project welcoming contributions from the geo
 
 ## License
 
-This project is licensed under the **MIT License**. See the `LICENSE` file for complete terms.
-
-The MIT License permits use, modification, and distribution while maintaining attribution to original contributors and providing the software "as is" without warranty.
+This project is licensed under the **GPLv3 License**. See the `LICENSE` file for complete terms.

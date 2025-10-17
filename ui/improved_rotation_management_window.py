@@ -9,10 +9,10 @@ from os import path
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import (
-    QFileDialog, QHBoxLayout, QLabel, 
+    QFileDialog, QHBoxLayout, QLabel,
     QLineEdit, QMessageBox, QPushButton, QVBoxLayout, QWidget,
     QTabWidget, QGroupBox, QTextEdit, QCheckBox, QSpinBox,
-    QFormLayout, QLayout, QMainWindow
+    QFormLayout, QLayout, QMainWindow, QScrollArea, QFrame
 )
 
 from core.session import Session, FeatureDataColumn
@@ -29,49 +29,45 @@ import traceback
 
 class RotationInitializationWidget(ProcessTabWidget):
     """Widget for initializing rotation models."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Features for Rotation Model", 
+            ProcessStepWidget(1, "Select Features for Rotation Model",
                             "Choose features that will be used to create rotation model.\nSelect none to generate for all plates."),
-            ProcessStepWidget(2, "Set Time Parameters", 
+            ProcessStepWidget(2, "Set Time Parameters",
                             "Define the time period for rotation model"),
-            ProcessStepWidget(3, "Initialize & Save", 
+            ProcessStepWidget(3, "Initialize & Save",
                             "Create rotation model and save results")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Feature selection
         self.feature_group = QGroupBox("Feature Selection")
         self.feature_selector = FeatureSelectorWidget(self.session)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
-        
+
         feature_layout = QVBoxLayout(self.feature_group)
-        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         feature_layout.addWidget(self.feature_selector)
-        
+
         # Step 2: Time parameters
         self.time_group = QGroupBox("Time Parameters")
         self.time_widget = TimeRangeWidget()
         self.time_widget.timeChanged.connect(self.on_time_changed)
-        
+
         time_layout = QVBoxLayout(self.time_group)
-        time_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         time_layout.addWidget(self.time_widget)
-        
+
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
         self.output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
-        
+
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         output_layout.addWidget(self.output_widget)
         
         # Process button
@@ -96,17 +92,23 @@ class RotationInitializationWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.feature_group)
-        layout.addWidget(self.time_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.feature_group)
+        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
         self.steps[0].set_completed(True)
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
 
     
     def on_time_changed(self, start_time: float, end_time: float):
@@ -176,39 +178,36 @@ class RotationInitializationWidget(ProcessTabWidget):
 
 class PlateCreationWidget(ProcessTabWidget):
     """Widget for creating new plates with rotations."""
-    
+
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Workflow steps
         self.steps = [
-            ProcessStepWidget(1, "Select Features for New Plate", 
+            ProcessStepWidget(1, "Select Features for New Plate",
                             "Choose features that will become the new plate"),
-            ProcessStepWidget(2, "Set Plate Parameters", 
+            ProcessStepWidget(2, "Set Plate Parameters",
                             "Define new plate ID and time parameters"),
-            ProcessStepWidget(3, "Configure Output Options", 
+            ProcessStepWidget(3, "Configure Output Options",
                             "Set output locations for features and rotations"),
-            ProcessStepWidget(4, "Create Plate & Rotations", 
+            ProcessStepWidget(4, "Create Plate & Rotations",
                             "Generate new plate and rotation entries")
         ]
-        
+
         for step in self.steps:
-            layout.addWidget(step)
-        
+            content_layout.addWidget(step)
+
         # Step 1: Feature selection
         self.feature_group = QGroupBox("Feature Selection for New Plate")
         self.feature_selector = FeatureSelectorWidget(self.session)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
-        
+
         feature_layout = QVBoxLayout(self.feature_group)
-        feature_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         feature_layout.addWidget(self.feature_selector)
-        
+
         # Step 2: Plate parameters
         self.params_group = QGroupBox("Plate Parameters")
         params_layout = QFormLayout(self.params_group)
-        params_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.new_plate_id = QSpinBox()
         self.new_plate_id.setRange(0, 9999)
@@ -222,22 +221,19 @@ class PlateCreationWidget(ProcessTabWidget):
         
         params_layout.addRow("New Plate ID:", self.new_plate_id)
         params_layout.addRow("Split Time (Ma):", self.split_time)
-        
+
         # Step 3: Output configuration
         self.output_group = QGroupBox("Output Configuration")
         output_layout = QVBoxLayout(self.output_group)
-        output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         # Feature output
         feature_output_layout = QFormLayout()
-        feature_output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         self.feature_output_widget = OutputWidget(self.session, "GPlates Markup Language (*.gpml)", enable_topology_generation=False)
         self.feature_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         feature_output_layout.addRow("Feature Output:", self.feature_output_widget)
-        
+
         # Rotation output
-        rotation_output_layout = QFormLayout()  
-        rotation_output_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
+        rotation_output_layout = QFormLayout()
         self.rotation_output_widget = OutputWidget(self.session, "PLATES4 Rotation File (*.rot)", enable_topology_generation=False)
         self.rotation_output_widget.pathChange.connect(lambda: self.validate_and_enable_process())
         rotation_output_layout.addRow("Rotation Output:", self.rotation_output_widget)
@@ -267,16 +263,22 @@ class PlateCreationWidget(ProcessTabWidget):
             }
         """)
         output_layout.addWidget(self.process_button)
-        
-        layout.addWidget(self.feature_group)
-        layout.addWidget(self.params_group)
-        layout.addWidget(self.output_group)
-        
+
+        content_layout.addWidget(self.feature_group)
+        content_layout.addWidget(self.params_group)
+        content_layout.addWidget(self.output_group)
+
         # Set first step as active
         self.steps[0].set_active(True)
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = self.wrap_in_scroll_area(content_widget)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
     
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
@@ -380,22 +382,19 @@ class RotationMaintenanceWidget(QWidget):
         self.setup_ui()
     
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+        content_layout = QVBoxLayout()
+
         # Header
         header_label = QLabel("<h3>Rotation Model Maintenance</h3>")
-        layout.addWidget(header_label)
-        
+        content_layout.addWidget(header_label)
+
         # Maintenance operations
         operations_group = QGroupBox("Maintenance Operations")
         operations_layout = QVBoxLayout(operations_group)
-        operations_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         # Fix final rotation
         fix_rotation_group = QGroupBox("Fix Final Rotation")
         fix_layout = QVBoxLayout(fix_rotation_group)
-        fix_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         fix_description = QLabel(
             "Fix the final rotation in the rotation model to ensure proper plate reconstruction. "
@@ -404,9 +403,8 @@ class RotationMaintenanceWidget(QWidget):
         fix_description.setWordWrap(True)
         fix_description.setStyleSheet("color: #666; margin-bottom: 10px;")
         fix_layout.addWidget(fix_description)
-        
+
         fix_button_layout = QHBoxLayout()
-        fix_button_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.rotation_output_path = QLineEdit()
         self.rotation_output_path.setPlaceholderText("Select rotation file output location...")
@@ -442,12 +440,11 @@ class RotationMaintenanceWidget(QWidget):
         fix_button_layout.addWidget(self.fix_rotation_button)
         
         fix_layout.addLayout(fix_button_layout)
-        
+
         # Model validation
         validation_group = QGroupBox("Model Validation")
         validation_layout = QVBoxLayout(validation_group)
-        validation_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
-        
+
         validation_description = QLabel(
             "Validate the current rotation model for consistency and completeness. "
             "This checks for missing rotations, duplicate entries, and temporal continuity."
@@ -455,9 +452,8 @@ class RotationMaintenanceWidget(QWidget):
         validation_description.setWordWrap(True)
         validation_description.setStyleSheet("color: #666; margin-bottom: 10px;")
         validation_layout.addWidget(validation_description)
-        
+
         validation_button_layout = QHBoxLayout()
-        validation_button_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         self.validate_button = QPushButton("✅ Validate Model")
         self.validate_button.clicked.connect(self.validate_rotation_model)
@@ -490,12 +486,21 @@ class RotationMaintenanceWidget(QWidget):
         
         operations_layout.addWidget(fix_rotation_group)
         operations_layout.addWidget(validation_group)
-        
-        layout.addWidget(operations_group)
-        layout.addStretch()
 
-        self.setLayout(layout)
-        self.setMinimumSize(layout.minimumSize())
+        content_layout.addWidget(operations_group)
+        content_layout.addStretch()
+
+        # Wrap content in scroll area
+        content_widget = QWidget()
+        content_widget.setLayout(content_layout)
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(content_widget)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setFrameShape(QFrame.NoFrame)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(scroll_area)
+        self.setLayout(main_layout)
     
     def select_rotation_output(self):
         """Select rotation output file."""
@@ -624,16 +629,15 @@ class ImprovedRotationManagementWindow(QWidget):
     def __init__(self, session: Session):
         super().__init__()
         self.session = session
-        
+
         self.setWindowTitle("Rotation Management Helper")
-        self.setMinimumSize(1000, 700)
-        
+        self.resize(800, 600)
+
         self.setup_ui()
-        
+
     def setup_ui(self):
         """Setup the main UI components."""
         layout = QVBoxLayout()
-        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         
         # Header info
         header_label = QLabel("""
