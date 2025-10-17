@@ -9,8 +9,13 @@ from os import path
 from PyQt5.QtCore import QTimer, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
-    QFileDialog, QMessageBox, QVBoxLayout, QWidget,
-    QTabWidget, QMainWindow, QLayout
+    QFileDialog,
+    QMessageBox,
+    QVBoxLayout,
+    QWidget,
+    QTabWidget,
+    QMainWindow,
+    QLayout,
 )
 
 from core.session import Session
@@ -27,7 +32,7 @@ from resources import LOGO_PATH
 class ImprovedGeologicalOperationsWindow(QMainWindow):
     """
     Master geological operations window combining all geological modeling functionality.
-    
+
     Features:
     - Welcome tab with operation overview
     - Geological processes (subduction, rifting, spreading)
@@ -37,173 +42,202 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
     - Integrated help and documentation
     - Session state management
     """
-    
+
     def __init__(self, session: Session):
         super().__init__()
         self.session = session
-        
+
         self.setWindowTitle("GPlates Operations Suite")
         # self.setMinimumSize(1200, 800)
         self.resize(800, 600)
 
         self.feature_collection_manager = FeatureCollectionLoader(self.session)
-        
+
         # Set application icon (if available)
         self.setWindowIcon(QIcon(LOGO_PATH))
-      
+
         self.setup_menu_bar()
         self.setup_ui()
         self.setup_status_bar()
-        
+
     def setup_ui(self):
         """Setup the main UI components."""
         # Central widget and main tab widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         layout = QVBoxLayout(central_widget)
         # layout.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
         layout.setContentsMargins(5, 5, 5, 5)
-        
+
         # Main tab widget
         self.main_tab_widget = QTabWidget()
         self.main_tab_widget.setTabPosition(QTabWidget.North)
         self.main_tab_widget.setMovable(True)
         self.main_tab_widget.setTabsClosable(False)
-        
+
         # Create operation windows
         self.welcome_tab = WelcomeTabWidget()
         self.geological_window = ImprovedSubductionRiftHelperWindow(self.session)
         self.plate_operations_window = ImprovedPlateOperationsWindow(self.session)
         self.rotation_management_window = ImprovedRotationManagementWindow(self.session)
-        
+
         # Add tabs with icons
         self.main_tab_widget.addTab(self.welcome_tab, "🏠 Welcome")
         self.main_tab_widget.addTab(self.geological_window, "🌋 Geological Processes")
         self.main_tab_widget.addTab(self.plate_operations_window, "🌍 Plate Operations")
-        self.main_tab_widget.addTab(self.rotation_management_window, "🔄 Rotation Management")
-        
+        self.main_tab_widget.addTab(
+            self.rotation_management_window, "🔄 Rotation Management"
+        )
+
         # Set tab tooltips
-        self.main_tab_widget.setTabToolTip(0, "Overview and quick access to all operations")
-        self.main_tab_widget.setTabToolTip(1, "Subduction, rifting, and ocean spreading operations")
-        self.main_tab_widget.setTabToolTip(2, "Plate splitting and geometric operations")
+        self.main_tab_widget.setTabToolTip(
+            0, "Overview and quick access to all operations"
+        )
+        self.main_tab_widget.setTabToolTip(
+            1, "Subduction, rifting, and ocean spreading operations"
+        )
+        self.main_tab_widget.setTabToolTip(
+            2, "Plate splitting and geometric operations"
+        )
         self.main_tab_widget.setTabToolTip(3, "Rotation model creation and management")
-        
+
         layout.addWidget(self.main_tab_widget)
 
-        self.setStyleSheet('* { color: black; }\nQLineEdit { background-color: white; }\nQTreeView { background-color: white; }\nQTreeView::section { background-color: lightgray; }')
-        
+        self.setStyleSheet(
+            "* { color: black; }\nQLineEdit { background-color: white; }\nQTreeView { background-color: white; }\nQTreeView::section { background-color: lightgray; }"
+        )
+
         # Connect welcome tab signals
         self.welcome_tab.operationSelected.connect(self.navigate_to_operation)
-        
+
     def setup_menu_bar(self):
         """Setup menu bar similar to the original MainWindow."""
         # File Menu
         file_menu = self.menuBar().addMenu("File")
-        
+
         new_project_action = file_menu.addAction("New Project")
         new_project_action.triggered.connect(self.new_project)
         load_project_action = file_menu.addAction("Open Project")
         load_project_action.triggered.connect(self.open_project)
         save_project_action = file_menu.addAction("Save Project")
         save_project_action.triggered.connect(self.save_project)
-        
+
         file_menu.addSeparator()
-        
-        manage_feature_collection_action = file_menu.addAction("Manage Feature Collections")
-        manage_feature_collection_action.triggered.connect(self.feature_collection_manager.show)
-        load_feature_collection_action = file_menu.addAction("Open Feature Collection(s)")
+
+        manage_feature_collection_action = file_menu.addAction(
+            "Manage Feature Collections"
+        )
+        manage_feature_collection_action.triggered.connect(
+            self.feature_collection_manager.show
+        )
+        load_feature_collection_action = file_menu.addAction(
+            "Open Feature Collection(s)"
+        )
         load_feature_collection_action.triggered.connect(self.open_feature_collections)
         load_rotation_model_action = file_menu.addAction("Open Rotation Model")
         load_rotation_model_action.triggered.connect(self.open_rotation_model)
-        
+
         file_menu.addSeparator()
-        
+
         reload_action = file_menu.addAction("Reload Files")
         reload_action.triggered.connect(self.reload_files)
-        
+
         # View Menu
         view_menu = self.menuBar().addMenu("View")
-        
+
         welcome_action = view_menu.addAction("Welcome")
-        welcome_action.triggered.connect(lambda: self.main_tab_widget.setCurrentIndex(0))
+        welcome_action.triggered.connect(
+            lambda: self.main_tab_widget.setCurrentIndex(0)
+        )
         geological_action = view_menu.addAction("Geological Processes")
-        geological_action.triggered.connect(lambda: self.main_tab_widget.setCurrentIndex(1))
+        geological_action.triggered.connect(
+            lambda: self.main_tab_widget.setCurrentIndex(1)
+        )
         plate_action = view_menu.addAction("Plate Operations")
         plate_action.triggered.connect(lambda: self.main_tab_widget.setCurrentIndex(2))
         rotation_action = view_menu.addAction("Rotation Management")
-        rotation_action.triggered.connect(lambda: self.main_tab_widget.setCurrentIndex(3))
-        
+        rotation_action.triggered.connect(
+            lambda: self.main_tab_widget.setCurrentIndex(3)
+        )
+
         # Help Menu
         help_menu = self.menuBar().addMenu("Help")
-        
+
         help_action = help_menu.addAction("Help Documentation")
         help_action.triggered.connect(self.show_help)
         about_action = help_menu.addAction("About")
         about_action.triggered.connect(self.show_about)
-      
+
     def setup_status_bar(self):
         """Setup status bar for information display."""
         # Use QMainWindow's built-in status bar
         status_bar = self.statusBar()
         status_bar.showMessage("Ready - Select an operation to begin")
-        
+
         # Update status based on session state
         self.update_status()
-        
+
         # Update status periodically
         self.status_timer = QTimer()
         self.status_timer.timeout.connect(self.update_status)
         self.status_timer.start(5000)  # Update every 5 seconds
-    
+
     def navigate_to_operation(self, operation_category: str):
         """Navigate to the specified operation category."""
         tab_map = {
             "Geological Processes": 1,
-            "Plate Operations": 2, 
-            "Rotation Management": 3
+            "Plate Operations": 2,
+            "Rotation Management": 3,
         }
-        
+
         if operation_category in tab_map:
             self.main_tab_widget.setCurrentIndex(tab_map[operation_category])
             self.statusBar().showMessage(f"Navigated to {operation_category}")
-    
+
     def update_status(self):
         """Update the status bar with current session information."""
         try:
             # Count loaded features
-            feature_count = sum(len(lfc.feature_collection) for lfc in self.session.loaded_feature_collections)
-            
+            feature_count = sum(
+                len(lfc.feature_collection)
+                for lfc in self.session.loaded_feature_collections
+            )
+
             # Check rotation model
             has_rotation = "✓" if self.session._rotationModel else "✗"
-            
+
             # Current tab
-            current_tab = self.main_tab_widget.tabText(self.main_tab_widget.currentIndex())
-            
+            current_tab = self.main_tab_widget.tabText(
+                self.main_tab_widget.currentIndex()
+            )
+
             status = f"Features: {feature_count} | Rotation Model: {has_rotation} | Current: {current_tab}"
             self.statusBar().showMessage(status)
-            
+
         except Exception as e:
             self.statusBar().showMessage(f"Status update error: {str(e)}")
-    
+
     # File menu methods (similar to original MainWindow)
     @pyqtSlot()
     def new_project(self):
         """Create a new project."""
         self.session.reset_project()
         self.statusBar().showMessage("New project created")
-    
+
     @pyqtSlot()
     def open_project(self):
         """Open an existing project."""
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open Project", ".", "JavaScript Object Notation (*.json)")
+        file_name, _ = QFileDialog.getOpenFileName(
+            self, "Open Project", ".", "JavaScript Object Notation (*.json)"
+        )
         if not file_name:
             return
         if not load_project(self.session, file_name):
             QMessageBox.critical(self, "Error", "Error occurred loading project file.")
         else:
             self.statusBar().showMessage(f"Project loaded: {path.basename(file_name)}")
-    
+
     @pyqtSlot()
     def save_project(self):
         """Save the current project."""
@@ -211,64 +245,76 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         if self.session._project_file:
             file_name = self.session._project_file
         else:
-            file_name, _ = QFileDialog.getSaveFileName(self, "Save Project", ".", "JavaScript Object Notation (*.json)")
-        
+            file_name, _ = QFileDialog.getSaveFileName(
+                self, "Save Project", ".", "JavaScript Object Notation (*.json)"
+            )
+
         if not file_name:
             return
         if not save_project(self.session, file_name):
             QMessageBox.critical(self, "Error", "Error occurred saving project file.")
         else:
             self.statusBar().showMessage(f"Project saved: {path.basename(file_name)}")
-    
+
     @pyqtSlot()
     def open_feature_collections(self):
         """Open feature collection files."""
-        fc_filepaths, _ = QFileDialog.getOpenFileNames(self, "Open Feature Collection(s)", 
-                                                       self.session._project_path if self.session._project_path else ".", 
-                                                       "GPlates Markup Language (*.gpml)")
+        fc_filepaths, _ = QFileDialog.getOpenFileNames(
+            self,
+            "Open Feature Collection(s)",
+            self.session._project_path if self.session._project_path else ".",
+            "GPlates Markup Language (*.gpml)",
+        )
         if len(fc_filepaths) == 0:
             return
-        
+
         self.session.load_feature_collections(fc_filepaths)
-        self.statusBar().showMessage(f"Loaded {len(fc_filepaths)} feature collection(s)")
-    
+        self.statusBar().showMessage(
+            f"Loaded {len(fc_filepaths)} feature collection(s)"
+        )
+
     @pyqtSlot()
     def open_rotation_model(self):
         """Open a rotation model file."""
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open Rotation Model", 
-                                                   self.session._project_path if self.session._project_path else ".", 
-                                                   "PLATES4 rotation (*.rot)")
+        file_name, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Rotation Model",
+            self.session._project_path if self.session._project_path else ".",
+            "PLATES4 rotation (*.rot)",
+        )
         if file_name:
             self.session.load_rotation_model(file_name)
-            self.statusBar().showMessage(f"Rotation model loaded: {path.basename(file_name)}")
-    
+            self.statusBar().showMessage(
+                f"Rotation model loaded: {path.basename(file_name)}"
+            )
+
     @pyqtSlot()
     def reload_files(self):
         """Reload all loaded files."""
         self.session.reload_features()
         self.session.reload_rotation_model()
         self.statusBar().showMessage("Files reloaded")
-    
+
     def save_session(self):
         """Save current session state (uses project saving functionality)."""
         try:
             self.save_project()
         except Exception as e:
             QMessageBox.warning(self, "Save Error", f"Error saving session: {str(e)}")
-    
+
     def load_session(self):
         """Load saved session state (uses project loading functionality)."""
         try:
             self.open_project()
         except Exception as e:
             QMessageBox.warning(self, "Load Error", f"Error loading session: {str(e)}")
-    
+
     def show_help(self):
         """Show help documentation."""
         help_dialog = QMessageBox(self)
         help_dialog.setWindowTitle("GPlates Operations Help")
         help_dialog.setIcon(QMessageBox.Information)
-        
+
         help_text = """
         <h3>GPlates Operations Suite Help</h3>
         
@@ -300,9 +346,10 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         
         <p><b>Need more help?</b> Each tab contains detailed tooltips and contextual help.</p>
         """
-        
+
         help_dialog.setText(help_text)
-        help_dialog.setDetailedText("""
+        help_dialog.setDetailedText(
+            """
         Workflow Tips:
         
         1. Load your feature collections and rotation models first
@@ -322,10 +369,11 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         
         - Features: GPlates Markup Language (.gpml)
         - Rotations: PLATES4 Rotation File (.rot)
-        """)
-        
+        """
+        )
+
         help_dialog.exec()
-    
+
     def show_about(self):
         """Show about dialog."""
         about_text = """
@@ -358,15 +406,15 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
         This software is designed for worldbuilding tectonic histories with GPlates.
         </p>
         """
-        
+
         QMessageBox.about(self, "About GPlates Operations Suite", about_text)
-    
+
     def closeEvent(self, event):
         """Handle window close event."""
         # Clean up timers
-        if hasattr(self, 'status_timer'):
+        if hasattr(self, "status_timer"):
             self.status_timer.stop()
-        
+
         event.accept()
 
 
@@ -375,13 +423,14 @@ if __name__ == "__main__":
     import sys
     from PyQt5.QtWidgets import QApplication
     from core.session import Session
-    
+
     app = QApplication(sys.argv)
     app.setApplicationName("GPlates Operations Suite")
     app.setOrganizationName("GPlates Modeling Tools")
-    
+
     # Set application style
-    app.setStyleSheet("""
+    app.setStyleSheet(
+        """
         QTabWidget::pane {
             border: 1px solid #C0C0C0;
             background-color: white;
@@ -416,11 +465,12 @@ if __name__ == "__main__":
             left: 10px;
             padding: 0 10px 0 10px;
         }
-    """)
-    
+    """
+    )
+
     session = Session()
-    
+
     window = ImprovedGeologicalOperationsWindow(session)
     window.show()
-    
+
     sys.exit(app.exec_())

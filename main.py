@@ -1,21 +1,22 @@
-
 if __name__ == "__main__":
     import sys
-
 
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtGui import QIcon
     from core.session import Session
-    from ui.improved_geological_operations_window import ImprovedGeologicalOperationsWindow
+    from ui.improved_geological_operations_window import (
+        ImprovedGeologicalOperationsWindow,
+    )
     from resources import LOGO_PATH
-    
+
     try:
         from ctypes import windll  # Only exists on Windows.
-        myappid = 'moshi-mochi.gplates-utilities.app.0.3.0'
+
+        myappid = "moshi-mochi.gplates-utilities.app.0.3.0"
         windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except ImportError:
         pass
-    
+
     app = QApplication(sys.argv)
     app.setApplicationName("Geological Operations Suite")
     app.setWindowIcon(QIcon(LOGO_PATH))
@@ -25,9 +26,10 @@ if __name__ == "__main__":
     # main_window.show()
 
     # sys.exit(app.exec())
-    
+
     # Set application style
-    app.setStyleSheet("""
+    app.setStyleSheet(
+        """
         QTabWidget::pane {
             border: 1px solid #C0C0C0;
             background-color: white;
@@ -62,11 +64,12 @@ if __name__ == "__main__":
             left: 10px;
             padding: 0 10px 0 10px;
         }
-    """)
-    
+    """
+    )
+
     session = Session()
 
     window = ImprovedGeologicalOperationsWindow(session)
     window.show()
-    
+
     sys.exit(app.exec_())
