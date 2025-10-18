@@ -84,9 +84,10 @@ class FeatureSelectorWidget(QWidget):
 
         self.feature_view = QTreeView()
         self.feature_view.setModel(self.feature_model)
+          # Hide internal columns
         self.feature_view.setColumnHidden(
             FeatureDataColumn.feature_name_and_id, True
-        )  # Hide internal columns
+        )
         self.feature_view.setColumnHidden(FeatureDataColumn.geometry_type, True)
         self.feature_view.setColumnHidden(FeatureDataColumn.reconstruction_method, True)
         self.feature_view.setColumnHidden(FeatureDataColumn.left_plate, True)
@@ -119,6 +120,10 @@ class FeatureSelectorWidget(QWidget):
         layout.addWidget(feature_group)
         self.setLayout(layout)
         self.setMinimumSize(layout.minimumSize())
+
+    @property
+    def columnCount(self):
+        return self.feature_model.columnCount() - 5
 
     def connect_signals(self):
         """Connect widget signals."""
@@ -245,7 +250,7 @@ class FeatureSelectorWidget(QWidget):
     ):
         """Handle selection changes."""
         selection_count = (
-            len(self.feature_view.selectedIndexes()) // self.feature_model.columnCount()
+            len(self.feature_view.selectedIndexes()) // self.columnCount
         )
         self.selection_label.setText(f"{selection_count} features selected")
         if self._single_plate_id and not (selected.isEmpty() and deselected.isEmpty()):
