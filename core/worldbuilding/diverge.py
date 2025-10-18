@@ -282,7 +282,7 @@ def divergeTriple(
     reverse_reconstruct(ridges, rotation_model, times[0][0])
     # output_fc.add(ridges)
 
-    ridge_extentions = [
+    ridge_extensions = [
         recreate_reconstructable_feature_with_method(
             ridgeA, PolylineOnSphere([ridge_a[a_idx], midpoint]), ""
         ),
@@ -293,9 +293,9 @@ def divergeTriple(
             ridgeC, PolylineOnSphere([ridge_c[c_idx], midpoint]), ""
         ),
     ]
-    reverse_reconstruct(ridge_extentions, rotation_model, times[0][0])
+    reverse_reconstruct(ridge_extensions, rotation_model, times[0][0])
 
-    ridge_extentions = [ridgeA, ridgeB, ridgeC] + ridge_extentions
+    ridge_extensions = [ridgeA, ridgeB, ridgeC] + ridge_extensions
 
     for older_time, younger_time in times:
         ridge_a, ridge_b, ridge_c = [
@@ -335,30 +335,39 @@ def divergeTriple(
             younger_time,
         )
 
-        new_ridge_extentions = [
+        new_ridge_extensions = [
             recreate_reconstructable_feature_with_method(
-                ridgeA, PolylineOnSphere([ridge_a, midpoint]), ""
+                ridgeA,
+                PolylineOnSphere([ridge_a, midpoint]),
+                f"{ridgeA.get_name()} Extension @{younger_time}",
+                valid_time=(younger_time, ridgeA.get_valid_time()[1]),
             ),
             recreate_reconstructable_feature_with_method(
-                ridgeB, PolylineOnSphere([ridge_b, midpoint]), ""
+                ridgeB,
+                PolylineOnSphere([ridge_b, midpoint]),
+                f"{ridgeB.get_name()} Extension @{younger_time}",
+                valid_time=(younger_time, ridgeB.get_valid_time()[1]),
             ),
             recreate_reconstructable_feature_with_method(
-                ridgeC, PolylineOnSphere([ridge_c, midpoint]), ""
+                ridgeC,
+                PolylineOnSphere([ridge_c, midpoint]),
+                f"{ridgeC.get_name()} Extension @{younger_time}",
+                valid_time=(younger_time, ridgeC.get_valid_time()[1]),
             ),
         ]
-        reverse_reconstruct(new_ridge_extentions, rotation_model, younger_time)
+        reverse_reconstruct(new_ridge_extensions, rotation_model, younger_time)
 
         extra_crust = []
-        for extention in ridge_extentions:
+        for extension in ridge_extensions:
             extra_crust += generate_ocean_crust_for_timestep(
-                extention,
-                [extention.get_left_plate(), extention.get_right_plate()],
+                extension,
+                [extension.get_left_plate(), extension.get_right_plate()],
                 rotation_model,
                 older_time,
                 younger_time,
             )
 
-        ridge_extentions += new_ridge_extentions
+        ridge_extensions += new_ridge_extensions
 
         # points = []
         # points.append(
@@ -377,7 +386,7 @@ def divergeTriple(
 
         output_fc.add(crusts)
         output_fc.add(extra_crust)
-        # output_fc.add(ridges)
+        output_fc.add(new_ridge_extensions)
         # output_fc.add(points)
 
     return output_fc
