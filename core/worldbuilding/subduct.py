@@ -442,8 +442,8 @@ def process_polyline_segments_with_zone(
         (s2, PolylineOnSphere([s1, s2])) for s1, s2 in zip(snap_older, snap_younger)
     ]
 
-    valid_segment_paths = []
-    invalid_segment_paths = []
+    valid_segment_paths: list[PolylineOnSphere] = []
+    invalid_segment_paths: list[PolylineOnSphere] = []
 
     for seg, seg_line, path in segment_paths:
         start_path = next(
@@ -451,7 +451,7 @@ def process_polyline_segments_with_zone(
         )
         end_path = next((path for p, path in point_paths if p == seg.get_end_point()))
 
-        valid = [seg_line]
+        valid: list[PolylineOnSphere] = [seg_line]
 
         for zone in zone_frames:
             start_subducted = zone.partition(start_path) in [
@@ -476,13 +476,13 @@ def process_polyline_segments_with_zone(
                 for line in valid:
                     zone.partition(line, inside, outside)
                 valid = outside[1:]
-                invalid_segment_paths.extend(inside + outside[0])
+                invalid_segment_paths.extend(inside + [outside[0]])
             elif end_subducted:
                 inside, outside = [], []
                 for line in valid:
                     zone.partition(line, inside, outside)
                 valid = outside[:-1]
-                invalid_segment_paths.extend(inside + outside[-1])
+                invalid_segment_paths.extend(inside + [outside[-1]])
             elif subducted:
                 inside, outside = [], []
                 for line in valid:
@@ -499,10 +499,10 @@ def process_polylines_with_ref_zone(
     lines: list[PolylineOnSphere], ref_zone_frames: list[PolygonOnSphere]
 ) -> tuple[list, list]:
     """Process polyline segments for subduction, returning valid and invalid segment paths."""
-    valid_segment_paths = []
-    invalid_segment_paths = []
+    valid_segment_paths: list[PolylineOnSphere] = []
+    invalid_segment_paths: list[PolylineOnSphere] = []
     for line in lines:
-        valid = [line]
+        valid: list[PolylineOnSphere] = [line]
         for zone in ref_zone_frames:
             tmp_valid = []
             for line in valid:
