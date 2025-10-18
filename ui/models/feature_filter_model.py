@@ -21,10 +21,8 @@ class FeatureFilterModel(QSortFilterProxyModel):
 
         valid_time = (
             self._start_time_filter is None
-            or data.end_time <= self._start_time_filter <= data.start_time
-        ) and (
-            self._end_time_filter is None or self._end_time_filter <= data.start_time
-        )
+            or data.end_time < self._start_time_filter <= data.start_time
+        ) and (self._end_time_filter is None or self._end_time_filter < data.start_time)
         valid_id = len(self._id_filter) == 0 or (
             data.reconstruction_method == "ByPlateId"
             and data.plate_id in self._id_filter
@@ -70,50 +68,50 @@ class FeatureFilterModel(QSortFilterProxyModel):
     def setStartTimeFilter(self, time: float):
         # self.beginFilterChange()
         self._start_time_filter = time
-        self.invalidate()
+        self.invalidateFilter()
 
     def setEndTimeFilter(self, time: float):
         # self.beginFilterChange()
         self._end_time_filter = time
-        self.invalidate()
+        self.invalidateFilter()
 
     def setTimeRangeFilter(self, start: float, end: float):
         # self.beginFilterChange()
         self._start_time_filter = start
         self._end_time_filter = end
-        self.invalidate()
+        self.invalidateFilter()
 
     def setPlateIdFilter(self, ids: list[str]):
         # self.beginFilterChange()
         self._id_filter = ids or []
-        self.invalidate()
+        self.invalidateFilter()
 
     def setNameFilter(self, names: list[str]):
         # self.beginFilterChange()
         self._name_filter = names or []
-        self.invalidate()
+        self.invalidateFilter()
 
     def setGeometryFilter(self, geometries: list[str]):
         # self.beginFilterChange()
         self._geometry_filter = geometries or []
-        self.invalidate()
+        self.invalidateFilter()
 
     def setReconstructionFilter(self, reconstruction_methods: list[str]):
         # self.beginFilterChange()
         self._reconstruction_filter = reconstruction_methods or []
-        self.invalidate()
+        self.invalidateFilter()
 
     def setCollectionFilter(self, collections: list[str]):
         # self.beginFilterChange()
         self._collection_filter = collections or []
-        self.invalidate()
+        self.invalidateFilter()
 
     def setTypeFilter(self, types: list[str]):
         # self.beginFilterChange()
         self._type_filter = types or []
-        self.invalidate()
+        self.invalidateFilter()
 
     def setFeatureIdFilter(self, ids: list[str]):
         # self.beginFilterChange()
         self._excluded_features = ids or []
-        self.invalidate()
+        self.invalidateFilter()
