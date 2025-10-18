@@ -33,6 +33,8 @@ def split_plate_features(
     splitting_feature: Feature,
     rotation_model: RotationModel,
     split_time: float,
+    *,
+    keep_time: bool = False,
 ) -> FeatureCollection:
     initial_feature_collection = FeatureCollection(plates)
     snapshot = ReconstructSnapshot(
@@ -70,11 +72,13 @@ def split_plate_features(
                 plate_feature.get_feature_type(),
                 split_plate,
                 f"{plate_feature.get_name()} [{i}]",
+                valid_time=plate_feature.get_valid_time(),
                 reconstruction_plate_id=plate_feature.get_reconstruction_plate_id(),
             )
             for i, split_plate in enumerate(plates)
         ]:
-            new_plate.set_valid_time(split_time, float("-inf"))
+            if not keep_time:
+                new_plate.set_valid_time(split_time, new_plate.get_valid_time()[1])
             new_collection.add(new_plate)
 
     reverse_reconstruct(new_collection, rotation_model, split_time)

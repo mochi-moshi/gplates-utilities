@@ -56,11 +56,13 @@ class PlateSplittingTabWidget(ProcessTabWidget):
                 "Select Splitting Feature",
                 "Choose the geological feature that will split the plates",
             ),
-            ProcessStepWidget(2, "Set Split Time", "Define when plate splitting occur"),
             ProcessStepWidget(
-                3,
+                2,
                 "Select Plates to Split",
                 "Choose which plates will be affected by splitting",
+            ),
+            ProcessStepWidget(
+                3, "Set Split Parameters", "Define when and how plate splitting occur"
             ),
             ProcessStepWidget(
                 4, "Process & Save", "Execute splitting and save results"
@@ -88,18 +90,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
 
         splitter_layout.addWidget(self.splitter_selection)
 
-        # Step 2: Split time
-        self.time_group = QGroupBox("Split Time")
-        time_layout = QFormLayout(self.time_group)
-
-        self.split_time = QLineEdit()
-        self.split_time.setValidator(QDoubleValidator())
-        self.split_time.setPlaceholderText("e.g., 10.0")
-        self.split_time.textChanged.connect(lambda: self.on_time_changed())
-
-        time_layout.addRow("Split Time (Ma):", self.split_time)
-
-        # Step 3: Feature selection
+        # Step 2: Feature selection
         self.feature_group = QGroupBox("Plate Selection")
         self.feature_selector = FeatureSelectorWidget(self.session)
         self.feature_selector.selectionChanged.connect(self.on_features_selected)
@@ -107,7 +98,21 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         feature_layout = QVBoxLayout(self.feature_group)
         feature_layout.addWidget(self.feature_selector)
 
-        # Step 5: Output controls
+        # Step 3: Split time
+        self.parameters_group = QGroupBox("Parameters")
+        parameters_layout = QFormLayout(self.parameters_group)
+
+        self.split_time = QLineEdit()
+        self.split_time.setValidator(QDoubleValidator())
+        self.split_time.setPlaceholderText("e.g., 10.0")
+        self.split_time.textChanged.connect(lambda: self.on_time_changed())
+
+        self.keep_valid = QCheckBox("Keep Original Valid Time")
+
+        parameters_layout.addRow("Split Time (Ma):", self.split_time)
+        parameters_layout.addRow(self.keep_valid)
+
+        # Step 4: Output controls
         self.output_group = QGroupBox("Output")
         self.output_widget = OutputWidget(
             self.session, enable_topology_generation=False
@@ -145,8 +150,8 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.process_button)
 
         content_layout.addWidget(self.splitter_group)
-        content_layout.addWidget(self.time_group)
         content_layout.addWidget(self.feature_group)
+        content_layout.addWidget(self.parameters_group)
         content_layout.addWidget(self.output_group)
 
         # Set first step as active
@@ -166,13 +171,13 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         self.splitter_model.setStartTimeFilter(
             float(self.split_time.text()) if self.split_time.text() else None
         )
-        self.update_step_status(1, bool(self.split_time.text()))
+        self.update_step_status(2, bool(self.split_time.text()))
         self.validate_and_enable_process()
 
     def on_features_selected(self, count: int):
         """Handle feature selection changes."""
         if count > 0:
-            self.update_step_status(2, True)
+            self.update_step_status(1, True)
         self.validate_and_enable_process()
 
     def validate_and_enable_process(self):
@@ -236,6 +241,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
                 splitter_feature,
                 self.session._rotationModel,
                 split_time,
+                keep_time=self.keep_valid.isChecked(),
             )
 
             if len(result_fc) == 0:
@@ -283,7 +289,9 @@ class LineSplittingTabWidget(ProcessTabWidget):
             ProcessStepWidget(
                 2, "Select Second Line", "Choose the second line feature to split"
             ),
-            ProcessStepWidget(3, "Set Split Time", "Define when line splitting occurs"),
+            ProcessStepWidget(
+                3, "Set Split Parameters", "Define when and how line splitting occurs"
+            ),
             ProcessStepWidget(
                 4, "Process & Save", "Split lines at intersections and save results"
             ),
@@ -329,8 +337,8 @@ class LineSplittingTabWidget(ProcessTabWidget):
         line2_layout.addWidget(self.line2_selection)
 
         # Step 3: Split time
-        self.time_group = QGroupBox("Split Time")
-        time_layout = QFormLayout(self.time_group)
+        self.parameters_group = QGroupBox("Parameters")
+        parameters_layout = QFormLayout(self.parameters_group)
 
         self.split_time = QLineEdit()
         self.split_time.setValidator(QDoubleValidator())
@@ -339,7 +347,10 @@ class LineSplittingTabWidget(ProcessTabWidget):
             lambda: self.update_step_status(2, bool(self.split_time.text()))
         )
 
-        time_layout.addRow("Split Time (Ma):", self.split_time)
+        self.keep_valid = QCheckBox("Keep Original Valid Time")
+
+        parameters_layout.addRow("Split Time (Ma):", self.split_time)
+        parameters_layout.addRow(self.keep_valid)
 
         # Step 4: Output controls
         self.output_group = QGroupBox("Output")
@@ -380,7 +391,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
 
         content_layout.addWidget(self.line1_group)
         content_layout.addWidget(self.line2_group)
-        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.parameters_group)
         content_layout.addWidget(self.output_group)
 
         # Set first step as active
@@ -494,7 +505,11 @@ class LineSplittingTabWidget(ProcessTabWidget):
 
             # Process line splitting
             result_fc = split_line_features(
-                line1_feature, line2_feature, self.session._rotationModel, split_time
+                line1_feature,
+                line2_feature,
+                self.session._rotationModel,
+                split_time,
+                keep_time=self.keep_valid.isChecked(),
             )
 
             if len(result_fc) == 0:

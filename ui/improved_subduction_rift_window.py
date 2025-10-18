@@ -771,7 +771,7 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
                 1, "Select Ridges", "Choose the mid-ocean ridges for spreading"
             ),
             ProcessStepWidget(
-                2, "Set Time Range", "Define when ocean spreading occurs"
+                2, "Set Parameters", "Define when and how ocean spreading occurs"
             ),
             ProcessStepWidget(
                 3, "Process & Save", "Execute spreading and save results"
@@ -829,12 +829,12 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
         ridge_layout.addWidget(self.ridgeC_selection)
 
         # Step 2: Time range
-        self.time_group = QGroupBox("Time Range")
+        self.parameters_group = QGroupBox("Parameters")
         self.time_widget = TimeRangeWidget()
         self.time_widget.timeChanged.connect(self.on_time_changed)
 
-        time_layout = QVBoxLayout(self.time_group)
-        time_layout.addWidget(self.time_widget)
+        parameters_layout = QVBoxLayout(self.parameters_group)
+        parameters_layout.addWidget(self.time_widget)
 
         # Step 3: Output controls
         self.output_group = QGroupBox("Output")
@@ -872,7 +872,7 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.process_button)
 
         content_layout.addWidget(self.ridge_group)
-        content_layout.addWidget(self.time_group)
+        content_layout.addWidget(self.parameters_group)
         content_layout.addWidget(self.output_group)
 
         # Set first step as active

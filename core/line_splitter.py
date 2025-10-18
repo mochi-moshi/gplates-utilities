@@ -12,7 +12,12 @@ from core.arc_geometry import get_arc_intersection
 
 
 def split_line_features(
-    line_a: Feature, line_b: Feature, rotation_model: RotationModel, split_time: float
+    line_a: Feature,
+    line_b: Feature,
+    rotation_model: RotationModel,
+    split_time: float,
+    *,
+    keep_time: bool = False,
 ) -> FeatureCollection:
     initial_feature_collection = FeatureCollection([line_a, line_b])
     snapshot = ReconstructSnapshot(
@@ -32,9 +37,10 @@ def split_line_features(
             line_a.get_feature_type(),
             line,
             f"{line_a.get_name()} [{idx}]",
-            "",  # description
-            (split_time, line_a.get_valid_time()[1]),
+            valid_time=line_a.get_valid_time(),
         )
+        if not keep_time:
+            feature.set_valid_time(split_time, feature.get_valid_time()[1])
         if line_a.get_reconstruction_method() == "ByPlateID":
             feature.set_reconstruction_plate_id(line_a.get_reconstruction_plate_id())
         else:
@@ -50,9 +56,10 @@ def split_line_features(
             line_b.get_feature_type(),
             line,
             f"{line_b.get_name()} [{idx}]",
-            "",  # description
-            (split_time, line_b.get_valid_time()[1]),
+            valid_time=line_b.get_valid_time(),
         )
+        if not keep_time:
+            feature.set_valid_time(split_time, feature.get_valid_time()[1])
         if line_b.get_reconstruction_method() == "ByPlateID":
             feature.set_reconstruction_plate_id(line_b.get_reconstruction_plate_id())
         else:
