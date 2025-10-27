@@ -1137,8 +1137,6 @@ class ImprovedSubductionRiftHelperWindow(QWidget):
             """
             QLabel {
                 padding: 15px;
-                background-color: #f8f9fa;
-                border: 1px solid #dee2e6;
                 border-radius: 8px;
                 margin-bottom: 10px;
             }

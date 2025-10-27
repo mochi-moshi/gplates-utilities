@@ -104,10 +104,6 @@ class ImprovedGeologicalOperationsWindow(QMainWindow):
 
         layout.addWidget(self.main_tab_widget)
 
-        self.setStyleSheet(
-            "* { color: black; }\nQLineEdit { background-color: white; }\nQTreeView { background-color: white; }\nQTreeView::section { background-color: lightgray; }"
-        )
-
         # Connect welcome tab signals
         self.welcome_tab.operationSelected.connect(self.navigate_to_operation)
 

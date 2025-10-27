@@ -152,7 +152,6 @@ class PlateIdWidget(QWidget):
                 """
                 QSpinBox {
                     border: 2px solid red;
-                    background-color: #fff5f5;
                 }
             """
             )
@@ -203,7 +202,7 @@ class DualPlateIdWidget(QWidget):
         )
         description_label.setWordWrap(True)
         description_label.setStyleSheet(
-            "color: #666; font-size: 10px; margin-bottom: 10px;"
+            "font-size: 10px; margin-bottom: 10px;"
         )
         layout.addWidget(description_label)
 

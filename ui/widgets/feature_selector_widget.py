@@ -109,7 +109,7 @@ class FeatureSelectorWidget(QWidget):
 
         # Selection info
         self.selection_label = QLabel("No features selected")
-        self.selection_label.setStyleSheet("color: #666; font-size: 11px;")
+        self.selection_label.setStyleSheet("font-size: 11px;")
 
         feature_layout.addWidget(self.feature_view)
         feature_layout.addWidget(self.selection_label)

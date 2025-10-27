@@ -96,14 +96,14 @@ class WelcomeTabWidget(QWidget):
         welcome_label = QLabel(
             f"""
         <h1>{self.title}</h1>
-        <p style="font-size: 14px; color: #666;">
+        <p style="font-size:">
         {self.description}
         </p>
         """
         )
         welcome_label.setWordWrap(True)
         welcome_label.setStyleSheet(
-            "padding: 20px; background-color: #f0f8ff; border-radius: 8px; margin-bottom: 20px;"
+            "padding: 20px; border-radius: 8px; margin-bottom: 20px;"
         )
 
         content_layout.addWidget(welcome_label)
@@ -179,7 +179,7 @@ class WelcomeTabWidget(QWidget):
         """
         )
         quick_start_text.setWordWrap(True)
-        quick_start_text.setStyleSheet("color: #333; line-height: 1.4;")
+        quick_start_text.setStyleSheet("line-height: 1.4;")
 
         layout.addWidget(quick_start_text)
 

@@ -45,7 +45,7 @@ class TimeRangeWidget(QWidget):
         layout.addRow("End/Newer Time (Mya):", self.end_time)
 
         self.status_label = QLabel()
-        self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+        self.status_label.setStyleSheet("font-size: 11px;")
         layout.addRow(self.status_label)
         self.status_label.setDisabled(True)
 
@@ -92,7 +92,7 @@ class TimeRangeWidget(QWidget):
                     return True
             else:
                 self.status_label.setText("Enter both start and end times")
-                self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+                self.status_label.setStyleSheet("font-size: 11px;")
                 self.status_label.setDisabled(False)
 
         except ValueError:

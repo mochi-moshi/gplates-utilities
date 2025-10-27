@@ -29,14 +29,7 @@ class OperationSummaryWidget(QFrame):
         self.setStyleSheet(
             """
             QFrame {
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                background-color: #f9f9f9;
                 margin: 5px;
-            }
-            QFrame:hover {
-                border-color: #2196F3;
-                background-color: #f0f8ff;
             }
         """
         )
@@ -54,7 +47,7 @@ class OperationSummaryWidget(QFrame):
             header_layout.addWidget(icon_label)
 
         title_label = QLabel(f"<b>{title}</b>")
-        title_label.setStyleSheet("font-size: 14px; color: #333;")
+        title_label.setStyleSheet("font-size: 14px;")
         header_layout.addWidget(title_label)
         header_layout.addStretch()
 
@@ -63,17 +56,17 @@ class OperationSummaryWidget(QFrame):
         # Description
         desc_label = QLabel(description)
         desc_label.setWordWrap(True)
-        desc_label.setStyleSheet("color: #666; margin-bottom: 10px;")
+        desc_label.setStyleSheet("margin-bottom: 10px;")
         layout.addWidget(desc_label)
 
         # Operations list
         ops_label = QLabel("<b>Available Operations:</b>")
-        ops_label.setStyleSheet("color: #333; font-size: 12px;")
+        ops_label.setStyleSheet("font-size: 12px;")
         layout.addWidget(ops_label)
 
         for op in operations:
             op_label = QLabel(f"• {op}")
-            op_label.setStyleSheet("color: #555; font-size: 11px; margin-left: 10px;")
+            op_label.setStyleSheet("font-size: 11px; margin-left: 10px;")
             layout.addWidget(op_label)
 
         self.setCursor(Qt.PointingHandCursor)

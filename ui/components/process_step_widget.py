@@ -55,7 +55,6 @@ class ProcessStepWidget(QFrame):
         self.title_label = QLabel(f"<b>{title}</b>")
         self.description_label = QLabel(description)
         self.description_label.setWordWrap(True)
-        self.description_label.setStyleSheet("color: #666;")
 
         content_layout.addWidget(self.title_label)
         content_layout.addWidget(self.description_label)

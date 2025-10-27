@@ -84,7 +84,7 @@ class OutputWidget(QWidget):
 
         # Status label
         self.status_label = QLabel()
-        self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+        self.status_label.setStyleSheet("font-size: 11px;")
 
         layout.addLayout(file_layout)
         layout.addLayout(options_layout)
@@ -107,7 +107,7 @@ class OutputWidget(QWidget):
             self.pathChange.emit(file_path)
         else:
             self.status_label.setText("Please select an output file")
-            self.status_label.setStyleSheet("color: #666; font-size: 11px;")
+            self.status_label.setStyleSheet("font-size: 11px;")
             self.pathChange.emit("")
 
     def get_output_path(self) -> str:

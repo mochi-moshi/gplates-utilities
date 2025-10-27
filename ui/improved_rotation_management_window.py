@@ -488,7 +488,7 @@ class RotationMaintenanceWidget(QWidget):
             "This corrects any inconsistencies in the final rotation entries."
         )
         fix_description.setWordWrap(True)
-        fix_description.setStyleSheet("color: #666; margin-bottom: 10px;")
+        fix_description.setStyleSheet("margin-bottom: 10px;")
         fix_layout.addWidget(fix_description)
 
         fix_button_layout = QHBoxLayout()
@@ -541,7 +541,7 @@ class RotationMaintenanceWidget(QWidget):
             "This checks for missing rotations, duplicate entries, and temporal continuity."
         )
         validation_description.setWordWrap(True)
-        validation_description.setStyleSheet("color: #666; margin-bottom: 10px;")
+        validation_description.setStyleSheet("margin-bottom: 10px;")
         validation_layout.addWidget(validation_description)
 
         validation_button_layout = QHBoxLayout()
@@ -760,8 +760,6 @@ class ImprovedRotationManagementWindow(QWidget):
             """
             QLabel {
                 padding: 15px;
-                background-color: #f8f9fa;
-                border: 1px solid #dee2e6;
                 border-radius: 8px;
                 margin-bottom: 10px;
             }
