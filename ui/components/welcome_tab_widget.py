@@ -172,7 +172,7 @@ class WelcomeTabWidget(QWidget):
         <p><b>Need rotation models?</b> The <b>Rotation Management</b> tab provides comprehensive 
         tools for creating and maintaining plate rotation models.</p>
         
-        <p style="margin-top: 15px; padding: 10px; background-color: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+        <p style="margin-top: 15px; padding: 10px;">
         <b>💡 Tip:</b> Each tab provides guided workflows with step-by-step instructions. 
         Look for the numbered workflow steps at the top of each operation.
         </p>
