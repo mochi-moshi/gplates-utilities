@@ -100,7 +100,7 @@ class RotationInitializationWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("🔄 Initialize Rotation Model")
+        self.process_button = QPushButton("Initialize Rotation Model")
         self.process_button.clicked.connect(self.initialize_rotations)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -309,7 +309,7 @@ class PlateCreationWidget(ProcessTabWidget):
         output_layout.addLayout(rotation_output_layout)
 
         # Process button
-        self.process_button = QPushButton("🆕 Create New Plate")
+        self.process_button = QPushButton("Create New Plate")
         self.process_button.clicked.connect(self.create_plate)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -502,7 +502,7 @@ class RotationMaintenanceWidget(QWidget):
         self.browse_rotation_button = QPushButton("Browse...")
         self.browse_rotation_button.clicked.connect(self.select_rotation_output)
 
-        self.fix_rotation_button = QPushButton("🔧 Fix Final Rotation")
+        self.fix_rotation_button = QPushButton("Fix Final Rotation")
         self.fix_rotation_button.clicked.connect(self.fix_final_rotation)
         self.fix_rotation_button.setEnabled(False)
         self.fix_rotation_button.setStyleSheet(
@@ -546,7 +546,7 @@ class RotationMaintenanceWidget(QWidget):
 
         validation_button_layout = QHBoxLayout()
 
-        self.validate_button = QPushButton("✅ Validate Model")
+        self.validate_button = QPushButton("Validate Model")
         self.validate_button.clicked.connect(self.validate_rotation_model)
         self.validate_button.setStyleSheet(
             """
@@ -777,9 +777,9 @@ class ImprovedRotationManagementWindow(QWidget):
         self.maintenance_tab = RotationMaintenanceWidget(self.session)
 
         # Add tabs with emojis for visual appeal
-        self.tab_widget.addTab(self.initialization_tab, "🔄 Initialize Rotations")
-        self.tab_widget.addTab(self.plate_creation_tab, "🆕 Create New Plate")
-        self.tab_widget.addTab(self.maintenance_tab, "🔧 Maintenance")
+        self.tab_widget.addTab(self.initialization_tab, "Initialize Rotations")
+        self.tab_widget.addTab(self.plate_creation_tab, "Create New Plate")
+        self.tab_widget.addTab(self.maintenance_tab, "Maintenance")
 
         # Set tab tooltips
         self.tab_widget.setTabToolTip(0, "Initialize rotation models from features")

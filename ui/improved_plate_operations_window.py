@@ -125,7 +125,7 @@ class PlateSplittingTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("🔪 Split Plates")
+        self.process_button = QPushButton("Split Plates")
         self.process_button.clicked.connect(self.process_splitting)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -365,7 +365,7 @@ class LineSplittingTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("✂️ Split Lines")
+        self.process_button = QPushButton("Split Lines")
         self.process_button.clicked.connect(self.process_line_splitting)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -695,7 +695,7 @@ class PolygonOperationsTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("⚙️ Process Operation")
+        self.process_button = QPushButton("Process Operation")
         self.process_button.clicked.connect(self.process_operation)
         self.process_button.setEnabled(False)
 
@@ -919,9 +919,9 @@ class ImprovedPlateOperationsWindow(QWidget):
         self.polygon_operations_tab = PolygonOperationsTabWidget(self.session)
 
         # Add tabs with emojis for visual appeal
-        self.tab_widget.addTab(self.plate_splitting_tab, "🔪 Plate Splitting")
-        self.tab_widget.addTab(self.line_splitting_tab, "✂️ Line Splitting")
-        self.tab_widget.addTab(self.polygon_operations_tab, "⚙️ Polygon Operations")
+        self.tab_widget.addTab(self.plate_splitting_tab, "Plate Splitting")
+        self.tab_widget.addTab(self.line_splitting_tab, "Line Splitting")
+        self.tab_widget.addTab(self.polygon_operations_tab, "Polygon Operations")
 
         # Set tab tooltips
         self.tab_widget.setTabToolTip(0, "Split plates using geological features")

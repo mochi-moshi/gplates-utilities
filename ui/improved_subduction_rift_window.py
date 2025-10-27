@@ -111,7 +111,7 @@ class SubductionTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("🌋 Process Subduction")
+        self.process_button = QPushButton("Process Subduction")
         self.process_button.clicked.connect(self.process_subduction)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -367,7 +367,7 @@ class RiftingTabWidget(ProcessTabWidget):
         output_layout.addLayout(rotation_output_layout)
 
         # Process button
-        self.process_button = QPushButton("🏔️ Process Rifting")
+        self.process_button = QPushButton("Process Rifting")
         self.process_button.clicked.connect(self.process_rifting)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -621,7 +621,7 @@ class SimpleDivergenceTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("🌊 Process Ocean Spreading")
+        self.process_button = QPushButton("Process Ocean Spreading")
         self.process_button.clicked.connect(self.process_divergence)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -847,7 +847,7 @@ class TripleDivergenceTabWidget(ProcessTabWidget):
         output_layout.addWidget(self.output_widget)
 
         # Process button
-        self.process_button = QPushButton("🌊 Process Ocean Spreading")
+        self.process_button = QPushButton("Process Ocean Spreading")
         self.process_button.clicked.connect(self.process_divergence)
         self.process_button.setEnabled(False)
         self.process_button.setStyleSheet(
@@ -1155,12 +1155,10 @@ class ImprovedSubductionRiftHelperWindow(QWidget):
         self.divergence_triple_tab = TripleDivergenceTabWidget(self.session)
 
         # Add tabs with emojis for visual appeal
-        self.tab_widget.addTab(self.subduction_tab, "🌋 Subduction")
-        self.tab_widget.addTab(self.rifting_tab, "🏔️ Rifting")
-        self.tab_widget.addTab(self.divergence_tab, "🌊 Ocean Spreading")
-        self.tab_widget.addTab(
-            self.divergence_triple_tab, "🌊 Triple Juction Spreading"
-        )
+        self.tab_widget.addTab(self.subduction_tab, "Subduction")
+        self.tab_widget.addTab(self.rifting_tab, "Rifting")
+        self.tab_widget.addTab(self.divergence_tab, "Ocean Spreading")
+        self.tab_widget.addTab(self.divergence_triple_tab, "Triple Juction Spreading")
 
         # Set tab tooltips
         self.tab_widget.setTabToolTip(
